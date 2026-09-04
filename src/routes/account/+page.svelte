@@ -1,14 +1,16 @@
-<script>
+<script lang="ts">
 	import { onMount } from "svelte";
 	import {
 		loadGroups,
 		saveGroups,
 		loadAccount,
 		saveAccount,
-	} from "$lib/storage.js";
-	import { _ } from "$lib/i18n.js";
+		type StoredAccount,
+		type StoredGroup,
+	} from "$lib/storage";
+	import { _ } from "$lib/i18n";
 
-	let account = $state(null); // { username, password } or null
+	let account = $state<StoredAccount | null>(null);
 	let remember = $state(true);
 
 	let mode = $state("login"); // 'login' | 'register'
@@ -29,18 +31,22 @@
 		}
 	});
 
-	async function mergeVaultIntoStorage(vault) {
+	async function mergeVaultIntoStorage(vault: StoredGroup[]) {
 		// vault entries from the server never include a fresher name than what
 		// we might already have locally, so keep local entries on conflict.
 		const local = loadGroups();
-		const byId = new Map(vault.map((g) => [g.id, g]));
+		const byId = new Map<string, StoredGroup>(vault.map((g) => [g.id, g]));
 		for (const g of local) byId.set(g.id, g);
 		const merged = Array.from(byId.values());
 		saveGroups(merged);
 		groupCount = merged.length;
 	}
 
-	async function sync(user, pass, { silent = false } = {}) {
+	async function sync(
+		user: string,
+		pass: string,
+		{ silent = false }: { silent?: boolean } = {},
+	) {
 		if (!silent) {
 			busy = true;
 			formErr = "";
@@ -79,7 +85,7 @@
 		}
 	}
 
-	async function submit(e) {
+	async function submit(e: SubmitEvent) {
 		e.preventDefault();
 		formErr = "";
 		if (!username.trim() || !password) {
@@ -106,7 +112,10 @@
 
 			await sync(account.username, account.password);
 		} catch (err) {
-			formErr = err.message;
+			formErr =
+				err instanceof Error
+					? err.message
+					: $_("account.somethingWrong");
 		} finally {
 			busy = false;
 		}
@@ -156,7 +165,9 @@
 			<button
 				class="btn btn-primary btn-sm"
 				disabled={busy}
-				onclick={() => sync(account.username, account.password)}
+				onclick={() => {
+					if (account) sync(account.username, account.password);
+				}}
 			>
 				{busy ? $_("account.syncing") : $_("account.syncNow")}
 			</button>

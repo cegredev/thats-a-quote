@@ -6,6 +6,9 @@
 const GROUPS_KEY = "my-friendly-quotes:groups";
 const ACCOUNT_KEY = "my-friendly-quotes:account";
 
+export type StoredGroup = { id: string; name: string; password: string | null };
+export type StoredAccount = { username: string; password: string };
+
 function hasStorage() {
 	return (
 		typeof window !== "undefined" &&
@@ -13,7 +16,7 @@ function hasStorage() {
 	);
 }
 
-function safeParse(raw, fallback) {
+function safeParse<T>(raw: string | null, fallback: T): T {
 	if (!raw) return fallback;
 	try {
 		const parsed = JSON.parse(raw);
@@ -24,21 +27,21 @@ function safeParse(raw, fallback) {
 }
 
 /** @returns {{id: string, name: string, password: string|null}[]} */
-export function loadGroups() {
+export function loadGroups(): StoredGroup[] {
 	if (!hasStorage()) return [];
 	return safeParse(window.localStorage.getItem(GROUPS_KEY), []);
 }
 
-export function saveGroups(groups) {
+export function saveGroups(groups: StoredGroup[]): void {
 	if (!hasStorage()) return;
 	window.localStorage.setItem(GROUPS_KEY, JSON.stringify(groups));
 }
 
-export function getStoredGroup(id) {
+export function getStoredGroup(id: string): StoredGroup | null {
 	return loadGroups().find((g) => g.id === id) || null;
 }
 
-export function upsertStoredGroup(group) {
+export function upsertStoredGroup(group: StoredGroup): StoredGroup[] {
 	const groups = loadGroups();
 	const index = groups.findIndex((g) => g.id === group.id);
 	if (index === -1) {
@@ -50,18 +53,18 @@ export function upsertStoredGroup(group) {
 	return groups;
 }
 
-export function removeStoredGroup(id) {
+export function removeStoredGroup(id: string): StoredGroup[] {
 	const groups = loadGroups().filter((g) => g.id !== id);
 	saveGroups(groups);
 	return groups;
 }
 
-export function loadAccount() {
+export function loadAccount(): StoredAccount | null {
 	if (!hasStorage()) return null;
 	return safeParse(window.localStorage.getItem(ACCOUNT_KEY), null);
 }
 
-export function saveAccount(account) {
+export function saveAccount(account: StoredAccount | null): void {
 	if (!hasStorage()) return;
 	if (account) {
 		window.localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
@@ -6,10 +6,12 @@
 		getStoredGroup,
 		upsertStoredGroup,
 		removeStoredGroup,
-	} from "$lib/storage.js";
-	import { _, locale } from "$lib/i18n.js";
+	} from "$lib/storage";
+	import type { StoredGroup } from "$lib/storage";
+	import { _, locale } from "$lib/i18n";
+	import type { Quote } from "$lib/server/groups";
 
-	const id = page.params.id;
+	const id = page.params.id ?? "";
 
 	let loading = $state(true);
 	let notFound = $state(false);
@@ -18,10 +20,10 @@
 	let passwordErr = $state("");
 	let passwordBusy = $state(false);
 
-	let activePassword = $state(null);
+	let activePassword = $state<string | null>(null);
 	let groupName = $state("");
-	let quotes = $state([]);
-	let people = $state([]);
+	let quotes = $state<Quote[]>([]);
+	let people = $state<string[]>([]);
 
 	let quoteText = $state("");
 	let personName = $state("");
@@ -35,7 +37,7 @@
 		await tryLoad(stored?.password ?? "");
 	});
 
-	async function tryLoad(password) {
+	async function tryLoad(password: string) {
 		loading = true;
 		passwordErr = "";
 		try {
@@ -73,7 +75,7 @@
 		}
 	}
 
-	async function submitPassword(e) {
+	async function submitPassword(e: SubmitEvent) {
 		e.preventDefault();
 		passwordBusy = true;
 		passwordErr = "";
@@ -104,7 +106,7 @@
 		}
 	}
 
-	async function addQuote(e) {
+	async function addQuote(e: SubmitEvent) {
 		e.preventDefault();
 		addErr = "";
 		if (!quoteText.trim()) {
@@ -134,7 +136,7 @@
 			quoteText = "";
 			personName = "";
 		} catch (err) {
-			addErr = err.message;
+			addErr = err instanceof Error ? err.message : $_("group.addFailed");
 		} finally {
 			addBusy = false;
 		}
@@ -158,7 +160,7 @@
 		goto("/");
 	}
 
-	function formatDate(ts) {
+	function formatDate(ts: number): string {
 		return new Date(ts).toLocaleDateString($locale === "de" ? "de-DE" : "en-US", {
 			month: "short",
 			day: "numeric",

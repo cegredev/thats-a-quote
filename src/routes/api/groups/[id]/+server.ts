@@ -5,7 +5,7 @@ import {
 	checkGroupPassword,
 	listQuotes,
 	listPeople
-} from '$lib/server/groups.js';
+} from '$lib/server/groups';
 
 export async function GET({ params, url }) {
 	const group = getGroup(params.id);

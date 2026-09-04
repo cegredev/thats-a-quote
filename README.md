@@ -32,7 +32,7 @@ Production build:
 
 ```bash
 npm run build
-node build/index.js     # PORT=3000 by default
+node build/index.ts     # PORT=3000 by default
 ```
 
 Run with Docker, using a named volume for the SQLite database:
@@ -53,11 +53,11 @@ the location with the `DATABASE_PATH` environment variable.
 ```text
 src/
   lib/
-    storage.js            client-side localStorage helpers (the "vault")
+    storage.ts            client-side localStorage helpers (the "vault")
     server/
-      db.js                sqlite connection + schema
-      groups.js             group + quote queries
-      accounts.js           optional sync-account queries
+      db.ts                sqlite connection + schema
+      groups.ts             group + quote queries
+      accounts.ts           optional sync-account queries
   routes/
     +page.svelte           home: your groups, create/join forms
     group/[id]/+page.svelte group view: password gate, quotes, add-quote form

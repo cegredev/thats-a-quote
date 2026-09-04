@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { verifyAccount } from '$lib/server/accounts.js';
+import { verifyAccount } from '$lib/server/accounts';
 
 export async function POST({ request }) {
 	const body = await request.json().catch(() => ({}));

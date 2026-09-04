@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { getGroup, checkGroupPassword, addQuote, listQuotes, listPeople } from '$lib/server/groups.js';
+import { getGroup, checkGroupPassword, addQuote, listQuotes, listPeople } from '$lib/server/groups';
 
 export async function POST({ params, request }) {
 	const group = getGroup(params.id);

@@ -1,10 +1,14 @@
-<script>
+<script lang="ts">
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
-	import { loadGroups, upsertStoredGroup } from "$lib/storage.js";
-	import { _ } from "$lib/i18n.js";
+	import {
+		loadGroups,
+		upsertStoredGroup,
+		type StoredGroup,
+	} from "$lib/storage";
+	import { _ } from "$lib/i18n";
 
-	let groups = $state([]);
+	let groups = $state<StoredGroup[]>([]);
 	let mode = $state("create"); // 'create' | 'join'
 
 	let createName = $state("");
@@ -21,7 +25,7 @@
 		groups = loadGroups();
 	});
 
-	async function createGroup(e) {
+	async function createGroup(e: SubmitEvent) {
 		e.preventDefault();
 		createErr = "";
 		if (!createName.trim()) {
@@ -48,13 +52,14 @@
 			});
 			goto(`/group/${data.id}`);
 		} catch (err) {
-			createErr = err.message;
+			createErr =
+				err instanceof Error ? err.message : $_("home.createFailed");
 		} finally {
 			createBusy = false;
 		}
 	}
 
-	async function joinGroup(e) {
+	async function joinGroup(e: SubmitEvent) {
 		e.preventDefault();
 		joinErr = "";
 		const id = extractId(joinId.trim());
@@ -78,13 +83,14 @@
 			});
 			goto(`/group/${id}`);
 		} catch (err) {
-			joinErr = err.message;
+			joinErr =
+				err instanceof Error ? err.message : $_("home.joinFailed");
 		} finally {
 			joinBusy = false;
 		}
 	}
 
-	function extractId(input) {
+	function extractId(input: string): string {
 		if (!input) return "";
 		try {
 			const url = new URL(input);

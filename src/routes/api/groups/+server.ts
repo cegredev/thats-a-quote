@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit';
-import { createGroup } from '$lib/server/groups.js';
+import { createGroup } from '$lib/server/groups';
 
 export async function POST({ request }) {
 	const body = await request.json().catch(() => ({}));
