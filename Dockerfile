@@ -1,4 +1,4 @@
-FROM node:22-alpine AS build
+FROM node:lts-alpine3.24 AS build
 
 RUN apk add --no-cache python3 make g++
 
@@ -12,7 +12,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build && pnpm prune --prod
 
-FROM node:22-alpine AS runtime
+FROM node:lts-alpine3.24 AS runtime
 
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \
