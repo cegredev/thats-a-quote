@@ -1,17 +1,22 @@
 <script>
-	import { onMount } from 'svelte';
-	import { loadGroups, saveGroups, loadAccount, saveAccount } from '$lib/storage.js';
+	import { onMount } from "svelte";
+	import {
+		loadGroups,
+		saveGroups,
+		loadAccount,
+		saveAccount,
+	} from "$lib/storage.js";
 
 	let account = $state(null); // { username, password } or null
 	let remember = $state(true);
 
-	let mode = $state('login'); // 'login' | 'register'
-	let username = $state('');
-	let password = $state('');
+	let mode = $state("login"); // 'login' | 'register'
+	let username = $state("");
+	let password = $state("");
 	let busy = $state(false);
-	let formErr = $state('');
+	let formErr = $state("");
 
-	let status = $state(''); // last sync status message
+	let status = $state(""); // last sync status message
 	let groupCount = $state(0);
 
 	onMount(async () => {
@@ -37,24 +42,28 @@
 	async function sync(user, pass, { silent = false } = {}) {
 		if (!silent) {
 			busy = true;
-			formErr = '';
+			formErr = "";
 		}
 		try {
-			const res = await fetch('/api/account/sync', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ username: user, password: pass, vault: loadGroups() })
+			const res = await fetch("/api/account/sync", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					username: user,
+					password: pass,
+					vault: loadGroups(),
+				}),
 			});
 			const data = await res.json();
 			if (!res.ok) {
-				if (!silent) formErr = data.message || 'Could not sync.';
+				if (!silent) formErr = data.message || "Could not sync.";
 				return false;
 			}
 			await mergeVaultIntoStorage(data.vault);
-			status = `Synced just now · ${data.vault.length} group${data.vault.length === 1 ? '' : 's'}`;
+			status = `Synced just now · ${data.vault.length} group${data.vault.length === 1 ? "" : "s"}`;
 			return true;
 		} catch {
-			if (!silent) formErr = 'Could not reach the server.';
+			if (!silent) formErr = "Could not reach the server.";
 			return false;
 		} finally {
 			busy = false;
@@ -63,21 +72,25 @@
 
 	async function submit(e) {
 		e.preventDefault();
-		formErr = '';
+		formErr = "";
 		if (!username.trim() || !password) {
-			formErr = 'Fill in both fields.';
+			formErr = "Fill in both fields.";
 			return;
 		}
 		busy = true;
 		try {
-			const endpoint = mode === 'register' ? '/api/account/register' : '/api/account/login';
+			const endpoint =
+				mode === "register"
+					? "/api/account/register"
+					: "/api/account/login";
 			const res = await fetch(endpoint, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ username, password })
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username, password }),
 			});
 			const data = await res.json();
-			if (!res.ok) throw new Error(data.message || 'Something went wrong.');
+			if (!res.ok)
+				throw new Error(data.message || "Something went wrong.");
 
 			account = { username: data.username, password };
 			if (remember) saveAccount(account);
@@ -93,29 +106,34 @@
 	function forgetDevice() {
 		saveAccount(null);
 		account = null;
-		status = '';
-		username = '';
-		password = '';
+		status = "";
+		username = "";
+		password = "";
 	}
 </script>
 
 <svelte:head>
-	<title>Sync devices · Quotebook</title>
+	<title>Sync devices · My Friendly Quotes</title>
 </svelte:head>
 
-<h1 class="font-display text-2xl font-semibold">Sync your groups across devices</h1>
+<h1 class="font-display text-2xl font-semibold">
+	Sync your groups across devices
+</h1>
 <p class="mt-2 max-w-lg text-base-content/70">
-	By default your groups only live in this browser. Create a small password-protected account to
-	back up and sync the list of groups you belong to — the quotes themselves always stay on the
-	server, this just syncs which groups <em>this device</em> knows about.
+	By default your groups only live in this browser. Create a small
+	password-protected account to back up and sync the list of groups you belong
+	to — the quotes themselves always stay on the server, this just syncs which
+	groups <em>this device</em> knows about.
 </p>
 
 {#if account}
-	<div class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6">
+	<div
+		class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
+	>
 		<p class="text-sm text-base-content/60">Signed in as</p>
 		<p class="font-display text-lg font-semibold">{account.username}</p>
 		<p class="mt-3 text-sm text-base-content/70">
-			{groupCount} group{groupCount === 1 ? '' : 's'} on this device
+			{groupCount} group{groupCount === 1 ? "" : "s"} on this device
 		</p>
 		{#if status}
 			<p class="mt-1 text-sm text-success">{status}</p>
@@ -126,25 +144,29 @@
 				disabled={busy}
 				onclick={() => sync(account.username, account.password)}
 			>
-				{busy ? 'Syncing…' : 'Sync now'}
+				{busy ? "Syncing…" : "Sync now"}
 			</button>
-			<button class="btn btn-ghost btn-sm" onclick={forgetDevice}>Forget this device</button>
+			<button class="btn btn-ghost btn-sm" onclick={forgetDevice}
+				>Forget this device</button
+			>
 		</div>
 	</div>
 {:else}
-	<div class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6">
+	<div
+		class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
+	>
 		<div class="tabs tabs-box mb-5 w-fit">
 			<button
 				type="button"
 				class="tab {mode === 'login' ? 'tab-active' : ''}"
-				onclick={() => (mode = 'login')}
+				onclick={() => (mode = "login")}
 			>
 				Log in
 			</button>
 			<button
 				type="button"
 				class="tab {mode === 'register' ? 'tab-active' : ''}"
-				onclick={() => (mode = 'register')}
+				onclick={() => (mode = "register")}
 			>
 				Create account
 			</button>
@@ -152,7 +174,12 @@
 
 		<form class="flex flex-col gap-3" onsubmit={submit}>
 			<label class="fieldset-label" for="acct-username">Username</label>
-			<input id="acct-username" class="input w-full" bind:value={username} maxlength="40" />
+			<input
+				id="acct-username"
+				class="input w-full"
+				bind:value={username}
+				maxlength="40"
+			/>
 
 			<label class="fieldset-label" for="acct-password">Password</label>
 			<input
@@ -164,7 +191,11 @@
 			/>
 
 			<label class="label cursor-pointer justify-start gap-2 px-0">
-				<input type="checkbox" class="checkbox checkbox-sm" bind:checked={remember} />
+				<input
+					type="checkbox"
+					class="checkbox checkbox-sm"
+					bind:checked={remember}
+				/>
 				<span class="label-text">Remember me on this device</span>
 			</label>
 
@@ -173,7 +204,11 @@
 			{/if}
 
 			<button class="btn btn-primary mt-1 self-start" disabled={busy}>
-				{busy ? 'Please wait…' : mode === 'register' ? 'Create account & sync' : 'Log in & sync'}
+				{busy
+					? "Please wait…"
+					: mode === "register"
+						? "Create account & sync"
+						: "Log in & sync"}
 			</button>
 		</form>
 	</div>

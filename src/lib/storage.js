@@ -3,11 +3,14 @@
 // group's id, a cached name, and its password (if any) so they don't have
 // to retype it every visit.
 
-const GROUPS_KEY = 'quotebook:groups';
-const ACCOUNT_KEY = 'quotebook:account';
+const GROUPS_KEY = "my-friendly-quotes:groups";
+const ACCOUNT_KEY = "my-friendly-quotes:account";
 
 function hasStorage() {
-	return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+	return (
+		typeof window !== "undefined" &&
+		typeof window.localStorage !== "undefined"
+	);
 }
 
 function safeParse(raw, fallback) {

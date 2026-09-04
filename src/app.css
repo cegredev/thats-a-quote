@@ -1,10 +1,10 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @plugin 'daisyui' {
 	themes: false;
 }
 
 @plugin 'daisyui/theme' {
-	name: 'quotebook';
+	name: "my-friendly-quotes";
 	default: true;
 	prefersdark: false;
 	color-scheme: light;
@@ -35,13 +35,13 @@
 }
 
 @font-face {
-	font-family: 'Fraunces';
-	src: local('Fraunces');
+	font-family: "Fraunces";
+	src: local("Fraunces");
 }
 
 :root {
-	--font-display: 'Fraunces', 'Georgia', serif;
-	--font-body: 'Inter', 'system-ui', sans-serif;
+	--font-display: "Fraunces", "Georgia", serif;
+	--font-body: "Inter", "system-ui", sans-serif;
 }
 
 body {
@@ -55,7 +55,9 @@ body {
 .quote-card {
 	background: color-mix(in oklch, var(--color-base-100) 100%, transparent);
 	border: 1.5px solid var(--color-base-300);
-	transition: transform 0.15s ease, box-shadow 0.15s ease;
+	transition:
+		transform 0.15s ease,
+		box-shadow 0.15s ease;
 }
 
 .quote-card:nth-child(3n + 1) {
@@ -72,5 +74,6 @@ body {
 
 .quote-card:hover {
 	transform: rotate(0deg) translateY(-2px);
-	box-shadow: 0 6px 18px -8px color-mix(in oklch, var(--color-neutral) 35%, transparent);
+	box-shadow: 0 6px 18px -8px
+		color-mix(in oklch, var(--color-neutral) 35%, transparent);
 }

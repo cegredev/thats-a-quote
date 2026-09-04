@@ -1,14 +1,14 @@
-import Database from 'better-sqlite3';
-import fs from 'node:fs';
-import path from 'node:path';
+import Database from "better-sqlite3";
+import fs from "node:fs";
+import path from "node:path";
 
-const DB_PATH = process.env.DATABASE_PATH || 'data/quotebook.sqlite3';
+const DB_PATH = process.env.DATABASE_PATH || "data/my-friendly-quotes.sqlite3";
 
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
 export const db = new Database(DB_PATH);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+db.pragma("journal_mode = WAL");
+db.pragma("foreign_keys = ON");
 
 db.exec(`
 	CREATE TABLE IF NOT EXISTS groups (

@@ -1,4 +1,4 @@
-# Quotebook
+# my-friendly-quotes
 
 A tiny app for keeping track of the funny things your friends say.
 
@@ -17,7 +17,7 @@ A tiny app for keeping track of the funny things your friends say.
 
 - SvelteKit (Svelte 5, runes)
 - SQLite via `better-sqlite3`
-- Tailwind CSS v4 + DaisyUI v5 (custom "quotebook" theme)
+- Tailwind CSS v4 + DaisyUI v5 (custom "my-friendly-quotes" theme)
 - `bcryptjs` for password hashing, `nanoid` for IDs
 
 ## Running it
@@ -37,14 +37,14 @@ node build/index.js     # PORT=3000 by default
 Run with Docker, using a named volume for the SQLite database:
 
 ```bash
-docker build -t quote-app .
-docker run --rm -p 3000:3000 -v quotebook-data:/app/data quote-app
+docker build -t my-friendly-quotes .
+docker run --rm -p 3000:3000 -v my-friendly-quotes-data:/app/data my-friendly-quotes
 ```
 
 To keep the SQLite file in a directory on the host instead, replace the named
 volume with `-v "$PWD/data:/app/data"`.
 
-By default the SQLite file is created at `data/quotebook.sqlite3`. Override
+By default the SQLite file is created at `data/my-friendly-quotes.sqlite3`. Override
 the location with the `DATABASE_PATH` environment variable.
 
 ## How the pieces fit together

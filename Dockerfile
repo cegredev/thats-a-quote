@@ -17,7 +17,7 @@ FROM node:22-alpine AS runtime
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \
     PORT=3000 \
-    DATABASE_PATH=/app/data/quotebook.sqlite3
+    DATABASE_PATH=/app/data/my-friendly-quotes.sqlite3
 
 WORKDIR /app
 
