@@ -1,0 +1,76 @@
+@import 'tailwindcss';
+@plugin 'daisyui' {
+	themes: false;
+}
+
+@plugin 'daisyui/theme' {
+	name: 'quotebook';
+	default: true;
+	prefersdark: false;
+	color-scheme: light;
+	--color-base-100: oklch(97.5% 0.014 85);
+	--color-base-200: oklch(94% 0.018 82);
+	--color-base-300: oklch(89% 0.022 80);
+	--color-base-content: oklch(24% 0.02 55);
+	--color-primary: oklch(46% 0.09 175);
+	--color-primary-content: oklch(97% 0.01 175);
+	--color-secondary: oklch(72% 0.15 75);
+	--color-secondary-content: oklch(20% 0.03 75);
+	--color-accent: oklch(58% 0.19 25);
+	--color-accent-content: oklch(97% 0.01 25);
+	--color-neutral: oklch(24% 0.02 55);
+	--color-neutral-content: oklch(95% 0.01 55);
+	--color-info: oklch(70% 0.1 220);
+	--color-info-content: oklch(20% 0.02 220);
+	--color-success: oklch(58% 0.12 155);
+	--color-success-content: oklch(97% 0.01 155);
+	--color-warning: oklch(75% 0.15 75);
+	--color-warning-content: oklch(20% 0.02 75);
+	--color-error: oklch(55% 0.19 25);
+	--color-error-content: oklch(97% 0.01 25);
+	--radius-selector: 0.5rem;
+	--radius-field: 0.5rem;
+	--radius-box: 0.75rem;
+	--border: 1.5px;
+}
+
+@font-face {
+	font-family: 'Fraunces';
+	src: local('Fraunces');
+}
+
+:root {
+	--font-display: 'Fraunces', 'Georgia', serif;
+	--font-body: 'Inter', 'system-ui', sans-serif;
+}
+
+body {
+	font-family: var(--font-body);
+}
+
+.font-display {
+	font-family: var(--font-display);
+}
+
+.quote-card {
+	background: color-mix(in oklch, var(--color-base-100) 100%, transparent);
+	border: 1.5px solid var(--color-base-300);
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.quote-card:nth-child(3n + 1) {
+	transform: rotate(-0.6deg);
+}
+
+.quote-card:nth-child(3n + 2) {
+	transform: rotate(0.5deg);
+}
+
+.quote-card:nth-child(3n) {
+	transform: rotate(-0.3deg);
+}
+
+.quote-card:hover {
+	transform: rotate(0deg) translateY(-2px);
+	box-shadow: 0 6px 18px -8px color-mix(in oklch, var(--color-neutral) 35%, transparent);
+}
