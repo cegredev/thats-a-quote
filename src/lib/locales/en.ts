@@ -14,6 +14,8 @@ export default {
 		joinTab: "Join a group",
 		groupName: "Group name",
 		groupNamePlaceholder: "The Thursday Hiking Crew",
+		customId: "Custom group ID",
+		customIdPlaceholder: "thursday-hiking-crew",
 		password: "Password",
 		optional: "optional",
 		openGroupPlaceholder: "Leave blank for an open group",

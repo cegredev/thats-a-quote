@@ -12,6 +12,7 @@
 	let mode = $state("create"); // 'create' | 'join'
 
 	let createName = $state("");
+	let createId = $state("");
 	let createPassword = $state("");
 	let createBusy = $state(false);
 	let createErr = $state("");
@@ -39,6 +40,7 @@
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					name: createName,
+					id: createId,
 					password: createPassword,
 				}),
 			});
@@ -190,6 +192,18 @@
 				placeholder={$_("home.groupNamePlaceholder")}
 				bind:value={createName}
 				maxlength="80"
+			/>
+			<label class="fieldset-label" for="create-id"
+				>{$_("home.customId")}
+				<span class="text-base-content/50">({$_("home.optional")})</span
+				></label
+			>
+			<input
+				id="create-id"
+				class="input w-full"
+				placeholder={$_("home.customIdPlaceholder")}
+				bind:value={createId}
+				maxlength="64"
 			/>
 			<label class="fieldset-label" for="create-password">
 				{$_("home.password")}

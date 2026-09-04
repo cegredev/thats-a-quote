@@ -17,8 +17,12 @@ export type Quote = {
 };
 
 /** Create a new group and return its long unique id. */
-export function createGroup(name: string, password: string | null): string {
-	const id = nanoid(24);
+export function createGroup(
+	name: string,
+	password: string | null,
+	customId?: string,
+): string {
+	const id = customId || nanoid(24);
 	const passwordHash = password ? bcrypt.hashSync(password, 10) : null;
 	db.prepare(
 		"INSERT INTO groups (id, name, password_hash, created_at) VALUES (?, ?, ?, ?)",

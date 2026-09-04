@@ -14,6 +14,8 @@ export default {
 		joinTab: "Gruppe beitreten",
 		groupName: "Gruppenname",
 		groupNamePlaceholder: "Die Donnerstag-Wandergruppe",
+		customId: "Eigene Gruppen-ID",
+		customIdPlaceholder: "donnerstag-wandergruppe",
 		password: "Passwort",
 		optional: "optional",
 		openGroupPlaceholder: "Für eine offene Gruppe leer lassen",
