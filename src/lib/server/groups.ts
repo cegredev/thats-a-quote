@@ -13,6 +13,7 @@ export type Quote = {
 	text: string;
 	person: string;
 	createdAt: number;
+	quotedAt: number;
 };
 
 /** Create a new group and return its long unique id. */
@@ -42,29 +43,67 @@ export function checkGroupPassword(group: GroupRow, password: string): boolean {
 }
 
 export function listQuotes(groupId: string): Quote[] {
-	return db
-		.prepare(
-			"SELECT id, text, person, created_at as createdAt FROM quotes WHERE group_id = ? ORDER BY created_at DESC",
-		)
-		.all(groupId) as Quote[];
+	return listQuotesMatching(groupId, {});
 }
 
-export function addQuote(groupId: string, text: string, person: string): Quote {
+export type QuoteSearch = {
+	content?: string;
+	person?: string;
+};
+
+export function listQuotesMatching(
+	groupId: string,
+	search: QuoteSearch,
+): Quote[] {
+	const conditions = ["group_id = ?"];
+	const values: Array<string | number> = [groupId];
+
+	if (search.content) {
+		conditions.push("text LIKE ? COLLATE NOCASE");
+		values.push(`%${search.content}%`);
+	}
+	if (search.person) {
+		const personSearch = search.person.toLocaleLowerCase();
+		if (personSearch === "someone" || personSearch === "jemand") {
+			conditions.push("(person LIKE ? COLLATE NOCASE OR person = '')");
+			values.push(`%${search.person}%`);
+		} else {
+			conditions.push("person LIKE ? COLLATE NOCASE");
+			values.push(`%${search.person}%`);
+		}
+	}
+	return db
+		.prepare(
+			`SELECT id, text, person, created_at as createdAt, quoted_at as quotedAt
+			 FROM quotes
+			 WHERE ${conditions.join(" AND ")}
+			 ORDER BY quoted_at DESC, created_at DESC`,
+		)
+		.all(...values) as Quote[];
+}
+
+export function addQuote(
+	groupId: string,
+	text: string,
+	person: string,
+	quotedAt: number,
+): Quote {
 	const id = nanoid(16);
 	const createdAt = Date.now();
 	db.prepare(
-		"INSERT INTO quotes (id, group_id, text, person, created_at) VALUES (?, ?, ?, ?, ?)",
-	).run(id, groupId, text, person, createdAt);
-	return { id, text, person, createdAt };
+		"INSERT INTO quotes (id, group_id, text, person, created_at, quoted_at) VALUES (?, ?, ?, ?, ?, ?)",
+	).run(id, groupId, text, person, createdAt, quotedAt);
+	return { id, text, person, createdAt, quotedAt };
 }
 
 /** Distinct people who have been quoted in this group, most recently used first. */
 export function listPeople(groupId: string): string[] {
 	const rows = db
 		.prepare(
-			`SELECT person, MAX(created_at) as lastUsed
+			`SELECT person, MAX(quoted_at) as lastUsed
 			 FROM quotes
 			 WHERE group_id = ?
+			   AND person <> ''
 			 GROUP BY person COLLATE NOCASE
 			 ORDER BY lastUsed DESC`,
 		)

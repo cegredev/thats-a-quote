@@ -48,6 +48,10 @@ volume with `-v "$PWD/data:/app/data"`.
 By default the SQLite file is created at `data/my-friendly-quotes.sqlite3`. Override
 the location with the `DATABASE_PATH` environment variable.
 
+Database schema changes are applied automatically when the server starts. The
+`schema_migrations` table records applied migration versions; existing databases
+are upgraded without replacing the SQLite file.
+
 ## How the pieces fit together
 
 ```text

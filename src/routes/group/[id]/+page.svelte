@@ -27,22 +27,33 @@
 
 	let quoteText = $state("");
 	let personName = $state("");
+	let quotedAt = $state("");
+	let searchContent = $state("");
+	let searchPerson = $state("");
+	let searchBusy = $state(false);
 	let addBusy = $state(false);
 	let addErr = $state("");
 
 	let copied = $state(false);
 
 	onMount(async () => {
+		quotedAt = toDateTimeLocal(new Date());
 		const stored = getStoredGroup(id);
 		await tryLoad(stored?.password ?? "");
 	});
 
-	async function tryLoad(password: string) {
+	async function tryLoad(password: string, useSearch = true) {
 		loading = true;
 		passwordErr = "";
 		try {
 			const params = new URLSearchParams();
 			if (password) params.set("password", password);
+			if (useSearch) {
+				if (searchContent.trim())
+					params.set("content", searchContent.trim());
+				if (searchPerson.trim())
+					params.set("person", searchPerson.trim());
+			}
 			const res = await fetch(`/api/groups/${id}?${params}`);
 
 			if (res.status === 404) {
@@ -75,6 +86,27 @@
 		}
 	}
 
+	async function searchQuotes(e: SubmitEvent) {
+		e.preventDefault();
+		searchBusy = true;
+		try {
+			await tryLoad(activePassword ?? "");
+		} finally {
+			searchBusy = false;
+		}
+	}
+
+	async function clearSearch() {
+		searchContent = "";
+		searchPerson = "";
+		searchBusy = true;
+		try {
+			await tryLoad(activePassword ?? "", false);
+		} finally {
+			searchBusy = false;
+		}
+	}
+
 	async function submitPassword(e: SubmitEvent) {
 		e.preventDefault();
 		passwordBusy = true;
@@ -94,8 +126,7 @@
 			needsPassword = false;
 			activePassword = passwordInput;
 			groupName = data.name;
-			quotes = data.quotes;
-			people = data.people;
+			await tryLoad(activePassword ?? "");
 			upsertStoredGroup({
 				id,
 				name: data.name,
@@ -113,8 +144,9 @@
 			addErr = $_("group.quoteRequired");
 			return;
 		}
-		if (!personName.trim()) {
-			addErr = $_("group.personRequired");
+		const quotedAtDate = new Date(quotedAt);
+		if (!quotedAt || Number.isNaN(quotedAtDate.getTime())) {
+			addErr = $_("group.dateTimeInvalid");
 			return;
 		}
 		addBusy = true;
@@ -125,16 +157,16 @@
 				body: JSON.stringify({
 					password: activePassword,
 					text: quoteText,
-					person: personName,
+					person: personName.trim(),
+					quotedAt: quotedAtDate.getTime(),
 				}),
 			});
 			const data = await res.json();
-			if (!res.ok)
-				throw new Error(data.message || $_("group.addFailed"));
-			quotes = data.quotes;
-			people = data.people;
+			if (!res.ok) throw new Error(data.message || $_("group.addFailed"));
+			await tryLoad(activePassword ?? "");
 			quoteText = "";
 			personName = "";
+			quotedAt = toDateTimeLocal(new Date());
 		} catch (err) {
 			addErr = err instanceof Error ? err.message : $_("group.addFailed");
 		} finally {
@@ -150,9 +182,7 @@
 
 	function leaveGroup() {
 		if (
-			!confirm(
-				$_("group.leaveConfirm", { values: { name: groupName } }),
-			)
+			!confirm($_("group.leaveConfirm", { values: { name: groupName } }))
 		) {
 			return;
 		}
@@ -161,11 +191,23 @@
 	}
 
 	function formatDate(ts: number): string {
-		return new Date(ts).toLocaleDateString($locale === "de" ? "de-DE" : "en-US", {
-			month: "short",
-			day: "numeric",
-			year: "numeric",
-		});
+		return new Date(ts).toLocaleString(
+			$locale === "de" ? "de-DE" : "en-US",
+			{
+				month: "short",
+				day: "numeric",
+				year: "numeric",
+				hour: "2-digit",
+				minute: "2-digit",
+				second: "2-digit",
+			},
+		);
+	}
+
+	function toDateTimeLocal(date: Date): string {
+		const offset = date.getTimezoneOffset();
+		const localDate = new Date(date.getTime() - offset * 60_000);
+		return localDate.toISOString().slice(0, 19);
 	}
 </script>
 
@@ -217,7 +259,15 @@
 		<div>
 			<h1 class="font-display text-2xl font-semibold">{groupName}</h1>
 			<p class="text-sm text-base-content/60">
-				{$_("group.quoteCount", { values: { count: quotes.length, s: quotes.length === 1 ? $_("group.quoteSuffixOne") : $_("group.quoteSuffix") } })}
+				{$_("group.quoteCount", {
+					values: {
+						count: quotes.length,
+						s:
+							quotes.length === 1
+								? $_("group.quoteSuffixOne")
+								: $_("group.quoteSuffix"),
+					},
+				})}
 			</p>
 		</div>
 		<div class="flex shrink-0 gap-2">
@@ -234,7 +284,8 @@
 		class="mb-10 flex flex-col gap-3 rounded-box border border-base-300 bg-base-100 p-5"
 		onsubmit={addQuote}
 	>
-		<label class="fieldset-label" for="quote-text">{$_("group.whatDidTheySay")}</label
+		<label class="fieldset-label" for="quote-text"
+			>{$_("group.whatDidTheySay")}</label
 		>
 		<textarea
 			id="quote-text"
@@ -245,7 +296,9 @@
 			bind:value={quoteText}
 		></textarea>
 
-		<label class="fieldset-label" for="quote-person">{$_("group.whoSaidIt")}</label>
+		<label class="fieldset-label" for="quote-person"
+			>{$_("group.whoSaidIt")}</label
+		>
 		<input
 			id="quote-person"
 			class="input w-full"
@@ -253,6 +306,17 @@
 			placeholder={$_("group.personPlaceholder")}
 			maxlength="80"
 			bind:value={personName}
+		/>
+
+		<label class="fieldset-label" for="quote-date-time"
+			>{$_("group.dateTime")}</label
+		>
+		<input
+			id="quote-date-time"
+			type="datetime-local"
+			class="input w-full"
+			step="1"
+			bind:value={quotedAt}
 		/>
 		<datalist id="people-list">
 			{#each people as person (person)}
@@ -269,12 +333,41 @@
 		</button>
 	</form>
 
+	<form
+		class="mb-6 grid gap-3 rounded-box border border-base-300 bg-base-100 p-4 sm:grid-cols-[1fr_1fr_auto]"
+		onsubmit={searchQuotes}
+	>
+		<input
+			class="input w-full"
+			placeholder={$_("group.searchContent")}
+			bind:value={searchContent}
+		/>
+		<input
+			class="input w-full"
+			placeholder={$_("group.searchPerson")}
+			bind:value={searchPerson}
+		/>
+		<div class="flex gap-2">
+			<button class="btn btn-primary" disabled={searchBusy}
+				>{$_("group.search")}</button
+			>
+			<button
+				class="btn btn-ghost"
+				type="button"
+				disabled={searchBusy}
+				onclick={clearSearch}>{$_("group.clearSearch")}</button
+			>
+		</div>
+	</form>
+
 	{#if quotes.length === 0}
 		<div
 			class="rounded-box border border-dashed border-base-300 px-5 py-10 text-center"
 		>
 			<p class="text-base-content/70">
-				{$_("group.noQuotes")}
+				{searchContent || searchPerson
+					? $_("group.noMatchingQuotes")
+					: $_("group.noQuotes")}
 			</p>
 		</div>
 	{:else}
@@ -287,9 +380,9 @@
 						&ldquo;{quote.text}&rdquo;
 					</p>
 					<p class="mt-3 text-sm text-base-content/60">
-						— {quote.person}
+						— {quote.person || $_("group.anonymousPersonDisplay")}
 						<span class="text-base-content/40"
-							>· {formatDate(quote.createdAt)}</span
+							>· {formatDate(quote.quotedAt)}</span
 						>
 					</p>
 				</li>

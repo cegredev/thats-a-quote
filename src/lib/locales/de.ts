@@ -76,7 +76,11 @@ export default {
 		quotePlaceholder:
 			'"Ich sage ja nicht, dass es Aliens waren, aber es waren Aliens."',
 		whoSaidIt: "Wer hat es gesagt?",
-		personPlaceholder: "Beginne einen Namen zu tippen...",
+		personPlaceholder:
+			"Beginne einen Namen zu tippen oder leer lassen für jemand...",
+		anonymousPersonDisplay: "jemand",
+		dateTime: "Wann wurde es gesagt?",
+		dateTimeInvalid: "Wähle ein gültiges Datum und eine gültige Uhrzeit.",
 		quoteRequired: "Das Zitat darf nicht leer sein.",
 		personRequired: "Wer hat es gesagt?",
 		addFailed: "Das Zitat konnte nicht hinzugefügt werden.",
@@ -84,5 +88,10 @@ export default {
 		addQuote: "Zitat hinzufügen",
 		noQuotes:
 			"Noch keine Zitate. Sei die erste Person und füge oben eines hinzu.",
+		searchContent: "Zitatinhalt durchsuchen",
+		searchPerson: "Person durchsuchen",
+		search: "Suchen",
+		clearSearch: "Löschen",
+		noMatchingQuotes: "Keine Zitate passen zu deiner Suche.",
 	},
 };
