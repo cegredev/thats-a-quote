@@ -7,6 +7,7 @@
 		upsertStoredGroup,
 		removeStoredGroup,
 	} from "$lib/storage.js";
+	import { _, locale } from "$lib/i18n.js";
 
 	const id = page.params.id;
 
@@ -81,11 +82,11 @@
 			const res = await fetch(`/api/groups/${id}?${params}`);
 			const data = await res.json();
 			if (res.status === 401) {
-				passwordErr = "That password is incorrect.";
+				passwordErr = $_("home.wrongPassword");
 				return;
 			}
 			if (!res.ok) {
-				passwordErr = data.message || "Something went wrong.";
+				passwordErr = data.message || $_("account.somethingWrong");
 				return;
 			}
 			needsPassword = false;
@@ -107,11 +108,11 @@
 		e.preventDefault();
 		addErr = "";
 		if (!quoteText.trim()) {
-			addErr = "The quote cannot be empty.";
+			addErr = $_("group.quoteRequired");
 			return;
 		}
 		if (!personName.trim()) {
-			addErr = "Who said it?";
+			addErr = $_("group.personRequired");
 			return;
 		}
 		addBusy = true;
@@ -127,7 +128,7 @@
 			});
 			const data = await res.json();
 			if (!res.ok)
-				throw new Error(data.message || "Could not add that quote.");
+				throw new Error(data.message || $_("group.addFailed"));
 			quotes = data.quotes;
 			people = data.people;
 			quoteText = "";
@@ -148,7 +149,7 @@
 	function leaveGroup() {
 		if (
 			!confirm(
-				`Remove "${groupName}" from this device? The group and its quotes stay online.`,
+				$_("group.leaveConfirm", { values: { name: groupName } }),
 			)
 		) {
 			return;
@@ -158,7 +159,7 @@
 	}
 
 	function formatDate(ts) {
-		return new Date(ts).toLocaleDateString(undefined, {
+		return new Date(ts).toLocaleDateString($locale === "de" ? "de-DE" : "en-US", {
 			month: "short",
 			day: "numeric",
 			year: "numeric",
@@ -167,7 +168,7 @@
 </script>
 
 <svelte:head>
-	<title>{groupName || "Group"} · My Friendly Quotes</title>
+	<title>{groupName || $_("group.fallbackTitle")} · {$_("brand")}</title>
 </svelte:head>
 
 {#if loading}
@@ -178,12 +179,12 @@
 	<div
 		class="rounded-box border border-dashed border-base-300 px-5 py-10 text-center"
 	>
-		<p class="font-display text-lg">This group doesn't exist.</p>
+		<p class="font-display text-lg">{$_("group.notFound")}</p>
 		<p class="mt-1 text-base-content/70">
-			Double check the link, or head back home.
+			{$_("group.checkLink")}
 		</p>
 		<a href="/" class="btn btn-primary btn-sm mt-4"
-			>Back to My Friendly Quotes</a
+			>{$_("group.backHome")}</a
 		>
 	</div>
 {:else if needsPassword}
@@ -192,20 +193,20 @@
 	>
 		<p class="font-display text-lg font-semibold">{groupName}</p>
 		<p class="mt-1 text-sm text-base-content/70">
-			This group is password protected.
+			{$_("group.protected")}
 		</p>
 		<form class="mt-4 flex flex-col gap-3" onsubmit={submitPassword}>
 			<input
 				type="password"
 				class="input w-full"
-				placeholder="Password"
+				placeholder={$_("group.passwordPlaceholder")}
 				bind:value={passwordInput}
 			/>
 			{#if passwordErr}
 				<p class="text-sm text-error">{passwordErr}</p>
 			{/if}
 			<button class="btn btn-primary" disabled={passwordBusy}>
-				{passwordBusy ? "Checking…" : "Unlock"}
+				{passwordBusy ? $_("group.checking") : $_("group.unlock")}
 			</button>
 		</form>
 	</div>
@@ -214,15 +215,15 @@
 		<div>
 			<h1 class="font-display text-2xl font-semibold">{groupName}</h1>
 			<p class="text-sm text-base-content/60">
-				{quotes.length} quote{quotes.length === 1 ? "" : "s"}
+				{$_("group.quoteCount", { values: { count: quotes.length, s: quotes.length === 1 ? $_("group.quoteSuffixOne") : $_("group.quoteSuffix") } })}
 			</p>
 		</div>
 		<div class="flex shrink-0 gap-2">
 			<button class="btn btn-ghost btn-sm" onclick={copyLink}>
-				{copied ? "Copied!" : "Copy invite link"}
+				{copied ? $_("group.copied") : $_("group.copyLink")}
 			</button>
 			<button class="btn btn-ghost btn-sm text-error" onclick={leaveGroup}
-				>Leave</button
+				>{$_("group.leave")}</button
 			>
 		</div>
 	</div>
@@ -231,23 +232,23 @@
 		class="mb-10 flex flex-col gap-3 rounded-box border border-base-300 bg-base-100 p-5"
 		onsubmit={addQuote}
 	>
-		<label class="fieldset-label" for="quote-text">What did they say?</label
+		<label class="fieldset-label" for="quote-text">{$_("group.whatDidTheySay")}</label
 		>
 		<textarea
 			id="quote-text"
 			class="textarea w-full"
 			rows="2"
 			maxlength="1000"
-			placeholder={`"I'm not saying it was aliens, but it was aliens."`}
+			placeholder={$_("group.quotePlaceholder")}
 			bind:value={quoteText}
 		></textarea>
 
-		<label class="fieldset-label" for="quote-person">Who said it?</label>
+		<label class="fieldset-label" for="quote-person">{$_("group.whoSaidIt")}</label>
 		<input
 			id="quote-person"
 			class="input w-full"
 			list="people-list"
-			placeholder="Start typing a name…"
+			placeholder={$_("group.personPlaceholder")}
 			maxlength="80"
 			bind:value={personName}
 		/>
@@ -262,7 +263,7 @@
 		{/if}
 
 		<button class="btn btn-primary mt-1 self-start" disabled={addBusy}>
-			{addBusy ? "Adding…" : "Add quote"}
+			{addBusy ? $_("group.adding") : $_("group.addQuote")}
 		</button>
 	</form>
 
@@ -271,7 +272,7 @@
 			class="rounded-box border border-dashed border-base-300 px-5 py-10 text-center"
 		>
 			<p class="text-base-content/70">
-				No quotes yet. Be the first to add one above.
+				{$_("group.noQuotes")}
 			</p>
 		</div>
 	{:else}

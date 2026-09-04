@@ -18,6 +18,7 @@ A tiny app for keeping track of the funny things your friends say.
 - SvelteKit (Svelte 5, runes)
 - SQLite via `better-sqlite3`
 - Tailwind CSS v4 + DaisyUI v5 (custom "my-friendly-quotes" theme)
+- English and German UI via `svelte-i18n`
 - `bcryptjs` for password hashing, `nanoid` for IDs
 
 ## Running it

@@ -1,5 +1,6 @@
 <script>
 	import "../app.css";
+	import { _, locale, setLanguage } from "$lib/i18n.js";
 	let { children } = $props();
 </script>
 
@@ -12,13 +13,30 @@
 				href="/"
 				class="font-display text-xl font-semibold tracking-tight"
 			>
-				My Friendly Quotes
+				{$_("brand")}
 			</a>
-			<a
-				href="/account"
-				class="link link-hover text-sm text-base-content/70"
-				>Sync devices</a
-			>
+			<div class="flex items-center gap-4">
+				<a
+					href="/account"
+					class="link link-hover text-sm text-base-content/70"
+					>{$_("syncDevices")}</a
+				>
+				<label
+					class="flex items-center gap-2 text-sm text-base-content/70"
+				>
+					<span class="sr-only">{$_("language")}</span>
+					<select
+						class="select select-bordered select-xs"
+						value={$locale}
+						onchange={(event) =>
+							setLanguage(event.currentTarget.value)}
+						aria-label={$_("language")}
+					>
+						<option value="en">{$_("english")}</option>
+						<option value="de">{$_("german")}</option>
+					</select>
+				</label>
+			</div>
 		</div>
 	</header>
 

@@ -6,6 +6,7 @@
 		loadAccount,
 		saveAccount,
 	} from "$lib/storage.js";
+	import { _ } from "$lib/i18n.js";
 
 	let account = $state(null); // { username, password } or null
 	let remember = $state(true);
@@ -56,14 +57,22 @@
 			});
 			const data = await res.json();
 			if (!res.ok) {
-				if (!silent) formErr = data.message || "Could not sync.";
+				if (!silent) formErr = data.message || $_("account.syncFailed");
 				return false;
 			}
 			await mergeVaultIntoStorage(data.vault);
-			status = `Synced just now · ${data.vault.length} group${data.vault.length === 1 ? "" : "s"}`;
+			status = $_("account.status", {
+				values: {
+					count: data.vault.length,
+					s:
+						data.vault.length === 1
+							? $_("account.groupSuffixOne")
+							: $_("account.groupSuffix"),
+				},
+			});
 			return true;
 		} catch {
-			if (!silent) formErr = "Could not reach the server.";
+			if (!silent) formErr = $_("account.serverUnavailable");
 			return false;
 		} finally {
 			busy = false;
@@ -74,7 +83,7 @@
 		e.preventDefault();
 		formErr = "";
 		if (!username.trim() || !password) {
-			formErr = "Fill in both fields.";
+			formErr = $_("account.fillFields");
 			return;
 		}
 		busy = true;
@@ -90,7 +99,7 @@
 			});
 			const data = await res.json();
 			if (!res.ok)
-				throw new Error(data.message || "Something went wrong.");
+				throw new Error(data.message || $_("account.somethingWrong"));
 
 			account = { username: data.username, password };
 			if (remember) saveAccount(account);
@@ -113,27 +122,32 @@
 </script>
 
 <svelte:head>
-	<title>Sync devices · My Friendly Quotes</title>
+	<title>{$_("syncDevices")} · {$_("brand")}</title>
 </svelte:head>
 
 <h1 class="font-display text-2xl font-semibold">
-	Sync your groups across devices
+	{$_("account.title")}
 </h1>
 <p class="mt-2 max-w-lg text-base-content/70">
-	By default your groups only live in this browser. Create a small
-	password-protected account to back up and sync the list of groups you belong
-	to — the quotes themselves always stay on the server, this just syncs which
-	groups <em>this device</em> knows about.
+	{$_("account.intro")}
 </p>
 
 {#if account}
 	<div
 		class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
 	>
-		<p class="text-sm text-base-content/60">Signed in as</p>
+		<p class="text-sm text-base-content/60">{$_("account.signedInAs")}</p>
 		<p class="font-display text-lg font-semibold">{account.username}</p>
 		<p class="mt-3 text-sm text-base-content/70">
-			{groupCount} group{groupCount === 1 ? "" : "s"} on this device
+			{$_("account.groupsOnDevice", {
+				values: {
+					count: groupCount,
+					s:
+						groupCount === 1
+							? $_("account.groupSuffixOne")
+							: $_("account.groupSuffix"),
+				},
+			})}
 		</p>
 		{#if status}
 			<p class="mt-1 text-sm text-success">{status}</p>
@@ -144,10 +158,10 @@
 				disabled={busy}
 				onclick={() => sync(account.username, account.password)}
 			>
-				{busy ? "Syncing…" : "Sync now"}
+				{busy ? $_("account.syncing") : $_("account.syncNow")}
 			</button>
 			<button class="btn btn-ghost btn-sm" onclick={forgetDevice}
-				>Forget this device</button
+				>{$_("account.forget")}</button
 			>
 		</div>
 	</div>
@@ -161,19 +175,21 @@
 				class="tab {mode === 'login' ? 'tab-active' : ''}"
 				onclick={() => (mode = "login")}
 			>
-				Log in
+				{$_("account.login")}
 			</button>
 			<button
 				type="button"
 				class="tab {mode === 'register' ? 'tab-active' : ''}"
 				onclick={() => (mode = "register")}
 			>
-				Create account
+				{$_("account.register")}
 			</button>
 		</div>
 
 		<form class="flex flex-col gap-3" onsubmit={submit}>
-			<label class="fieldset-label" for="acct-username">Username</label>
+			<label class="fieldset-label" for="acct-username"
+				>{$_("account.username")}</label
+			>
 			<input
 				id="acct-username"
 				class="input w-full"
@@ -181,7 +197,9 @@
 				maxlength="40"
 			/>
 
-			<label class="fieldset-label" for="acct-password">Password</label>
+			<label class="fieldset-label" for="acct-password"
+				>{$_("account.password")}</label
+			>
 			<input
 				id="acct-password"
 				type="password"
@@ -196,7 +214,7 @@
 					class="checkbox checkbox-sm"
 					bind:checked={remember}
 				/>
-				<span class="label-text">Remember me on this device</span>
+				<span class="label-text">{$_("account.remember")}</span>
 			</label>
 
 			{#if formErr}
@@ -205,10 +223,10 @@
 
 			<button class="btn btn-primary mt-1 self-start" disabled={busy}>
 				{busy
-					? "Please wait…"
+					? $_("account.pleaseWait")
 					: mode === "register"
-						? "Create account & sync"
-						: "Log in & sync"}
+						? $_("account.createAndSync")
+						: $_("account.loginAndSync")}
 			</button>
 		</form>
 	</div>

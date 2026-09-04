@@ -2,6 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
 	import { loadGroups, upsertStoredGroup } from "$lib/storage.js";
+	import { _ } from "$lib/i18n.js";
 
 	let groups = $state([]);
 	let mode = $state("create"); // 'create' | 'join'
@@ -24,7 +25,7 @@
 		e.preventDefault();
 		createErr = "";
 		if (!createName.trim()) {
-			createErr = "Give your group a name first.";
+			createErr = $_("home.nameRequired");
 			return;
 		}
 		createBusy = true;
@@ -39,7 +40,7 @@
 			});
 			const data = await res.json();
 			if (!res.ok)
-				throw new Error(data.message || "Could not create the group.");
+				throw new Error(data.message || $_("home.createFailed"));
 			upsertStoredGroup({
 				id: data.id,
 				name: data.name,
@@ -58,7 +59,7 @@
 		joinErr = "";
 		const id = extractId(joinId.trim());
 		if (!id) {
-			joinErr = "Paste the group link or ID you were given.";
+			joinErr = $_("home.linkRequired");
 			return;
 		}
 		joinBusy = true;
@@ -67,12 +68,9 @@
 			if (joinPassword) params.set("password", joinPassword);
 			const res = await fetch(`/api/groups/${id}?${params}`);
 			const data = await res.json();
-			if (res.status === 404)
-				throw new Error("That group doesn't exist. Check the link.");
-			if (res.status === 401)
-				throw new Error("That password is incorrect.");
-			if (!res.ok)
-				throw new Error(data.message || "Could not join the group.");
+			if (res.status === 404) throw new Error($_("home.notFound"));
+			if (res.status === 401) throw new Error($_("home.wrongPassword"));
+			if (!res.ok) throw new Error(data.message || $_("home.joinFailed"));
 			upsertStoredGroup({
 				id,
 				name: data.name,
@@ -99,30 +97,29 @@
 </script>
 
 <svelte:head>
-	<title>My Friendly Quotes</title>
+	<title>{$_("brand")}</title>
 </svelte:head>
 
 <section class="mb-10">
 	<h1 class="font-display text-3xl leading-tight font-semibold text-balance">
-		The funny things your friends say, kept somewhere safe.
+		{$_("home.title")}
 	</h1>
 	<p class="mt-3 max-w-lg text-base-content/70">
-		Make a group, share the link, and let everyone add the quotes worth
-		remembering. No accounts needed — everything lives in this browser
-		unless you choose to sync it.
+		{$_("home.intro")}
 	</p>
 </section>
 
 <section class="mb-12">
-	<h2 class="mb-3 font-display text-lg font-semibold">Your groups</h2>
+	<h2 class="mb-3 font-display text-lg font-semibold">
+		{$_("home.yourGroups")}
+	</h2>
 
 	{#if groups.length === 0}
 		<div
 			class="rounded-box border border-dashed border-base-300 px-5 py-8 text-center"
 		>
 			<p class="text-base-content/70">
-				You haven't joined any groups on this device yet. Create one, or
-				join an existing group with a link.
+				{$_("home.empty")}
 			</p>
 		</div>
 	{:else}
@@ -148,7 +145,7 @@
 										clip-rule="evenodd"
 									/>
 								</svg>
-								Locked
+								{$_("home.locked")}
 							</span>
 						{/if}
 					</a>
@@ -165,35 +162,39 @@
 			class="tab {mode === 'create' ? 'tab-active' : ''}"
 			onclick={() => (mode = "create")}
 		>
-			Create a group
+			{$_("home.createTab")}
 		</button>
 		<button
 			type="button"
 			class="tab {mode === 'join' ? 'tab-active' : ''}"
 			onclick={() => (mode = "join")}
 		>
-			Join a group
+			{$_("home.joinTab")}
 		</button>
 	</div>
 
 	{#if mode === "create"}
 		<form class="flex flex-col gap-3" onsubmit={createGroup}>
-			<label class="fieldset-label" for="create-name">Group name</label>
+			<label class="fieldset-label" for="create-name"
+				>{$_("home.groupName")}</label
+			>
 			<input
 				id="create-name"
 				class="input w-full"
-				placeholder="The Thursday Hiking Crew"
+				placeholder={$_("home.groupNamePlaceholder")}
 				bind:value={createName}
 				maxlength="80"
 			/>
 			<label class="fieldset-label" for="create-password">
-				Password <span class="text-base-content/50">(optional)</span>
+				{$_("home.password")}
+				<span class="text-base-content/50">({$_("home.optional")})</span
+				>
 			</label>
 			<input
 				id="create-password"
 				type="password"
 				class="input w-full"
-				placeholder="Leave blank for an open group"
+				placeholder={$_("home.openGroupPlaceholder")}
 				bind:value={createPassword}
 			/>
 			{#if createErr}
@@ -203,21 +204,23 @@
 				class="btn btn-primary mt-1 self-start"
 				disabled={createBusy}
 			>
-				{createBusy ? "Creating…" : "Create group"}
+				{createBusy ? $_("home.createBusy") : $_("home.create")}
 			</button>
 		</form>
 	{:else}
 		<form class="flex flex-col gap-3" onsubmit={joinGroup}>
-			<label class="fieldset-label" for="join-id">Group link or ID</label>
+			<label class="fieldset-label" for="join-id"
+				>{$_("home.groupLinkOrId")}</label
+			>
 			<input
 				id="join-id"
 				class="input w-full"
-				placeholder="Paste the link a friend sent you"
+				placeholder={$_("home.linkPlaceholder")}
 				bind:value={joinId}
 			/>
 			<label class="fieldset-label" for="join-password">
-				Password <span class="text-base-content/50"
-					>(if it has one)</span
+				{$_("home.password")}
+				<span class="text-base-content/50">({$_("home.ifHasOne")})</span
 				>
 			</label>
 			<input
@@ -230,7 +233,7 @@
 				<p class="text-sm text-error">{joinErr}</p>
 			{/if}
 			<button class="btn btn-primary mt-1 self-start" disabled={joinBusy}>
-				{joinBusy ? "Joining…" : "Join group"}
+				{joinBusy ? $_("home.joinBusy") : $_("home.join")}
 			</button>
 		</form>
 	{/if}

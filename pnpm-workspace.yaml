@@ -1,2 +1,4 @@
 allowBuilds:
   better-sqlite3: true
+  es5-ext: false
+  esbuild: true
