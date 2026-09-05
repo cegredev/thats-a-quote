@@ -9,7 +9,7 @@
 	import { _ } from "$lib/i18n";
 
 	let groups = $state<StoredGroup[]>([]);
-	let mode = $state("create"); // 'create' | 'join'
+	let mode: "create" | "join" = $state("create");
 
 	let createName = $state("");
 	let createId = $state("");

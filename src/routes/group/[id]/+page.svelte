@@ -7,7 +7,6 @@
 		upsertStoredGroup,
 		removeStoredGroup,
 	} from "$lib/storage";
-	import type { StoredGroup } from "$lib/storage";
 	import { _, locale } from "$lib/i18n";
 	import type { Quote } from "$lib/server/groups";
 

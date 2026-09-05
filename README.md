@@ -2,14 +2,13 @@
 
 A tiny app for keeping track of the funny things your friends say.
 
-- Anyone can create a **group** (unlimited members, no invites needed) and get a
-  long, unique, shareable link.
+- Anyone can create a **group** and get a
+  unique, shareable link.
 - A group can optionally be protected by a **password**.
 - Anyone with the link (and password, if set) can add a **quote** with the
-  name of who said it. The "who said it" field autocompletes from names
-  already used in that group.
-- No accounts are required. Each browser keeps its own list of groups
-  (id + name + password) in `localStorage`.
+  name of who said it.
+- No accounts are required. Quotes are stored on the server and each browser keeps its own list of groups
+  (id + name + password) in local storage.
 - Optionally, you can create a small password-protected **account** to sync
   that list of groups across devices/browsers.
 
@@ -24,8 +23,8 @@ A tiny app for keeping track of the funny things your friends say.
 ## Running it
 
 ```bash
-npm install
-npm run dev       # http://localhost:5173, auto-reload
+pnpm install
+pnpm run dev       # http://localhost:5173, auto-reload
 ```
 
 Production build:
@@ -51,29 +50,6 @@ the location with the `DATABASE_PATH` environment variable.
 Database schema changes are applied automatically when the server starts. The
 `schema_migrations` table records applied migration versions; existing databases
 are upgraded without replacing the SQLite file.
-
-## How the pieces fit together
-
-```text
-src/
-  lib/
-    storage.ts            client-side localStorage helpers (the "vault")
-    server/
-      db.ts                sqlite connection + schema
-      groups.ts             group + quote queries
-      accounts.ts           optional sync-account queries
-  routes/
-    +page.svelte           home: your groups, create/join forms
-    group/[id]/+page.svelte group view: password gate, quotes, add-quote form
-    account/+page.svelte    optional cross-device sync
-    api/
-      groups/                POST create group
-      groups/[id]/            GET group info + quotes (password-gated)
-      groups/[id]/quotes/      POST add a quote
-      account/register/       POST create a sync account
-      account/login/          POST log in, returns the account's group list
-      account/sync/           POST merge this device's groups with the account
-```
 
 ### How group passwords work
 
