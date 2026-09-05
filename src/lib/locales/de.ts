@@ -1,5 +1,5 @@
 export default {
-	brand: "My Friendly Quotes",
+	brand: "That's a quote!",
 	language: "Sprache",
 	english: "Englisch",
 	german: "Deutsch",
@@ -61,7 +61,7 @@ export default {
 		fallbackTitle: "Gruppe",
 		notFound: "Diese Gruppe gibt es nicht.",
 		checkLink: "Überprüfe den Link oder gehe zurück zur Startseite.",
-		backHome: "Zurück zu My Friendly Quotes",
+		backHome: "Zurück zu That's a quote!",
 		protected: "Diese Gruppe ist passwortgeschützt.",
 		passwordPlaceholder: "Passwort",
 		checking: "Wird geprüft...",

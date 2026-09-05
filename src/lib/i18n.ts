@@ -3,7 +3,7 @@ import { _, init, locale, register } from "svelte-i18n";
 import en from "$lib/locales/en";
 import de from "$lib/locales/de";
 
-const LOCALE_KEY = "my-friendly-quotes:locale";
+const LOCALE_KEY = "thats-a-quote:locale";
 
 register("en", () => Promise.resolve(en));
 register("de", () => Promise.resolve(de));

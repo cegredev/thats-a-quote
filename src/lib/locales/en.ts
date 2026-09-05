@@ -1,5 +1,5 @@
 export default {
-	brand: "My Friendly Quotes",
+	brand: "That's a quote!",
 	language: "Language",
 	english: "English",
 	german: "German",
@@ -61,7 +61,7 @@ export default {
 		fallbackTitle: "Group",
 		notFound: "This group doesn't exist.",
 		checkLink: "Double check the link, or head back home.",
-		backHome: "Back to My Friendly Quotes",
+		backHome: "Back to That's a quote!",
 		protected: "This group is password protected.",
 		passwordPlaceholder: "Password",
 		checking: "Checking...",

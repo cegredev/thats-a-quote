@@ -2,7 +2,7 @@ import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
 
-const DB_PATH = process.env.DATABASE_PATH || "data/my-friendly-quotes.sqlite3";
+const DB_PATH = process.env.DATABASE_PATH || "data/thats-a-quote.sqlite3";
 
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 

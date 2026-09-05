@@ -3,8 +3,8 @@
 // group's id, a cached name, and its password (if any) so they don't have
 // to retype it every visit.
 
-const GROUPS_KEY = "my-friendly-quotes:groups";
-const ACCOUNT_KEY = "my-friendly-quotes:account";
+const GROUPS_KEY = "thats-a-quote:groups";
+const ACCOUNT_KEY = "thats-a-quote:account";
 
 export type StoredGroup = { id: string; name: string; password: string | null };
 export type StoredAccount = { username: string; password: string };

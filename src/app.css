@@ -4,7 +4,7 @@
 }
 
 @plugin 'daisyui/theme' {
-	name: "my-friendly-quotes";
+	name: "thats-a-quote";
 	default: true;
 	prefersdark: false;
 	color-scheme: light;

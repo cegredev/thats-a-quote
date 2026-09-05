@@ -1,4 +1,4 @@
-# my-friendly-quotes
+# thats-a-quote
 
 A tiny app for keeping track of the funny things your friends say.
 
@@ -17,7 +17,7 @@ A tiny app for keeping track of the funny things your friends say.
 
 - SvelteKit (Svelte 5, runes)
 - SQLite via `better-sqlite3`
-- Tailwind CSS v4 + DaisyUI v5 (custom "my-friendly-quotes" theme)
+- Tailwind CSS v4 + DaisyUI v5 (custom "thats-a-quote" theme)
 - English and German UI via `svelte-i18n`
 - `bcryptjs` for password hashing, `nanoid` for IDs
 
@@ -38,14 +38,14 @@ node build/index.ts     # PORT=3000 by default
 Run with Docker, using a named volume for the SQLite database:
 
 ```bash
-docker build -t my-friendly-quotes .
-docker run --rm -p 3000:3000 -v my-friendly-quotes-data:/app/data my-friendly-quotes
+docker build -t thats-a-quote .
+docker run --rm -p 3000:3000 -v thats-a-quote-data:/app/data thats-a-quote
 ```
 
 To keep the SQLite file in a directory on the host instead, replace the named
 volume with `-v "$PWD/data:/app/data"`.
 
-By default the SQLite file is created at `data/my-friendly-quotes.sqlite3`. Override
+By default the SQLite file is created at `data/thats-a-quote.sqlite3`. Override
 the location with the `DATABASE_PATH` environment variable.
 
 Database schema changes are applied automatically when the server starts. The
