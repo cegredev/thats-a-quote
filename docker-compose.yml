@@ -1,0 +1,8 @@
+services:
+  quotes:
+    container_name: "quotes"
+    image: ghcr.io/cegredev/thats-a-quote:latest
+    volumes:
+      - "path/to/storage:/app/data"
+    ports:
+      - "3000:3000"
