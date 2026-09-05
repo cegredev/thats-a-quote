@@ -6,6 +6,7 @@
 		getStoredGroup,
 		upsertStoredGroup,
 		removeStoredGroup,
+		loadAccount,
 	} from "$lib/storage";
 	import { _, locale } from "$lib/i18n";
 	import type { Quote } from "$lib/server/groups";
@@ -179,13 +180,31 @@
 		setTimeout(() => (copied = false), 1500);
 	}
 
-	function leaveGroup() {
+	async function leaveGroup() {
 		if (
 			!confirm($_("group.leaveConfirm", { values: { name: groupName } }))
 		) {
 			return;
 		}
-		removeStoredGroup(id);
+		const remainingGroups = removeStoredGroup(id);
+		const account = loadAccount();
+		if (account) {
+			try {
+				await fetch("/api/account/sync", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						username: account.username,
+						password: account.password,
+						vault: remainingGroups,
+						removedGroups: [id],
+					}),
+				});
+			} catch {
+				// Best effort sync: even if the request fails, the local device is
+				// already updated and the user has left the group.
+			}
+		}
 		goto("/");
 	}
 

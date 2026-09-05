@@ -47,9 +47,13 @@ export function saveVault(username: string, vault: VaultEntry[]): void {
 export function mergeVaults(
 	serverVault: VaultEntry[],
 	clientVault: VaultEntry[],
+	removedGroupIds: string[] = [],
 ): VaultEntry[] {
 	const byId = new Map<string, VaultEntry>();
-	for (const entry of serverVault) byId.set(entry.id, entry);
+	const removed = new Set(removedGroupIds);
+	for (const entry of serverVault) {
+		if (!removed.has(entry.id)) byId.set(entry.id, entry);
+	}
 	for (const entry of clientVault) byId.set(entry.id, entry);
 	return Array.from(byId.values());
 }
