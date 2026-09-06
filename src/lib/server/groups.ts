@@ -1,12 +1,14 @@
 import { nanoid } from "nanoid";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
+import { groupsTable, quotesTable } from "./db/schema";
+import { and, desc, eq, like, ne, SQL, sql } from "drizzle-orm";
 
 export type GroupRow = {
 	id: string;
 	name: string;
-	password_hash: string | null;
-	created_at: number;
+	passwordHash: string | null;
+	createdAt: number;
 };
 export type Quote = {
 	id: string;
@@ -17,36 +19,48 @@ export type Quote = {
 };
 
 /** Create a new group and return its long unique id. */
-export function createGroup(
+export async function createGroup(
 	name: string,
 	password: string | null,
 	customId?: string,
-): string {
+): Promise<string> {
 	const id = customId || nanoid(24);
 	const passwordHash = password ? bcrypt.hashSync(password, 10) : null;
-	db.prepare(
-		"INSERT INTO groups (id, name, password_hash, created_at) VALUES (?, ?, ?, ?)",
-	).run(id, name, passwordHash, Date.now());
+
+	await db
+		.insert(groupsTable)
+		.values({ id, name, passwordHash, createdAt: Date.now() });
+
 	return id;
 }
 
-export function getGroup(id: string): GroupRow | undefined {
-	return db.prepare("SELECT * FROM groups WHERE id = ?").get(id) as
-		| GroupRow
-		| undefined;
+export async function getGroup(id: string): Promise<GroupRow | undefined> {
+	const result = await db
+		.select()
+		.from(groupsTable)
+		.where(eq(groupsTable.id, id));
+
+	if (result.length !== 1) return undefined;
+
+	return {
+		id: result[0].id,
+		name: result[0].name,
+		passwordHash: result[0].passwordHash,
+		createdAt: result[0].createdAt,
+	};
 }
 
 export function groupHasPassword(group: GroupRow): boolean {
-	return Boolean(group.password_hash);
+	return Boolean(group.passwordHash);
 }
 
 export function checkGroupPassword(group: GroupRow, password: string): boolean {
-	if (!group.password_hash) return true;
+	if (!group.passwordHash) return true;
 	if (!password) return false;
-	return bcrypt.compareSync(password, group.password_hash);
+	return bcrypt.compareSync(password, group.passwordHash);
 }
 
-export function listQuotes(groupId: string): Quote[] {
+export async function listQuotes(groupId: string): Promise<Quote[]> {
 	return listQuotesMatching(groupId, {});
 }
 
@@ -55,62 +69,62 @@ export type QuoteSearch = {
 	person?: string;
 };
 
-export function listQuotesMatching(
+export async function listQuotesMatching(
 	groupId: string,
 	search: QuoteSearch,
-): Quote[] {
-	const conditions = ["group_id = ?"];
-	const values: Array<string | number> = [groupId];
+): Promise<Quote[]> {
+	const conditions: SQL[] = [];
+
+	conditions.push(eq(quotesTable.groupId, groupId));
 
 	if (search.content) {
-		conditions.push("text LIKE ? COLLATE NOCASE");
-		values.push(`%${search.content}%`);
+		conditions.push(like(quotesTable.text, `%${search.content}%`));
 	}
+
 	if (search.person) {
-		const personSearch = search.person.toLocaleLowerCase();
-		if (personSearch === "someone" || personSearch === "jemand") {
-			conditions.push("(person LIKE ? COLLATE NOCASE OR person = '')");
-			values.push(`%${search.person}%`);
-		} else {
-			conditions.push("person LIKE ? COLLATE NOCASE");
-			values.push(`%${search.person}%`);
-		}
+		conditions.push(like(quotesTable.person, search.person));
 	}
-	return db
-		.prepare(
-			`SELECT id, text, person, created_at as createdAt, quoted_at as quotedAt
-			 FROM quotes
-			 WHERE ${conditions.join(" AND ")}
-			 ORDER BY quoted_at DESC, created_at DESC`,
-		)
-		.all(...values) as Quote[];
+
+	const result = await db
+		.select()
+		.from(quotesTable)
+		.where(and(...conditions))
+		.orderBy(desc(quotesTable.quotedAt), desc(quotesTable.createdAt))
+		.all();
+
+	return result as Quote[];
 }
 
-export function addQuote(
+export async function addQuote(
 	groupId: string,
 	text: string,
 	person: string,
 	quotedAt: number,
-): Quote {
+): Promise<Quote> {
 	const id = nanoid(16);
 	const createdAt = Date.now();
-	db.prepare(
-		"INSERT INTO quotes (id, group_id, text, person, created_at, quoted_at) VALUES (?, ?, ?, ?, ?, ?)",
-	).run(id, groupId, text, person, createdAt, quotedAt);
+
+	await db
+		.insert(quotesTable)
+		.values({ id, groupId, text, person, createdAt, quotedAt });
+
 	return { id, text, person, createdAt, quotedAt };
 }
 
 /** Distinct people who have been quoted in this group, most recently used first. */
-export function listPeople(groupId: string): string[] {
-	const rows = db
-		.prepare(
-			`SELECT person, MAX(quoted_at) as lastUsed
-			 FROM quotes
-			 WHERE group_id = ?
-			   AND person <> ''
-			 GROUP BY person COLLATE NOCASE
-			 ORDER BY lastUsed DESC`,
+export async function listPeople(groupId: string): Promise<string[]> {
+	const result = await db
+		.select({
+			person: quotesTable.person,
+			lastUsed: sql<number>`MAX(${quotesTable.quotedAt})`,
+		})
+		.from(quotesTable)
+		.where(
+			and(eq(quotesTable.groupId, groupId), ne(quotesTable.person, "")),
 		)
-		.all(groupId);
-	return (rows as Array<{ person: string }>).map((r) => r.person);
+		.groupBy(quotesTable.person)
+		.orderBy(({ lastUsed }) => desc(lastUsed))
+		.all();
+
+	return result.map((r) => r.person);
 }

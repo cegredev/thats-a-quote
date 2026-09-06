@@ -8,7 +8,7 @@ import {
 } from "$lib/server/groups";
 
 export async function GET({ params, url }) {
-	const group = getGroup(params.id);
+	const group = await getGroup(params.id);
 	if (!group) throw error(404, "This group does not exist.");
 
 	const password = url.searchParams.get("password") || "";
@@ -25,10 +25,10 @@ export async function GET({ params, url }) {
 		name: group.name,
 		hasPassword,
 		authorized: true,
-		quotes: listQuotesMatching(group.id, {
+		quotes: await listQuotesMatching(group.id, {
 			content: url.searchParams.get("content") || undefined,
 			person: url.searchParams.get("person") || undefined,
 		}),
-		people: listPeople(group.id),
+		people: await listPeople(group.id),
 	});
 }

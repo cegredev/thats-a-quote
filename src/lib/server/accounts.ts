@@ -1,45 +1,67 @@
 import { nanoid } from "nanoid";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
+import { accountsTable } from "./db/schema";
+import { eq } from "drizzle-orm";
 
 export type VaultEntry = { id: string; name: string; password: string | null };
 export type AccountRow = {
 	id: string;
 	username: string;
-	password_hash: string;
+	passwordHash: string;
 	vault: string;
-	updated_at: number;
+	updatedAt: number;
 };
 
-export function getAccount(username: string): AccountRow | undefined {
-	return db
-		.prepare("SELECT * FROM accounts WHERE username = ? COLLATE NOCASE")
-		.get(username) as AccountRow | undefined;
+export async function getAccount(
+	username: string,
+): Promise<AccountRow | undefined> {
+	const result = await db
+		.select()
+		.from(accountsTable)
+		.where(eq(accountsTable.username, username));
+
+	if (result.length !== 1) return undefined;
+
+	return result[0];
 }
 
-export function createAccount(username: string, password: string) {
+export async function createAccount(username: string, password: string) {
 	const id = nanoid(16);
 	const passwordHash = bcrypt.hashSync(password, 10);
-	db.prepare(
-		"INSERT INTO accounts (id, username, password_hash, vault, updated_at) VALUES (?, ?, ?, ?, ?)",
-	).run(id, username, passwordHash, "[]", Date.now());
+
+	await db.insert(accountsTable).values({
+		id,
+		username,
+		passwordHash,
+		vault: "[]",
+		updatedAt: Date.now(),
+	});
+
 	return { id, username, vault: "[]" };
 }
 
-export function verifyAccount(
+export async function verifyAccount(
 	username: string,
 	password: string,
-): AccountRow | null {
-	const account = getAccount(username);
+): Promise<AccountRow | null> {
+	const account = await getAccount(username);
 	if (!account) return null;
-	if (!bcrypt.compareSync(password, account.password_hash)) return null;
+	if (!bcrypt.compareSync(password, account.passwordHash)) return null;
 	return account;
 }
 
-export function saveVault(username: string, vault: VaultEntry[]): void {
-	db.prepare(
-		"UPDATE accounts SET vault = ?, updated_at = ? WHERE username = ? COLLATE NOCASE",
-	).run(JSON.stringify(vault), Date.now(), username);
+export async function saveVault(
+	username: string,
+	vault: VaultEntry[],
+): Promise<void> {
+	await db
+		.update(accountsTable)
+		.set({
+			vault: JSON.stringify(vault),
+			updatedAt: Date.now(),
+		})
+		.where(eq(accountsTable.username, username));
 }
 
 /** Union two vaults (lists of {id, name, password}) by group id. Client entries win on conflict

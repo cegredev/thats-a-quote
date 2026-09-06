@@ -8,7 +8,7 @@ import {
 } from "$lib/server/groups";
 
 export async function POST({ params, request }) {
-	const group = getGroup(params.id);
+	const group = await getGroup(params.id);
 	if (!group) throw error(404, "This group does not exist.");
 
 	const body = await request.json().catch(() => ({}));
@@ -29,10 +29,10 @@ export async function POST({ params, request }) {
 	if (!Number.isSafeInteger(requestedQuotedAt) || requestedQuotedAt < 0)
 		throw error(400, "The quote date is invalid.");
 
-	addQuote(group.id, text, person, quotedAt);
+	await addQuote(group.id, text, person, quotedAt);
 
 	return json({
-		quotes: listQuotes(group.id),
-		people: listPeople(group.id),
+		quotes: await listQuotes(group.id),
+		people: await listPeople(group.id),
 	});
 }

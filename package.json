@@ -20,15 +20,20 @@
 		"@types/better-sqlite3": "^9.6.0",
 		"@types/node": "^26.4.1",
 		"daisyui": "^5.7.28",
+		"drizzle-kit": "1.0.0-rc.4",
 		"svelte": "^5.56.1",
 		"svelte-check": "^4.6.0",
 		"tailwindcss": "^4.3.3",
+		"tsx": "^4.23.13",
 		"typescript": "^6.0.3",
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"@libsql/client": "^0.18.0",
 		"bcryptjs": "^3.0.3",
 		"better-sqlite3": "^13.0.3",
+		"dotenv": "^17.4.2",
+		"drizzle-orm": "1.0.0-rc.4",
 		"nanoid": "^6.0.1",
 		"svelte-i18n": "^4.0.1"
 	}

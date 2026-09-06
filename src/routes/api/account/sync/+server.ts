@@ -13,12 +13,12 @@ export async function POST({ request }) {
 			)
 		: [];
 
-	const account = verifyAccount(username, password);
+	const account = await verifyAccount(username, password);
 	if (!account) throw error(401, "Incorrect username or password.");
 
 	const serverVault = JSON.parse(account.vault);
 	const merged = mergeVaults(serverVault, clientVault, removedGroups);
-	saveVault(account.username, merged);
+	await saveVault(account.username, merged);
 
 	return json({ vault: merged });
 }

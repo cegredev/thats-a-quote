@@ -14,10 +14,11 @@ export async function POST({ request }) {
 	if (customId && !/^[A-Za-z0-9_-]{3,64}$/.test(customId)) {
 		throw error(400, "Custom group IDs must be 3-64 URL-safe characters.");
 	}
-	if (customId && getGroup(customId)) {
+	if (customId && (await getGroup(customId))) {
 		throw error(409, "That group ID is already taken.");
 	}
 
-	const id = createGroup(name, password || null, customId || undefined);
+	const id = await createGroup(name, password || null, customId || undefined);
+
 	return json({ id, name });
 }
