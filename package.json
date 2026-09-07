@@ -29,12 +29,15 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
+		"@better-auth/drizzle-adapter": "^1.7.3",
 		"@libsql/client": "^0.18.0",
 		"bcryptjs": "^3.0.3",
+		"better-auth": "^1.7.3",
 		"better-sqlite3": "^13.0.3",
 		"dotenv": "^17.4.2",
 		"drizzle-orm": "1.0.0-rc.4",
 		"nanoid": "^6.0.1",
+		"relations-v2": "link:better-auth/drizzle-adapter/relations-v2",
 		"svelte-i18n": "^4.0.1"
 	}
 }
