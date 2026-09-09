@@ -75,7 +75,7 @@ export default {
 		leaveConfirm:
 			'Remove "{name}" from this device? The group and its quotes stay online.',
 		whatDidTheySay: "What did they say?",
-		quotePlaceholder: '"I\'m not saying it was aliens, but it was aliens."',
+		quotePlaceholder: "I'm not saying it was aliens, but it was aliens.",
 		whoSaidIt: "Who said it?",
 		personPlaceholder: "Start typing a name, or leave empty for someone...",
 		anonymousPersonDisplay: "someone",

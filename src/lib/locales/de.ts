@@ -76,7 +76,7 @@ export default {
 			'"{name}" von diesem Gerät entfernen? Die Gruppe und ihre Zitate bleiben online.',
 		whatDidTheySay: "Was haben sie gesagt?",
 		quotePlaceholder:
-			'"Ich sage ja nicht, dass es Aliens waren, aber es waren Aliens."',
+			"Ich sage ja nicht, dass es Aliens waren, aber es waren Aliens.",
 		whoSaidIt: "Wer hat es gesagt?",
 		personPlaceholder:
 			"Beginne einen Namen zu tippen oder leer lassen für jemand...",
