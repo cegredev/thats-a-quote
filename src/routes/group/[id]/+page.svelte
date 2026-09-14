@@ -6,10 +6,12 @@
 		getStoredGroup,
 		upsertStoredGroup,
 		removeStoredGroup,
-		loadAccount,
 	} from "$lib/storage";
 	import { _, locale } from "$lib/i18n";
 	import type { Quote } from "$lib/server/groups";
+	import { authClient } from "$lib/frontend-auth";
+
+	const session = authClient.useSession();
 
 	const id = page.params.id ?? "";
 
@@ -186,18 +188,14 @@
 		) {
 			return;
 		}
-		const remainingGroups = removeStoredGroup(id);
-		const account = loadAccount();
-		if (account) {
+
+		if ($session.data?.user) {
 			try {
-				await fetch("/api/account/sync", {
-					method: "POST",
+				await fetch("/api/groups/" + id + "/members", {
+					method: "DELETE",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-						username: account.username,
-						password: account.password,
-						vault: remainingGroups,
-						removedGroups: [id],
+						userId: $session.data.user.id,
 					}),
 				});
 			} catch {
@@ -205,7 +203,8 @@
 				// already updated and the user has left the group.
 			}
 		}
-		goto("/");
+
+		await goto("/");
 	}
 
 	function formatDate(ts: number): string {

@@ -1,16 +1,11 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import {
-		loadGroups,
-		saveGroups,
-		loadAccount,
-		saveAccount,
-		type StoredAccount,
-		type StoredGroup,
-	} from "$lib/storage";
+	import { loadGroups, saveGroups, type StoredGroup } from "$lib/storage";
 	import { _ } from "$lib/i18n";
+	import { authClient } from "$lib/frontend-auth";
 
-	let account = $state<StoredAccount | null>(null);
+	const session = authClient.useSession();
+
 	let remember = $state(true);
 
 	let mode = $state("login"); // 'login' | 'register'
@@ -24,41 +19,19 @@
 
 	onMount(async () => {
 		groupCount = loadGroups().length;
-		const stored = loadAccount();
-		if (stored) {
-			account = stored;
-			await sync(stored.username, stored.password, { silent: true });
-		}
 	});
 
-	async function mergeVaultIntoStorage(vault: StoredGroup[]) {
-		// vault entries from the server never include a fresher name than what
-		// we might already have locally, so keep local entries on conflict.
-		const local = loadGroups();
-		const byId = new Map<string, StoredGroup>(vault.map((g) => [g.id, g]));
-		for (const g of local) byId.set(g.id, g);
-		const merged = Array.from(byId.values());
-		saveGroups(merged);
-		groupCount = merged.length;
-	}
-
-	async function sync(
-		user: string,
-		pass: string,
-		{ silent = false }: { silent?: boolean } = {},
-	) {
+	async function syncVault({ silent = false }: { silent?: boolean } = {}) {
 		if (!silent) {
 			busy = true;
 			formErr = "";
 		}
 		try {
-			const res = await fetch("/api/account/sync", {
+			const res = await fetch("/api/sync", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					username: user,
-					password: pass,
-					vault: loadGroups(),
+					vault: loadGroups().map((g) => g.id),
 				}),
 			});
 			const data = await res.json();
@@ -66,16 +39,7 @@
 				if (!silent) formErr = data.message || $_("account.syncFailed");
 				return false;
 			}
-			await mergeVaultIntoStorage(data.vault);
-			status = $_("account.status", {
-				values: {
-					count: data.vault.length,
-					s:
-						data.vault.length === 1
-							? $_("account.groupSuffixOne")
-							: $_("account.groupSuffix"),
-				},
-			});
+
 			return true;
 		} catch {
 			if (!silent) formErr = $_("account.serverUnavailable");
@@ -94,23 +58,30 @@
 		}
 		busy = true;
 		try {
-			const endpoint =
-				mode === "register"
-					? "/api/account/register"
-					: "/api/account/login";
-			const res = await fetch(endpoint, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ username, password }),
-			});
-			const data = await res.json();
-			if (!res.ok)
-				throw new Error(data.message || $_("account.somethingWrong"));
+			if (mode === "register") {
+				const user = await authClient.signUp.email({
+					email: username,
+					password: password,
+					name: username,
+				});
 
-			account = { username: data.username, password };
-			if (remember) saveAccount(account);
+				if (user.error)
+					throw new Error(
+						user.error.message || $_("account.somethingWrong"),
+					);
+			} else {
+				const user = await authClient.signIn.email({
+					email: username,
+					password: password,
+				});
 
-			await sync(account.username, account.password);
+				if (user.error)
+					throw new Error(
+						user.error.message || $_("account.somethingWrong"),
+					);
+			}
+
+			await syncVault();
 		} catch (err) {
 			formErr =
 				err instanceof Error
@@ -121,9 +92,8 @@
 		}
 	}
 
-	function forgetDevice() {
-		saveAccount(null);
-		account = null;
+	async function forgetDevice() {
+		await authClient.signOut();
 		status = "";
 		username = "";
 		password = "";
@@ -141,12 +111,14 @@
 	{$_("account.intro")}
 </p>
 
-{#if account}
+{#if $session.data}
 	<div
 		class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
 	>
 		<p class="text-sm text-base-content/60">{$_("account.signedInAs")}</p>
-		<p class="font-display text-lg font-semibold">{account.username}</p>
+		<p class="font-display text-lg font-semibold">
+			{$session.data.user.name}
+		</p>
 		<p class="mt-3 text-sm text-base-content/70">
 			{$_("account.groupsOnDevice", {
 				values: {
@@ -166,7 +138,7 @@
 				class="btn btn-primary btn-sm"
 				disabled={busy}
 				onclick={() => {
-					if (account) sync(account.username, account.password);
+					syncVault();
 				}}
 			>
 				{busy ? $_("account.syncing") : $_("account.syncNow")}

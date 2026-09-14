@@ -1,5 +1,19 @@
 import { json, error } from "@sveltejs/kit";
-import { createGroup, getGroup } from "$lib/server/groups";
+import {
+	createGroup,
+	getGroup,
+	getGroupDetails,
+	getUserGroupMemberships,
+} from "$lib/server/groups";
+
+export async function GET({ request, locals }) {
+	if (!locals.user) throw error(401, "You must be logged in to get groups");
+
+	const memberships = await getUserGroupMemberships(locals.user.id);
+	const groups = await getGroupDetails(memberships.map((m) => m.groupId));
+
+	return json(groups);
+}
 
 export async function POST({ request }) {
 	const body = await request.json().catch(() => ({}));
@@ -14,10 +28,11 @@ export async function POST({ request }) {
 	if (customId && !/^[A-Za-z0-9_-]{3,64}$/.test(customId)) {
 		throw error(400, "Custom group IDs must be 3-64 URL-safe characters.");
 	}
-	if (customId && getGroup(customId)) {
+	if (customId && (await getGroup(customId))) {
 		throw error(409, "That group ID is already taken.");
 	}
 
-	const id = createGroup(name, password || null, customId || undefined);
+	const id = await createGroup(name, password || null, customId || undefined);
+
 	return json({ id, name });
 }
