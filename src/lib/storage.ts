@@ -4,10 +4,8 @@
 // to retype it every visit.
 
 const GROUPS_KEY = "thats-a-quote:groups";
-const ACCOUNT_KEY = "thats-a-quote:account";
 
 export type StoredGroup = { id: string; name: string; password: string | null };
-export type StoredAccount = { username: string; password: string };
 
 function hasStorage() {
 	return (
@@ -57,18 +55,4 @@ export function removeStoredGroup(id: string): StoredGroup[] {
 	const groups = loadGroups().filter((g) => g.id !== id);
 	saveGroups(groups);
 	return groups;
-}
-
-export function loadAccount(): StoredAccount | null {
-	if (!hasStorage()) return null;
-	return safeParse(window.localStorage.getItem(ACCOUNT_KEY), null);
-}
-
-export function saveAccount(account: StoredAccount | null): void {
-	if (!hasStorage()) return;
-	if (account) {
-		window.localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
-	} else {
-		window.localStorage.removeItem(ACCOUNT_KEY);
-	}
 }

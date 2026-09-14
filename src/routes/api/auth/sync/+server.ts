@@ -1,10 +1,16 @@
 import { json, error } from "@sveltejs/kit";
-import { verifyAccount, saveVault, mergeVaults } from "$lib/server/accounts";
+import {
+	verifyAccount,
+	saveVault,
+	mergeVaults,
+	getAccount,
+} from "$lib/server/accounts";
+import { auth } from "$lib/server/auth.js";
 
 export async function POST({ request }) {
+	console.log("syncing");
+
 	const body = await request.json().catch(() => ({}));
-	const username = (body.username || "").trim();
-	const password = body.password || "";
 	const clientVault = Array.isArray(body.vault) ? body.vault : [];
 	const removedGroups = Array.isArray(body.removedGroups)
 		? body.removedGroups.filter(
@@ -13,8 +19,14 @@ export async function POST({ request }) {
 			)
 		: [];
 
-	const account = await verifyAccount(username, password);
-	if (!account) throw error(401, "Incorrect username or password.");
+	const session = await auth.api.getSession({
+		headers: request.headers,
+	});
+
+	if (!session) throw error(401, "Not authenticated");
+
+	const account = await getAccount(session.user.id);
+	if (!account) throw error(404, "user not found.");
 
 	const serverVault = JSON.parse(account.vault);
 	const merged = mergeVaults(serverVault, clientVault, removedGroups);
