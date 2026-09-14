@@ -21,28 +21,17 @@
 		groupCount = loadGroups().length;
 	});
 
-	async function mergeVaultIntoStorage(vault: StoredGroup[]) {
-		// vault entries from the server never include a fresher name than what
-		// we might already have locally, so keep local entries on conflict.
-		const local = loadGroups();
-		const byId = new Map<string, StoredGroup>(vault.map((g) => [g.id, g]));
-		for (const g of local) byId.set(g.id, g);
-		const merged = Array.from(byId.values());
-		saveGroups(merged);
-		groupCount = merged.length;
-	}
-
 	async function syncVault({ silent = false }: { silent?: boolean } = {}) {
 		if (!silent) {
 			busy = true;
 			formErr = "";
 		}
 		try {
-			const res = await fetch("/api/auth/sync", {
+			const res = await fetch("/api/sync", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					vault: loadGroups(),
+					vault: loadGroups().map((g) => g.id),
 				}),
 			});
 			const data = await res.json();
@@ -50,16 +39,7 @@
 				if (!silent) formErr = data.message || $_("account.syncFailed");
 				return false;
 			}
-			await mergeVaultIntoStorage(data.vault);
-			status = $_("account.status", {
-				values: {
-					count: data.vault.length,
-					s:
-						data.vault.length === 1
-							? $_("account.groupSuffixOne")
-							: $_("account.groupSuffix"),
-				},
-			});
+
 			return true;
 		} catch {
 			if (!silent) formErr = $_("account.serverUnavailable");

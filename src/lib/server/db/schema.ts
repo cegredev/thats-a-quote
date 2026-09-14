@@ -1,9 +1,11 @@
 import {
+	check,
 	index,
 	int,
 	integer,
 	sqliteTable,
 	text,
+	unique,
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
@@ -32,6 +34,29 @@ export const quotesTable = sqliteTable(
 	},
 	(table) => [index("idx_quotes_group").on(table.groupId)],
 );
+
+export const groupMembers = sqliteTable(
+	"group_members",
+	{
+		groupId: text()
+			.notNull()
+			.references(() => groupsTable.id, { onDelete: "cascade" }),
+		userId: text()
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		role: text("role", { enum: ["admin", "moderator", "member"] })
+			.notNull()
+			.default("member"),
+	},
+	(table) => [
+		unique("group_members_unique").on(table.groupId, table.userId),
+		check(
+			"group_members_role_check",
+			sql`${table.role} IN ('admin', 'moderator', 'member')`,
+		),
+	],
+);
+
 export const accountsTable = sqliteTable("accounts", {
 	id: text()
 		.primaryKey()

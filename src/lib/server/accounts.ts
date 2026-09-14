@@ -51,19 +51,6 @@ export async function verifyAccount(
 	return account;
 }
 
-export async function saveVault(
-	username: string,
-	vault: VaultEntry[],
-): Promise<void> {
-	await db
-		.update(accountsTable)
-		.set({
-			vault: JSON.stringify(vault),
-			updatedAt: Date.now(),
-		})
-		.where(eq(accountsTable.username, username));
-}
-
 /** Union two vaults (lists of {id, name, password}) by group id. Client entries win on conflict
  *  since the browser is the source of truth for a password the user just typed. */
 export function mergeVaults(

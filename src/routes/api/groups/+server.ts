@@ -1,5 +1,19 @@
 import { json, error } from "@sveltejs/kit";
-import { createGroup, getGroup } from "$lib/server/groups";
+import {
+	createGroup,
+	getGroup,
+	getGroupDetails,
+	getUserGroupMemberships,
+} from "$lib/server/groups";
+
+export async function GET({ request, locals }) {
+	if (!locals.user) throw error(401, "You must be logged in to get groups");
+
+	const memberships = await getUserGroupMemberships(locals.user.id);
+	const groups = await getGroupDetails(memberships.map((m) => m.groupId));
+
+	return json(groups);
+}
 
 export async function POST({ request }) {
 	const body = await request.json().catch(() => ({}));

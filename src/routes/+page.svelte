@@ -8,6 +8,10 @@
 	} from "$lib/storage";
 	import { _ } from "$lib/i18n";
 
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
+
 	let groups = $state<StoredGroup[]>([]);
 	let mode: "create" | "join" = $state("create");
 
@@ -23,7 +27,7 @@
 	let joinErr = $state("");
 
 	onMount(() => {
-		groups = loadGroups();
+		groups = data.groups ?? loadGroups();
 	});
 
 	async function createGroup(e: SubmitEvent) {

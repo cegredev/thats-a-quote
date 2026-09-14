@@ -1,8 +1,8 @@
 import { nanoid } from "nanoid";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
-import { groupsTable, quotesTable } from "./db/schema";
-import { and, desc, eq, like, ne, SQL, sql } from "drizzle-orm";
+import { groupMembers, groupsTable, quotesTable } from "./db/schema";
+import { and, desc, eq, inArray, like, ne, SQL, sql } from "drizzle-orm";
 
 export type GroupRow = {
 	id: string;
@@ -127,4 +127,48 @@ export async function listPeople(groupId: string): Promise<string[]> {
 		.all();
 
 	return result.map((r) => r.person);
+}
+
+export async function addMembersToGroup(
+	members: { groupId: string; userId: string }[],
+): Promise<void> {
+	await db.insert(groupMembers).values(members);
+}
+
+export async function removeMembersFromGroup(
+	members: { groupId: string; userId: string }[],
+): Promise<void> {
+	await db
+		.delete(groupMembers)
+		.where(
+			and(
+				...members.map((m) =>
+					and(
+						eq(groupMembers.groupId, m.groupId),
+						eq(groupMembers.userId, m.userId),
+					),
+				),
+			),
+		);
+}
+
+export async function getUserGroupMemberships(userId: string) {
+	const memberships = await db.query.groupMembers.findMany({
+		columns: {
+			groupId: true,
+			role: true,
+		},
+		where: {
+			userId,
+		},
+	});
+	return memberships;
+}
+
+export async function getGroupDetails(groupIds: string[]) {
+	const groups = await db
+		.select()
+		.from(groupsTable)
+		.where(inArray(groupsTable.id, groupIds));
+	return groups;
 }
