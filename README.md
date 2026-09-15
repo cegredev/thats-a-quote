@@ -38,7 +38,7 @@ Run with Docker, using a named volume for the SQLite database:
 
 ```bash
 docker build -t thats-a-quote .
-docker run --rm -p 3000:3000 -v ./data:/app/data -v ./drizzle:/app/drizzle -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_AUTH_SECRET=some_secret thats-a-quote:latest
+docker run --rm -p 3000:3000 -v ./data:/app/data -e BETTER_AUTH_URL=http://localhost:3000 -e BETTER_AUTH_SECRET=test-secret thats-a-quote:latest
 ```
 
 To keep the SQLite file in a directory on the host instead, replace the named

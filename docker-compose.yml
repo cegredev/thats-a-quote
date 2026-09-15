@@ -6,3 +6,6 @@ services:
       - "path/to/storage:/app/data"
     ports:
       - "3000:3000"
+    environment:
+      - BETTER_AUTH_URL=http://localhost:3000 # Your URL
+      - BETTER_AUTH_SECRET=NOT-A-REAL-SECRET # Your secret
