@@ -7,7 +7,6 @@ import { and, desc, eq, inArray, like, ne, SQL, sql } from "drizzle-orm";
 export type GroupRow = {
 	id: string;
 	name: string;
-	passwordHash: string | null;
 	createdAt: number;
 };
 export type Quote = {
@@ -21,15 +20,11 @@ export type Quote = {
 /** Create a new group and return its long unique id. */
 export async function createGroup(
 	name: string,
-	password: string | null,
 	customId?: string,
 ): Promise<string> {
 	const id = customId || nanoid(24);
-	const passwordHash = password ? bcrypt.hashSync(password, 10) : null;
 
-	await db
-		.insert(groupsTable)
-		.values({ id, name, passwordHash, createdAt: Date.now() });
+	await db.insert(groupsTable).values({ id, name, createdAt: Date.now() });
 
 	return id;
 }
@@ -45,19 +40,8 @@ export async function getGroup(id: string): Promise<GroupRow | undefined> {
 	return {
 		id: result[0].id,
 		name: result[0].name,
-		passwordHash: result[0].passwordHash,
 		createdAt: result[0].createdAt,
 	};
-}
-
-export function groupHasPassword(group: GroupRow): boolean {
-	return Boolean(group.passwordHash);
-}
-
-export function checkGroupPassword(group: GroupRow, password: string): boolean {
-	if (!group.passwordHash) return true;
-	if (!password) return false;
-	return bcrypt.compareSync(password, group.passwordHash);
 }
 
 export async function listQuotes(groupId: string): Promise<Quote[]> {

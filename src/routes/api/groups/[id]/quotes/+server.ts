@@ -1,20 +1,11 @@
 import { json, error } from "@sveltejs/kit";
-import {
-	getGroup,
-	checkGroupPassword,
-	addQuote,
-	listQuotes,
-	listPeople,
-} from "$lib/server/groups";
+import { getGroup, addQuote, listQuotes, listPeople } from "$lib/server/groups";
 
 export async function POST({ params, request }) {
 	const group = await getGroup(params.id);
 	if (!group) throw error(404, "This group does not exist.");
 
 	const body = await request.json().catch(() => ({}));
-	if (!checkGroupPassword(group, body.password)) {
-		throw error(401, "Incorrect password.");
-	}
 
 	const text = (body.text || "").trim();
 	const person = typeof body.person === "string" ? body.person.trim() : "";

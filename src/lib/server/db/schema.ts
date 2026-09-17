@@ -14,7 +14,6 @@ export const groupsTable = sqliteTable("groups", {
 		.primaryKey()
 		.$default(() => crypto.randomUUID()),
 	name: text().notNull(),
-	passwordHash: text(),
 	createdAt: int().notNull(),
 });
 

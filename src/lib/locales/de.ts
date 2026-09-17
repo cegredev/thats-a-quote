@@ -16,7 +16,6 @@ export default {
 		groupNamePlaceholder: "Die Donnerstag-Wandergruppe",
 		customId: "Eigene Gruppen-ID",
 		customIdPlaceholder: "donnerstag-wandergruppe",
-		password: "Passwort",
 		optional: "optional",
 		openGroupPlaceholder: "Für eine offene Gruppe leer lassen",
 		createBusy: "Wird erstellt...",
@@ -30,7 +29,6 @@ export default {
 		createFailed: "Die Gruppe konnte nicht erstellt werden.",
 		linkRequired: "Füge den Gruppenlink oder die Gruppen-ID ein.",
 		notFound: "Diese Gruppe gibt es nicht. Überprüfe den Link.",
-		wrongPassword: "Dieses Passwort ist falsch.",
 		joinFailed: "Der Gruppe konnte nicht beigetreten werden.",
 	},
 	account: {

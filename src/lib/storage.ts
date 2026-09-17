@@ -1,12 +1,7 @@
-// The browser's local storage is the only "account" a user needs by default.
-// It holds a list of the groups they've created or joined, each with the
-// group's id, a cached name, and its password (if any) so they don't have
-// to retype it every visit.
-
 const GROUPS_KEY = "thats-a-quote:groups";
 
 export type GroupID = string;
-export type Group = { id: GroupID; name: string; password: string | null };
+export type Group = { id: GroupID; name: string };
 
 function hasStorage() {
 	return (
@@ -25,7 +20,6 @@ function safeParse<T>(raw: string | null, fallback: T): T {
 	}
 }
 
-/** @returns {{id: string, name: string, password: string|null}[]} */
 export function readStoredGroupIDs(): GroupID[] {
 	if (!hasStorage()) return [];
 	return safeParse(window.localStorage.getItem(GROUPS_KEY), []);

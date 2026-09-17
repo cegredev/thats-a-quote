@@ -1,12 +1,5 @@
-import { json, error } from "@sveltejs/kit";
-import {
-	getGroup,
-	checkGroupPassword,
-	addQuote,
-	listQuotes,
-	listPeople,
-	removeMembersFromGroup,
-} from "$lib/server/groups";
+import { json } from "@sveltejs/kit";
+import { removeMembersFromGroup } from "$lib/server/groups";
 
 export async function DELETE({ params, request }) {
 	const groupId = params.id;

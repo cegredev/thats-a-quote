@@ -13,12 +13,7 @@
 
 	let loading = $state(true);
 	let notFound = $state(false);
-	let needsPassword = $state(false);
-	let passwordInput = $state("");
-	let passwordErr = $state("");
-	let passwordBusy = $state(false);
 
-	let activePassword = $state<string | null>(null);
 	let groupName = $state("");
 	let quotes = $state<Quote[]>([]);
 	let people = $state<string[]>([]);
@@ -36,15 +31,13 @@
 
 	onMount(async () => {
 		quotedAt = toDateTimeLocal(new Date());
-		await tryLoad("");
+		await tryLoad();
 	});
 
-	async function tryLoad(password: string, useSearch = true) {
+	async function tryLoad(useSearch = true) {
 		loading = true;
-		passwordErr = "";
 		try {
 			const params = new URLSearchParams();
-			if (password) params.set("password", password);
 			if (useSearch) {
 				if (searchContent.trim())
 					params.set("content", searchContent.trim());
@@ -60,14 +53,6 @@
 
 			const data = await res.json();
 
-			if (res.status === 401) {
-				needsPassword = true;
-				groupName = data.name;
-				return;
-			}
-
-			needsPassword = false;
-			activePassword = password || null;
 			groupName = data.name;
 			quotes = data.quotes;
 			people = data.people;
@@ -83,7 +68,7 @@
 		e.preventDefault();
 		searchBusy = true;
 		try {
-			await tryLoad(activePassword ?? "");
+			await tryLoad();
 		} finally {
 			searchBusy = false;
 		}
@@ -94,35 +79,9 @@
 		searchPerson = "";
 		searchBusy = true;
 		try {
-			await tryLoad(activePassword ?? "", false);
+			await tryLoad();
 		} finally {
 			searchBusy = false;
-		}
-	}
-
-	async function submitPassword(e: SubmitEvent) {
-		e.preventDefault();
-		passwordBusy = true;
-		passwordErr = "";
-		try {
-			const params = new URLSearchParams({ password: passwordInput });
-			const res = await fetch(`/api/groups/${id}?${params}`);
-			const data = await res.json();
-			if (res.status === 401) {
-				passwordErr = $_("home.wrongPassword");
-				return;
-			}
-			if (!res.ok) {
-				passwordErr = data.message || $_("account.somethingWrong");
-				return;
-			}
-			needsPassword = false;
-			activePassword = passwordInput;
-			groupName = data.name;
-			await tryLoad(activePassword ?? "");
-			addStoredGroupID(id);
-		} finally {
-			passwordBusy = false;
 		}
 	}
 
@@ -144,7 +103,6 @@
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					password: activePassword,
 					text: quoteText,
 					person: personName.trim(),
 					quotedAt: quotedAtDate.getTime(),
@@ -152,7 +110,7 @@
 			});
 			const data = await res.json();
 			if (!res.ok) throw new Error(data.message || $_("group.addFailed"));
-			await tryLoad(activePassword ?? "");
+			await tryLoad();
 			quoteText = "";
 			personName = "";
 			quotedAt = toDateTimeLocal(new Date());
@@ -234,29 +192,6 @@
 		<a href="/" class="btn btn-primary btn-sm mt-4"
 			>{$_("group.backHome")}</a
 		>
-	</div>
-{:else if needsPassword}
-	<div
-		class="mx-auto max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
-	>
-		<p class="font-display text-lg font-semibold">{groupName}</p>
-		<p class="mt-1 text-sm text-base-content/70">
-			{$_("group.protected")}
-		</p>
-		<form class="mt-4 flex flex-col gap-3" onsubmit={submitPassword}>
-			<input
-				type="password"
-				class="input w-full"
-				placeholder={$_("group.passwordPlaceholder")}
-				bind:value={passwordInput}
-			/>
-			{#if passwordErr}
-				<p class="text-sm text-error">{passwordErr}</p>
-			{/if}
-			<button class="btn btn-primary" disabled={passwordBusy}>
-				{passwordBusy ? $_("group.checking") : $_("group.unlock")}
-			</button>
-		</form>
 	</div>
 {:else}
 	<div class="mb-6 flex items-start justify-between gap-4">

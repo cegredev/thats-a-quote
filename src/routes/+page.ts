@@ -7,13 +7,7 @@ export const load: PageLoad = async ({ data }) => {
 	const groups: Group[] = [];
 
 	if (data.groups) {
-		groups.push(
-			...data.groups.map((g) => ({
-				id: g.id,
-				name: g.name,
-				password: null,
-			})),
-		);
+		groups.push(...data.groups);
 	}
 
 	if (browser) {

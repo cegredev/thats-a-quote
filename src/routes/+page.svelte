@@ -11,12 +11,10 @@
 
 	let createName = $state("");
 	let createId = $state("");
-	let createPassword = $state("");
 	let createBusy = $state(false);
 	let createErr = $state("");
 
 	let joinId = $state("");
-	let joinPassword = $state("");
 	let joinBusy = $state(false);
 	let joinErr = $state("");
 
@@ -35,7 +33,6 @@
 				body: JSON.stringify({
 					name: createName,
 					id: createId,
-					password: createPassword,
 				}),
 			});
 			const data = await res.json();
@@ -62,11 +59,9 @@
 		joinBusy = true;
 		try {
 			const params = new URLSearchParams();
-			if (joinPassword) params.set("password", joinPassword);
 			const res = await fetch(`/api/groups/${id}?${params}`);
 			const data = await res.json();
 			if (res.status === 404) throw new Error($_("home.notFound"));
-			if (res.status === 401) throw new Error($_("home.wrongPassword"));
 			if (!res.ok) throw new Error(data.message || $_("home.joinFailed"));
 			addStoredGroupID(data.id);
 			goto(`/group/${id}`);
@@ -125,23 +120,6 @@
 						class="flex items-center justify-between rounded-box border border-base-300 bg-base-100 px-4 py-3 transition hover:border-primary/50 hover:bg-base-200"
 					>
 						<span class="font-medium">{group.name}</span>
-						{#if group.password}
-							<span class="badge badge-ghost badge-sm gap-1">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									viewBox="0 0 24 24"
-									fill="currentColor"
-									class="h-3 w-3"
-								>
-									<path
-										fill-rule="evenodd"
-										d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3h-.75a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3v-6a3 3 0 0 0-3-3h-.75v-3A5.25 5.25 0 0 0 12 1.5Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-								{$_("home.locked")}
-							</span>
-						{/if}
 					</a>
 				</li>
 			{/each}
@@ -191,18 +169,6 @@
 				bind:value={createId}
 				maxlength="64"
 			/>
-			<label class="fieldset-label" for="create-password">
-				{$_("home.password")}
-				<span class="text-base-content/50">({$_("home.optional")})</span
-				>
-			</label>
-			<input
-				id="create-password"
-				type="password"
-				class="input w-full"
-				placeholder={$_("home.openGroupPlaceholder")}
-				bind:value={createPassword}
-			/>
 			{#if createErr}
 				<p class="text-sm text-error">{createErr}</p>
 			{/if}
@@ -223,17 +189,6 @@
 				class="input w-full"
 				placeholder={$_("home.linkPlaceholder")}
 				bind:value={joinId}
-			/>
-			<label class="fieldset-label" for="join-password">
-				{$_("home.password")}
-				<span class="text-base-content/50">({$_("home.ifHasOne")})</span
-				>
-			</label>
-			<input
-				id="join-password"
-				type="password"
-				class="input w-full"
-				bind:value={joinPassword}
 			/>
 			{#if joinErr}
 				<p class="text-sm text-error">{joinErr}</p>

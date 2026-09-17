@@ -30,7 +30,6 @@ export default {
 		createFailed: "Could not create the group.",
 		linkRequired: "Paste the group link or ID you were given.",
 		notFound: "That group doesn't exist. Check the link.",
-		wrongPassword: "That password is incorrect.",
 		joinFailed: "Could not join the group.",
 	},
 	account: {
