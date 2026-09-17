@@ -60,20 +60,8 @@ body {
 		box-shadow 0.15s ease;
 }
 
-.quote-card:nth-child(3n + 1) {
-	transform: rotate(-0.6deg);
-}
-
-.quote-card:nth-child(3n + 2) {
-	transform: rotate(0.5deg);
-}
-
-.quote-card:nth-child(3n) {
-	transform: rotate(-0.3deg);
-}
-
 .quote-card:hover {
-	transform: rotate(0deg) translateY(-2px);
+	transform: translateY(-2px);
 	box-shadow: 0 6px 18px -8px
 		color-mix(in oklch, var(--color-neutral) 35%, transparent);
 }
