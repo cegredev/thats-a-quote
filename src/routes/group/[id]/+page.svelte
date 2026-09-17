@@ -2,11 +2,7 @@
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
-	import {
-		getStoredGroup,
-		upsertStoredGroup,
-		removeStoredGroup,
-	} from "$lib/storage";
+	import { addStoredGroupID } from "$lib/storage";
 	import { _, locale } from "$lib/i18n";
 	import type { Quote } from "$lib/server/groups";
 	import { authClient } from "$lib/frontend-auth";
@@ -40,8 +36,7 @@
 
 	onMount(async () => {
 		quotedAt = toDateTimeLocal(new Date());
-		const stored = getStoredGroup(id);
-		await tryLoad(stored?.password ?? "");
+		await tryLoad("");
 	});
 
 	async function tryLoad(password: string, useSearch = true) {
@@ -76,11 +71,7 @@
 			groupName = data.name;
 			quotes = data.quotes;
 			people = data.people;
-			upsertStoredGroup({
-				id,
-				name: data.name,
-				password: activePassword,
-			});
+			addStoredGroupID(data.id);
 		} catch {
 			notFound = true;
 		} finally {
@@ -129,11 +120,7 @@
 			activePassword = passwordInput;
 			groupName = data.name;
 			await tryLoad(activePassword ?? "");
-			upsertStoredGroup({
-				id,
-				name: data.name,
-				password: activePassword,
-			});
+			addStoredGroupID(id);
 		} finally {
 			passwordBusy = false;
 		}

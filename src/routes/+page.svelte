@@ -1,18 +1,12 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { onMount } from "svelte";
-	import {
-		loadGroups,
-		upsertStoredGroup,
-		type StoredGroup,
-	} from "$lib/storage";
+	import { addStoredGroupID } from "$lib/storage";
 	import { _ } from "$lib/i18n";
 
 	import type { PageProps } from "./$types";
 
 	let { data }: PageProps = $props();
 
-	let groups = $state<StoredGroup[]>([]);
 	let mode: "create" | "join" = $state("create");
 
 	let createName = $state("");
@@ -25,10 +19,6 @@
 	let joinPassword = $state("");
 	let joinBusy = $state(false);
 	let joinErr = $state("");
-
-	onMount(() => {
-		groups = data.groups ?? loadGroups();
-	});
 
 	async function createGroup(e: SubmitEvent) {
 		e.preventDefault();
@@ -51,11 +41,7 @@
 			const data = await res.json();
 			if (!res.ok)
 				throw new Error(data.message || $_("home.createFailed"));
-			upsertStoredGroup({
-				id: data.id,
-				name: data.name,
-				password: createPassword.trim() || null,
-			});
+			addStoredGroupID(data.id);
 			goto(`/group/${data.id}`);
 		} catch (err) {
 			createErr =
@@ -82,11 +68,7 @@
 			if (res.status === 404) throw new Error($_("home.notFound"));
 			if (res.status === 401) throw new Error($_("home.wrongPassword"));
 			if (!res.ok) throw new Error(data.message || $_("home.joinFailed"));
-			upsertStoredGroup({
-				id,
-				name: data.name,
-				password: joinPassword.trim() || null,
-			});
+			addStoredGroupID(data.id);
 			goto(`/group/${id}`);
 		} catch (err) {
 			joinErr =
@@ -126,7 +108,7 @@
 		{$_("home.yourGroups")}
 	</h2>
 
-	{#if groups.length === 0}
+	{#if data.groups.length === 0}
 		<div
 			class="rounded-box border border-dashed border-base-300 px-5 py-8 text-center"
 		>
@@ -136,7 +118,7 @@
 		</div>
 	{:else}
 		<ul class="flex flex-col gap-2">
-			{#each groups as group (group.id)}
+			{#each data.groups as group (group.id)}
 				<li>
 					<a
 						href={`/group/${group.id}`}

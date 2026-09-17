@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { loadGroups, saveGroups, type StoredGroup } from "$lib/storage";
+	import { readStoredGroupIDs } from "$lib/storage";
 	import { _ } from "$lib/i18n";
 	import { authClient } from "$lib/frontend-auth";
 
@@ -18,7 +18,7 @@
 	let groupCount = $state(0);
 
 	onMount(async () => {
-		groupCount = loadGroups().length;
+		groupCount = readStoredGroupIDs().length;
 	});
 
 	async function syncVault({ silent = false }: { silent?: boolean } = {}) {
@@ -31,7 +31,7 @@
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					vault: loadGroups().map((g) => g.id),
+					vault: readStoredGroupIDs().map((g) => g.id),
 				}),
 			});
 			const data = await res.json();

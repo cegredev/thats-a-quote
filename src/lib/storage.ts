@@ -5,7 +5,8 @@
 
 const GROUPS_KEY = "thats-a-quote:groups";
 
-export type StoredGroup = { id: string; name: string; password: string | null };
+export type GroupID = string;
+export type Group = { id: GroupID; name: string; password: string | null };
 
 function hasStorage() {
 	return (
@@ -25,34 +26,27 @@ function safeParse<T>(raw: string | null, fallback: T): T {
 }
 
 /** @returns {{id: string, name: string, password: string|null}[]} */
-export function loadGroups(): StoredGroup[] {
+export function readStoredGroupIDs(): GroupID[] {
 	if (!hasStorage()) return [];
 	return safeParse(window.localStorage.getItem(GROUPS_KEY), []);
 }
 
-export function saveGroups(groups: StoredGroup[]): void {
+function storeGroupIDs(groupIDs: GroupID[]): void {
 	if (!hasStorage()) return;
-	window.localStorage.setItem(GROUPS_KEY, JSON.stringify(groups));
+	window.localStorage.setItem(GROUPS_KEY, JSON.stringify(groupIDs));
 }
 
-export function getStoredGroup(id: string): StoredGroup | null {
-	return loadGroups().find((g) => g.id === id) || null;
-}
+export function addStoredGroupID(groupID: GroupID): void {
+	const groupIDs = readStoredGroupIDs();
 
-export function upsertStoredGroup(group: StoredGroup): StoredGroup[] {
-	const groups = loadGroups();
-	const index = groups.findIndex((g) => g.id === group.id);
-	if (index === -1) {
-		groups.unshift(group);
-	} else {
-		groups[index] = { ...groups[index], ...group };
+	if (!groupIDs.includes(groupID)) {
+		groupIDs.push(groupID);
+
+		storeGroupIDs(groupIDs);
 	}
-	saveGroups(groups);
-	return groups;
 }
 
-export function removeStoredGroup(id: string): StoredGroup[] {
-	const groups = loadGroups().filter((g) => g.id !== id);
-	saveGroups(groups);
-	return groups;
+export function removeStoredGroupID(id: GroupID): void {
+	const groupIDs = readStoredGroupIDs().filter((g) => g !== id);
+	storeGroupIDs(groupIDs);
 }
