@@ -19,5 +19,5 @@ export const load: PageLoad = async ({ data }) => {
 		}
 	}
 
-	return { groups };
+	return { groupCreationForm: data.groupCreationForm, groups };
 };

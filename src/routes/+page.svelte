@@ -2,51 +2,38 @@
 	import { goto } from "$app/navigation";
 	import { addStoredGroupID } from "$lib/storage";
 	import { _ } from "$lib/i18n";
-
+	import { superForm } from "sveltekit-superforms";
+	import { untrack } from "svelte";
 	import type { PageProps } from "./$types";
 
 	let { data }: PageProps = $props();
 
-	let mode: "create" | "join" = $state("create");
+	const {
+		form: groupCreationForm,
+		errors: groupCreationErrors,
+		constraints: groupCreationConstraints,
+		enhance: groupCreationEnhance,
+		submitting: groupCreationSubmitting,
+	} = superForm(
+		untrack(() => data.groupCreationForm),
+		{
+			delayMs: 300,
+			onResult: ({ result }) => {
+				if (result.type === "success") {
+					const id = result.data?.id;
+					if (!id) return;
 
-	let createName = $state("");
-	let createId = $state("");
-	let createBusy = $state(false);
-	let createErr = $state("");
+					addStoredGroupID(id);
+				}
+			},
+		},
+	);
+
+	let mode: "create" | "join" = $state("create");
 
 	let joinId = $state("");
 	let joinBusy = $state(false);
 	let joinErr = $state("");
-
-	async function createGroup(e: SubmitEvent) {
-		e.preventDefault();
-		createErr = "";
-		if (!createName.trim()) {
-			createErr = $_("home.nameRequired");
-			return;
-		}
-		createBusy = true;
-		try {
-			const res = await fetch("/api/groups", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					name: createName,
-					id: createId,
-				}),
-			});
-			const data = await res.json();
-			if (!res.ok)
-				throw new Error(data.message || $_("home.createFailed"));
-			addStoredGroupID(data.id);
-			goto(`/group/${data.id}`);
-		} catch (err) {
-			createErr =
-				err instanceof Error ? err.message : $_("home.createFailed");
-		} finally {
-			createBusy = false;
-		}
-	}
 
 	async function joinGroup(e: SubmitEvent) {
 		e.preventDefault();
@@ -146,37 +133,50 @@
 	</div>
 
 	{#if mode === "create"}
-		<form class="flex flex-col gap-3" onsubmit={createGroup}>
-			<label class="fieldset-label" for="create-name"
+		<form
+			class="flex flex-col gap-3"
+			method="POST"
+			use:groupCreationEnhance
+		>
+			<label class="fieldset-label" for="name"
 				>{$_("home.groupName")}</label
 			>
 			<input
-				id="create-name"
+				type="text"
+				name="name"
 				class="input w-full"
-				placeholder={$_("home.groupNamePlaceholder")}
-				bind:value={createName}
-				maxlength="80"
+				aria-invalid={$groupCreationErrors.name ? "true" : undefined}
+				bind:value={$groupCreationForm.name}
+				{...$groupCreationConstraints.name}
 			/>
-			<label class="fieldset-label" for="create-id"
+			{#if $groupCreationErrors.name}
+				<span class="invalid">{$groupCreationErrors.name}</span>
+			{/if}
+
+			<label class="fieldset-label" for="id"
 				>{$_("home.customId")}
 				<span class="text-base-content/50">({$_("home.optional")})</span
 				></label
 			>
 			<input
-				id="create-id"
+				type="text"
+				name="id"
 				class="input w-full"
-				placeholder={$_("home.customIdPlaceholder")}
-				bind:value={createId}
-				maxlength="64"
+				aria-invalid={$groupCreationErrors.id ? "true" : undefined}
+				bind:value={$groupCreationForm.id}
+				{...$groupCreationConstraints.id}
 			/>
-			{#if createErr}
-				<p class="text-sm text-error">{createErr}</p>
+			{#if $groupCreationErrors.id}
+				<span class="invalid">{$groupCreationErrors.id}</span>
 			{/if}
+
 			<button
 				class="btn btn-primary mt-1 self-start"
-				disabled={createBusy}
+				disabled={$groupCreationSubmitting}
 			>
-				{createBusy ? $_("home.createBusy") : $_("home.create")}
+				{$groupCreationSubmitting
+					? $_("home.createBusy")
+					: $_("home.create")}
 			</button>
 		</form>
 	{:else}
