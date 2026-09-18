@@ -28,12 +28,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions = {
-	default: async ({ request }) => {
+	createGroup: async ({ request }) => {
 		const form = await superValidate(
 			request,
 			zod4(zodSchemas.groups.create),
 		);
-		console.log(form);
 
 		if (!form.valid) {
 			// Return { form } and things will just work.

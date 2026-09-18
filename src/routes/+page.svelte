@@ -18,58 +18,17 @@
 		untrack(() => data.groupCreationForm),
 		{
 			delayMs: 300,
-			onResult: ({ result }) => {
+			onResult: async ({ result }) => {
 				if (result.type === "success") {
 					const id = result.data?.id;
 					if (!id) return;
 
 					addStoredGroupID(id);
+					await goto(`/group/${id}`);
 				}
 			},
 		},
 	);
-
-	let mode: "create" | "join" = $state("create");
-
-	let joinId = $state("");
-	let joinBusy = $state(false);
-	let joinErr = $state("");
-
-	async function joinGroup(e: SubmitEvent) {
-		e.preventDefault();
-		joinErr = "";
-		const id = extractId(joinId.trim());
-		if (!id) {
-			joinErr = $_("home.linkRequired");
-			return;
-		}
-		joinBusy = true;
-		try {
-			const params = new URLSearchParams();
-			const res = await fetch(`/api/groups/${id}?${params}`);
-			const data = await res.json();
-			if (res.status === 404) throw new Error($_("home.notFound"));
-			if (!res.ok) throw new Error(data.message || $_("home.joinFailed"));
-			addStoredGroupID(data.id);
-			goto(`/group/${id}`);
-		} catch (err) {
-			joinErr =
-				err instanceof Error ? err.message : $_("home.joinFailed");
-		} finally {
-			joinBusy = false;
-		}
-	}
-
-	function extractId(input: string): string {
-		if (!input) return "";
-		try {
-			const url = new URL(input);
-			const parts = url.pathname.split("/").filter(Boolean);
-			return parts[parts.length - 1] || "";
-		} catch {
-			return input;
-		}
-	}
 </script>
 
 <svelte:head>
@@ -115,87 +74,51 @@
 </section>
 
 <section class="rounded-box border border-base-300 bg-base-100 p-5">
-	<div class="tabs tabs-box mb-5 w-fit">
+	<form
+		class="flex flex-col gap-3"
+		method="POST"
+		action="?/createGroup"
+		use:groupCreationEnhance
+	>
+		<label class="fieldset-label" for="name">{$_("home.groupName")}</label>
+		<input
+			type="text"
+			name="name"
+			class="input w-full validator"
+			aria-invalid={$groupCreationErrors.name ? "true" : undefined}
+			bind:value={$groupCreationForm.name}
+			{...$groupCreationConstraints.name}
+		/>
+		{#if $groupCreationErrors.name}
+			<span class="validator-hint hidden"
+				>{$groupCreationErrors.name}</span
+			>
+		{/if}
+
+		<label class="fieldset-label" for="id"
+			>{$_("home.customId")}
+			<span class="text-base-content/50">({$_("home.optional")})</span
+			></label
+		>
+		<input
+			type="text"
+			name="id"
+			class="input w-full"
+			aria-invalid={$groupCreationErrors.id ? "true" : undefined}
+			bind:value={$groupCreationForm.id}
+			{...$groupCreationConstraints.id}
+		/>
+		{#if $groupCreationErrors.id}
+			<span class="invalid">{$groupCreationErrors.id}</span>
+		{/if}
+
 		<button
-			type="button"
-			class="tab {mode === 'create' ? 'tab-active' : ''}"
-			onclick={() => (mode = "create")}
+			class="btn btn-primary mt-1 self-start"
+			disabled={$groupCreationSubmitting}
 		>
-			{$_("home.createTab")}
+			{$groupCreationSubmitting
+				? $_("home.createBusy")
+				: $_("home.create")}
 		</button>
-		<button
-			type="button"
-			class="tab {mode === 'join' ? 'tab-active' : ''}"
-			onclick={() => (mode = "join")}
-		>
-			{$_("home.joinTab")}
-		</button>
-	</div>
-
-	{#if mode === "create"}
-		<form
-			class="flex flex-col gap-3"
-			method="POST"
-			use:groupCreationEnhance
-		>
-			<label class="fieldset-label" for="name"
-				>{$_("home.groupName")}</label
-			>
-			<input
-				type="text"
-				name="name"
-				class="input w-full"
-				aria-invalid={$groupCreationErrors.name ? "true" : undefined}
-				bind:value={$groupCreationForm.name}
-				{...$groupCreationConstraints.name}
-			/>
-			{#if $groupCreationErrors.name}
-				<span class="invalid">{$groupCreationErrors.name}</span>
-			{/if}
-
-			<label class="fieldset-label" for="id"
-				>{$_("home.customId")}
-				<span class="text-base-content/50">({$_("home.optional")})</span
-				></label
-			>
-			<input
-				type="text"
-				name="id"
-				class="input w-full"
-				aria-invalid={$groupCreationErrors.id ? "true" : undefined}
-				bind:value={$groupCreationForm.id}
-				{...$groupCreationConstraints.id}
-			/>
-			{#if $groupCreationErrors.id}
-				<span class="invalid">{$groupCreationErrors.id}</span>
-			{/if}
-
-			<button
-				class="btn btn-primary mt-1 self-start"
-				disabled={$groupCreationSubmitting}
-			>
-				{$groupCreationSubmitting
-					? $_("home.createBusy")
-					: $_("home.create")}
-			</button>
-		</form>
-	{:else}
-		<form class="flex flex-col gap-3" onsubmit={joinGroup}>
-			<label class="fieldset-label" for="join-id"
-				>{$_("home.groupLinkOrId")}</label
-			>
-			<input
-				id="join-id"
-				class="input w-full"
-				placeholder={$_("home.linkPlaceholder")}
-				bind:value={joinId}
-			/>
-			{#if joinErr}
-				<p class="text-sm text-error">{joinErr}</p>
-			{/if}
-			<button class="btn btn-primary mt-1 self-start" disabled={joinBusy}>
-				{joinBusy ? $_("home.joinBusy") : $_("home.join")}
-			</button>
-		</form>
-	{/if}
+	</form>
 </section>
