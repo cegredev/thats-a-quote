@@ -12,7 +12,7 @@ export type Quote = {
 };
 
 export type QuoteSearch = {
-	content?: string;
+	text?: string;
 	person?: string;
 };
 
@@ -24,8 +24,8 @@ export async function listQuotesMatching(
 
 	conditions.push(eq(quotesTable.groupId, groupId));
 
-	if (search.content) {
-		conditions.push(like(quotesTable.text, `%${search.content}%`));
+	if (search.text) {
+		conditions.push(like(quotesTable.text, `%${search.text}%`));
 	}
 
 	if (search.person) {
