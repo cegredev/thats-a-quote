@@ -1,6 +1,6 @@
 import { browser } from "$app/environment";
-import { groupsApi } from "$lib/api";
-import { readStoredGroupIDs, type Group } from "$lib/storage";
+import { groupsApi } from "$lib/client/api";
+import { readStoredGroupIDs, type Group } from "$lib/client/storage";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ data }) => {

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { readStoredGroupIDs } from "$lib/storage";
-	import { _ } from "$lib/i18n";
-	import { authClient } from "$lib/frontend-auth";
+	import { readStoredGroupIDs } from "$lib/client/storage";
+	import { _ } from "$lib/client/i18n";
+	import { authClient } from "$lib/client/frontend-auth";
 
 	const session = authClient.useSession();
 

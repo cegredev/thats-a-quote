@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { addStoredGroupID } from "$lib/storage";
-	import { _ } from "$lib/i18n";
+	import { addStoredGroupID } from "$lib/client/storage";
+	import { _ } from "$lib/client/i18n";
 	import { superForm } from "sveltekit-superforms";
 	import { untrack } from "svelte";
 	import type { PageProps } from "./$types";
