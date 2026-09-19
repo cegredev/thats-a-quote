@@ -1,125 +1,46 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
-	import { onMount } from "svelte";
+	import { onMount, untrack } from "svelte";
 	import { addStoredGroupID } from "$lib/client/storage";
 	import { _, locale } from "$lib/client/i18n";
-	import type { Quote } from "$lib/server/groups";
 	import { authClient } from "$lib/client/frontend-auth";
+	import { superForm } from "sveltekit-superforms";
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
 
 	const session = authClient.useSession();
 
 	const id = page.params.id ?? "";
 
-	let loading = $state(true);
+	const {
+		form: quoteCreationForm,
+		errors: quoteCreationErrors,
+		constraints: quoteCreationConstraints,
+		enhance: quoteCreationEnhance,
+		submitting: quoteCreationSubmitting,
+	} = superForm(
+		untrack(() => data.quoteCreationForm),
+		{
+			delayMs: 300,
+		},
+	);
+
 	let notFound = $state(false);
 
-	let groupName = $state("");
-	let quotes = $state<Quote[]>([]);
-	let people = $state<string[]>([]);
-
-	let quoteText = $state("");
-	let personName = $state("");
-	let quotedAt = $state("");
 	let searchContent = $state("");
 	let searchPerson = $state("");
 	let searchBusy = $state(false);
-	let addBusy = $state(false);
-	let addErr = $state("");
 
 	let copied = $state(false);
 
+	$inspect($quoteCreationForm.quotedAt);
+
 	onMount(async () => {
-		quotedAt = toDateTimeLocal(new Date());
-		await tryLoad();
+		$quoteCreationForm.quotedAt = toDateTimeLocal(new Date());
+		addStoredGroupID(id);
 	});
-
-	async function tryLoad(useSearch = true) {
-		loading = true;
-		try {
-			const params = new URLSearchParams();
-			if (useSearch) {
-				if (searchContent.trim())
-					params.set("content", searchContent.trim());
-				if (searchPerson.trim())
-					params.set("person", searchPerson.trim());
-			}
-			const res = await fetch(`/api/groups/${id}?${params}`);
-
-			if (res.status === 404) {
-				notFound = true;
-				return;
-			}
-
-			const data = await res.json();
-
-			groupName = data.name;
-			quotes = data.quotes;
-			people = data.people;
-			addStoredGroupID(data.id);
-		} catch {
-			notFound = true;
-		} finally {
-			loading = false;
-		}
-	}
-
-	async function searchQuotes(e: SubmitEvent) {
-		e.preventDefault();
-		searchBusy = true;
-		try {
-			await tryLoad();
-		} finally {
-			searchBusy = false;
-		}
-	}
-
-	async function clearSearch() {
-		searchContent = "";
-		searchPerson = "";
-		searchBusy = true;
-		try {
-			await tryLoad();
-		} finally {
-			searchBusy = false;
-		}
-	}
-
-	async function addQuote(e: SubmitEvent) {
-		e.preventDefault();
-		addErr = "";
-		if (!quoteText.trim()) {
-			addErr = $_("group.quoteRequired");
-			return;
-		}
-		const quotedAtDate = new Date(quotedAt);
-		if (!quotedAt || Number.isNaN(quotedAtDate.getTime())) {
-			addErr = $_("group.dateTimeInvalid");
-			return;
-		}
-		addBusy = true;
-		try {
-			const res = await fetch(`/api/groups/${id}/quotes`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					text: quoteText,
-					person: personName.trim(),
-					quotedAt: quotedAtDate.getTime(),
-				}),
-			});
-			const data = await res.json();
-			if (!res.ok) throw new Error(data.message || $_("group.addFailed"));
-			await tryLoad();
-			quoteText = "";
-			personName = "";
-			quotedAt = toDateTimeLocal(new Date());
-		} catch (err) {
-			addErr = err instanceof Error ? err.message : $_("group.addFailed");
-		} finally {
-			addBusy = false;
-		}
-	}
 
 	async function copyLink() {
 		await navigator.clipboard.writeText(window.location.href);
@@ -174,14 +95,12 @@
 </script>
 
 <svelte:head>
-	<title>{groupName || $_("group.fallbackTitle")} · {$_("brand")}</title>
+	<title>
+		{data.group.name ?? $_("group.fallbackTitle")} · {$_("brand")}
+	</title>
 </svelte:head>
 
-{#if loading}
-	<div class="flex justify-center py-16">
-		<span class="loading loading-ring loading-lg text-primary"></span>
-	</div>
-{:else if notFound}
+{#if notFound}
 	<div
 		class="rounded-box border border-dashed border-base-300 px-5 py-10 text-center"
 	>
@@ -196,13 +115,15 @@
 {:else}
 	<div class="mb-6 flex items-start justify-between gap-4">
 		<div>
-			<h1 class="font-display text-2xl font-semibold">{groupName}</h1>
+			<h1 class="font-display text-2xl font-semibold">
+				{data.group.name}
+			</h1>
 			<p class="text-sm text-base-content/60">
 				{$_("group.quoteCount", {
 					values: {
-						count: quotes.length,
+						count: data.quotes.length,
 						s:
-							quotes.length === 1
+							data.quotes.length === 1
 								? $_("group.quoteSuffixOne")
 								: $_("group.quoteSuffix"),
 					},
@@ -221,54 +142,76 @@
 
 	<form
 		class="mb-10 flex flex-col gap-3 rounded-box border border-base-300 bg-base-100 p-5"
-		onsubmit={addQuote}
+		method="POST"
+		action="?/createQuote"
+		use:quoteCreationEnhance
 	>
-		<label class="fieldset-label" for="quote-text"
-			>{$_("group.whatDidTheySay")}</label
-		>
+		<label class="fieldset-label" for="text">
+			{$_("group.whatDidTheySay")}
+		</label>
 		<textarea
-			id="quote-text"
 			class="textarea w-full"
 			rows="2"
-			maxlength="1000"
 			placeholder={$_("group.quotePlaceholder")}
-			bind:value={quoteText}
+			name="text"
+			aria-invalid={$quoteCreationErrors.text ? "true" : undefined}
+			bind:value={$quoteCreationForm.text}
+			{...$quoteCreationConstraints.text}
 		></textarea>
+		{#if $quoteCreationErrors.text}
+			<span class="validator-hint hidden">
+				{$quoteCreationErrors.text}
+			</span>
+		{/if}
 
-		<label class="fieldset-label" for="quote-person"
-			>{$_("group.whoSaidIt")}</label
-		>
+		<label class="fieldset-label" for="person">
+			{$_("group.whoSaidIt")}
+		</label>
 		<input
-			id="quote-person"
 			class="input w-full"
-			list="people-list"
+			list="people"
 			placeholder={$_("group.personPlaceholder")}
-			maxlength="80"
-			bind:value={personName}
+			name="person"
+			aria-invalid={$quoteCreationErrors.person ? "true" : undefined}
+			bind:value={$quoteCreationForm.person}
+			{...$quoteCreationConstraints.person}
 		/>
+		{#if $quoteCreationErrors.person}
+			<span class="validator-hint hidden">
+				{$quoteCreationErrors.person}
+			</span>
+		{/if}
+		<datalist id="people">
+			{#each data.people as person (person)}
+				<option value={person}></option>
+			{/each}
+		</datalist>
 
 		<label class="fieldset-label" for="quote-date-time"
 			>{$_("group.dateTime")}</label
 		>
 		<input
-			id="quote-date-time"
 			type="datetime-local"
 			class="input w-full"
 			step="1"
-			bind:value={quotedAt}
+			name="quotedAt"
+			aria-invalid={$quoteCreationErrors.quotedAt ? "true" : undefined}
+			bind:value={$quoteCreationForm.quotedAt}
+			{...$quoteCreationConstraints.quotedAt}
 		/>
-		<datalist id="people-list">
-			{#each people as person (person)}
-				<option value={person}></option>
-			{/each}
-		</datalist>
-
-		{#if addErr}
-			<p class="text-sm text-error">{addErr}</p>
+		{#if $quoteCreationErrors.quotedAt}
+			<span class="validator-hint hidden">
+				{$quoteCreationErrors.quotedAt}
+			</span>
 		{/if}
 
-		<button class="btn btn-primary mt-1 self-start" disabled={addBusy}>
-			{addBusy ? $_("group.adding") : $_("group.addQuote")}
+		<button
+			class="btn btn-primary mt-1 self-start"
+			disabled={$quoteCreationSubmitting}
+		>
+			{$quoteCreationSubmitting
+				? $_("group.adding")
+				: $_("group.addQuote")}
 		</button>
 	</form>
 
@@ -299,7 +242,7 @@
 		</div>
 	</form>
 
-	{#if quotes.length === 0}
+	{#if data.quotes.length === 0}
 		<div
 			class="rounded-box border border-dashed border-base-300 px-5 py-10 text-center"
 		>
@@ -311,7 +254,7 @@
 		</div>
 	{:else}
 		<ul class="grid gap-4 sm:grid-cols-2">
-			{#each quotes as quote (quote.id)}
+			{#each data.quotes as quote (quote.id)}
 				<li class="quote-card rounded-box p-4">
 					<p
 						class="font-display text-[1.05rem] leading-snug text-balance"

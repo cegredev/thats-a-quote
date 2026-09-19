@@ -9,13 +9,6 @@ export type GroupRow = {
 	name: string;
 	createdAt: number;
 };
-export type Quote = {
-	id: string;
-	text: string;
-	person: string;
-	createdAt: number;
-	quotedAt: number;
-};
 
 /** Create a new group and return its long unique id. */
 export async function createGroup(
@@ -42,57 +35,6 @@ export async function getGroup(id: string): Promise<GroupRow | undefined> {
 		name: result[0].name,
 		createdAt: result[0].createdAt,
 	};
-}
-
-export async function listQuotes(groupId: string): Promise<Quote[]> {
-	return listQuotesMatching(groupId, {});
-}
-
-export type QuoteSearch = {
-	content?: string;
-	person?: string;
-};
-
-export async function listQuotesMatching(
-	groupId: string,
-	search: QuoteSearch,
-): Promise<Quote[]> {
-	const conditions: SQL[] = [];
-
-	conditions.push(eq(quotesTable.groupId, groupId));
-
-	if (search.content) {
-		conditions.push(like(quotesTable.text, `%${search.content}%`));
-	}
-
-	if (search.person) {
-		conditions.push(like(quotesTable.person, search.person));
-	}
-
-	const result = await db
-		.select()
-		.from(quotesTable)
-		.where(and(...conditions))
-		.orderBy(desc(quotesTable.quotedAt), desc(quotesTable.createdAt))
-		.all();
-
-	return result as Quote[];
-}
-
-export async function addQuote(
-	groupId: string,
-	text: string,
-	person: string,
-	quotedAt: number,
-): Promise<Quote> {
-	const id = nanoid(16);
-	const createdAt = Date.now();
-
-	await db
-		.insert(quotesTable)
-		.values({ id, groupId, text, person, createdAt, quotedAt });
-
-	return { id, text, person, createdAt, quotedAt };
 }
 
 /** Distinct people who have been quoted in this group, most recently used first. */

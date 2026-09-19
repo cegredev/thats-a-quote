@@ -12,4 +12,11 @@ export default {
 			id: z.string().optional(),
 		}),
 	},
+	quotes: {
+		create: z.object({
+			text: z.string(),
+			person: z.string().optional(),
+			quotedAt: z.iso.datetime({ local: true }),
+		}),
+	},
 };
