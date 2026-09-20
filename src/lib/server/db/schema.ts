@@ -56,16 +56,6 @@ export const groupMembers = sqliteTable(
 	],
 );
 
-export const accountsTable = sqliteTable("accounts", {
-	id: text()
-		.primaryKey()
-		.$default(() => crypto.randomUUID()),
-	username: text().notNull().unique(),
-	passwordHash: text().notNull(),
-	vault: text().notNull().default("[]"),
-	updatedAt: int().notNull(),
-});
-
 export const user = sqliteTable("user", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),

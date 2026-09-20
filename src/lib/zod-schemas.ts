@@ -23,4 +23,15 @@ export default {
 			person: z.string().optional(),
 		}),
 	},
+	users: {
+		register: z.object({
+			name: z.string().min(1).max(128),
+			email: z.email(),
+			password: z.string().min(8).max(128),
+		}),
+		login: z.object({
+			email: z.string(),
+			password: z.string(),
+		}),
+	},
 };

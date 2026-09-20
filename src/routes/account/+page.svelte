@@ -1,103 +1,49 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { readStoredGroupIDs } from "$lib/client/storage";
 	import { authClient } from "$lib/client/frontend-auth";
 	import { m } from "$lib/paraglide/messages";
+	import { superForm } from "sveltekit-superforms";
+	import { untrack } from "svelte";
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
 
 	const session = authClient.useSession();
 
-	let remember = $state(true);
-
 	let mode = $state("login"); // 'login' | 'register'
-	let username = $state("");
-	let password = $state("");
-	let busy = $state(false);
-	let formErr = $state("");
+
+	const {
+		form: registerForm,
+		errors: registerErrors,
+		constraints: registerConstraints,
+		enhance: registerEnhance,
+		submitting: registerSubmitting,
+	} = superForm(
+		untrack(() => data.registerForm),
+		{
+			delayMs: 300,
+			onResult: async ({ result }) => {},
+		},
+	);
+
+	const {
+		form: loginForm,
+		errors: loginErrors,
+		constraints: loginConstraints,
+		enhance: loginEnhance,
+		submitting: loginSubmitting,
+	} = superForm(
+		untrack(() => data.loginForm),
+		{
+			delayMs: 300,
+			onResult: async ({ result }) => {},
+		},
+	);
 
 	let status = $state(""); // last sync status message
-	let groupCount = $state(0);
-
-	onMount(async () => {
-		groupCount = readStoredGroupIDs().length;
-	});
-
-	async function syncVault({ silent = false }: { silent?: boolean } = {}) {
-		if (!silent) {
-			busy = true;
-			formErr = "";
-		}
-		try {
-			const res = await fetch("/api/sync", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					vault: readStoredGroupIDs(),
-				}),
-			});
-			const data = await res.json();
-			if (!res.ok) {
-				if (!silent)
-					formErr = data.message || m["account.syncFailed"]();
-				return false;
-			}
-
-			return true;
-		} catch {
-			if (!silent) formErr = m["account.serverUnavailable"]();
-			return false;
-		} finally {
-			busy = false;
-		}
-	}
-
-	async function submit(e: SubmitEvent) {
-		e.preventDefault();
-		formErr = "";
-		if (!username.trim() || !password) {
-			formErr = m["account.fillFields"]();
-			return;
-		}
-		busy = true;
-		try {
-			if (mode === "register") {
-				const user = await authClient.signUp.email({
-					email: username,
-					password: password,
-					name: username,
-				});
-
-				if (user.error)
-					throw new Error(
-						user.error.message || m["account.somethingWrong"](),
-					);
-			} else {
-				const user = await authClient.signIn.email({
-					email: username,
-					password: password,
-				});
-
-				if (user.error)
-					throw new Error(
-						user.error.message || m["account.somethingWrong"](),
-					);
-			}
-
-			await syncVault();
-		} catch (err) {
-			formErr =
-				err instanceof Error
-					? err.message
-					: m["account.somethingWrong"]();
-		} finally {
-			busy = false;
-		}
-	}
 
 	async function forgetDevice() {
 		await authClient.signOut();
 		status = "";
-		username = "";
-		password = "";
 	}
 </script>
 
@@ -120,31 +66,13 @@
 		<p class="font-display text-lg font-semibold">
 			{$session.data.user.name}
 		</p>
-		<p class="mt-3 text-sm text-base-content/70">
-			{m["account.groupsOnDevice"]({
-				count: groupCount,
-				s:
-					groupCount === 1
-						? m["account.groupSuffixOne"]()
-						: m["account.groupSuffix"](),
-			})}
-		</p>
 		{#if status}
 			<p class="mt-1 text-sm text-success">{status}</p>
 		{/if}
 		<div class="mt-5 flex gap-2">
-			<button
-				class="btn btn-primary btn-sm"
-				disabled={busy}
-				onclick={() => {
-					syncVault();
-				}}
-			>
-				{busy ? m["account.syncing"]() : m["account.syncNow"]()}
+			<button class="btn btn-ghost btn-sm" onclick={forgetDevice}>
+				{m["account.forget"]()}
 			</button>
-			<button class="btn btn-ghost btn-sm" onclick={forgetDevice}
-				>{m["account.forget"]()}</button
-			>
 		</div>
 	</div>
 {:else}
@@ -168,48 +96,113 @@
 			</button>
 		</div>
 
-		<form class="flex flex-col gap-3" onsubmit={submit}>
-			<label class="fieldset-label" for="acct-username"
-				>{m["account.username"]()}</label
+		{#if mode === "register"}
+			<form
+				class="flex flex-col gap-3"
+				method="POST"
+				action="?/register"
+				use:registerEnhance
 			>
-			<input
-				id="acct-username"
-				class="input w-full"
-				bind:value={username}
-				maxlength="40"
-			/>
-
-			<label class="fieldset-label" for="acct-password"
-				>{m["account.password"]()}</label
-			>
-			<input
-				id="acct-password"
-				type="password"
-				class="input w-full"
-				bind:value={password}
-				minlength="6"
-			/>
-
-			<label class="label cursor-pointer justify-start gap-2 px-0">
+				<label class="fieldset-label" for="name">Name</label>
 				<input
-					type="checkbox"
-					class="checkbox checkbox-sm"
-					bind:checked={remember}
+					type="text"
+					name="name"
+					class="input w-full validator"
+					aria-invalid={$registerErrors.name ? "true" : undefined}
+					bind:value={$registerForm.name}
+					{...$registerConstraints.name}
 				/>
-				<span class="label-text">{m["account.remember"]()}</span>
-			</label>
+				{#if $registerErrors.name}
+					<span class="validator-hint hidden">
+						{$registerErrors.name}
+					</span>
+				{/if}
 
-			{#if formErr}
-				<p class="text-sm text-error">{formErr}</p>
-			{/if}
+				<label class="fieldset-label" for="email">
+					{m["account.username"]()}
+				</label>
+				<input
+					type="email"
+					name="email"
+					class="input w-full validator"
+					aria-invalid={$registerErrors.email ? "true" : undefined}
+					bind:value={$registerForm.email}
+					{...$registerConstraints.email}
+				/>
+				{#if $registerErrors.email}
+					<span class="validator-hint hidden">
+						{$registerErrors.email}
+					</span>
+				{/if}
 
-			<button class="btn btn-primary mt-1 self-start" disabled={busy}>
-				{busy
-					? m["account.pleaseWait"]()
-					: mode === "register"
-						? m["account.createAndSync"]()
-						: m["account.loginAndSync"]()}
-			</button>
-		</form>
+				<label class="fieldset-label" for="password">Password</label>
+				<input
+					type="password"
+					name="password"
+					class="input w-full validator"
+					aria-invalid={$registerErrors.password ? "true" : undefined}
+					bind:value={$registerForm.password}
+					{...$registerConstraints.password}
+				/>
+				{#if $registerErrors.password}
+					<span class="validator-hint hidden">
+						{$registerErrors.password}
+					</span>
+				{/if}
+
+				<button
+					class="btn btn-primary mt-1 self-start"
+					disabled={$registerSubmitting}
+				>
+					{$registerSubmitting ? "Signing up..." : "Sign up"}
+				</button>
+			</form>
+		{:else}
+			<form
+				class="flex flex-col gap-3"
+				method="POST"
+				action="?/login"
+				use:loginEnhance
+			>
+				<label class="fieldset-label" for="email">
+					{m["account.username"]()}
+				</label>
+				<input
+					type="email"
+					name="email"
+					class="input w-full validator"
+					aria-invalid={$loginErrors.email ? "true" : undefined}
+					bind:value={$loginForm.email}
+					{...$loginConstraints.email}
+				/>
+				{#if $loginErrors.email}
+					<span class="validator-hint hidden">
+						{$loginErrors.email}
+					</span>
+				{/if}
+
+				<label class="fieldset-label" for="password">Password</label>
+				<input
+					type="password"
+					name="password"
+					class="input w-full validator"
+					aria-invalid={$loginErrors.password ? "true" : undefined}
+					bind:value={$loginForm.password}
+					{...$loginConstraints.password}
+				/>
+				{#if $loginErrors.password}
+					<span class="validator-hint hidden">
+						{$loginErrors.password}
+					</span>
+				{/if}
+
+				<button
+					class="btn btn-primary mt-1 self-start"
+					disabled={$loginSubmitting}
+				>
+					{$loginSubmitting ? "Logging in..." : "Log in"}
+				</button>
+			</form>
+		{/if}
 	</div>
 {/if}
