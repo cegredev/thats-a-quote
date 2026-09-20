@@ -95,11 +95,13 @@
 			>
 		{/if}
 
-		<label class="fieldset-label" for="id"
-			>{m["home.customId"]()}
-			<span class="text-base-content/50">({m["home.optional"]()})</span
-			></label
-		>
+		<label class="fieldset-label" for="id">
+			{m["home.customId"]()}
+
+			<span class="text-base-content/50">
+				({m["home.optional"]()})
+			</span>
+		</label>
 		<input
 			type="text"
 			name="id"

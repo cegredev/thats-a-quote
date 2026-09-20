@@ -2,18 +2,20 @@
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { onMount, untrack } from "svelte";
-	import { addStoredGroupID } from "$lib/client/storage";
+	import { addStoredGroupID, removeStoredGroupID } from "$lib/client/storage";
 	import { authClient } from "$lib/client/frontend-auth";
 	import { superForm } from "sveltekit-superforms";
 	import type { PageProps } from "./$types";
 	import { m } from "$lib/paraglide/messages";
 	import { getLocale } from "$lib/paraglide/runtime";
+	import { Dialog } from "bits-ui";
+	import { enhance } from "$app/forms";
 
 	let { data }: PageProps = $props();
 
 	const session = authClient.useSession();
 
-	const id = page.params.id ?? "";
+	const groupId = page.params.id ?? "";
 
 	const {
 		form: quoteCreationForm,
@@ -32,7 +34,7 @@
 
 	onMount(async () => {
 		$quoteCreationForm.quotedAt = toDateTimeLocal(new Date());
-		addStoredGroupID(id);
+		addStoredGroupID(groupId);
 	});
 
 	async function copyLink() {
@@ -42,13 +44,9 @@
 	}
 
 	async function leaveGroup() {
-		if (!confirm(m["group.leaveConfirm"]({ name: data.group.name }))) {
-			return;
-		}
-
 		if ($session.data?.user) {
 			try {
-				await fetch("/api/groups/" + id + "/members", {
+				await fetch("/api/groups/" + groupId + "/members", {
 					method: "DELETE",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -85,6 +83,8 @@
 	}
 
 	let searchQueryExists = $derived(page.url.searchParams.size > 0);
+
+	let leaveDialogOpen: boolean = $state(false);
 </script>
 
 <svelte:head>
@@ -108,13 +108,79 @@
 			})}
 		</p>
 	</div>
+
 	<div class="flex shrink-0 gap-2">
 		<button class="btn btn-ghost btn-sm" onclick={copyLink}>
 			{copied ? m["group.copied"]() : m["group.copyLink"]()}
 		</button>
-		<button class="btn btn-ghost btn-sm text-error" onclick={leaveGroup}>
-			{m["group.leave"]()}
-		</button>
+
+		<script lang="ts">
+			import { Dialog } from "bits-ui";
+
+			let open = $state(false);
+		</script>
+
+		<Dialog.Root bind:open={leaveDialogOpen}>
+			<Dialog.Trigger class="btn btn-ghost btn-sm text-error">
+				{m["group.leave"]()}
+			</Dialog.Trigger>
+
+			<Dialog.Portal>
+				<Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
+
+				<Dialog.Content
+					class="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg
+			       -translate-x-1/2 -translate-y-1/2
+			       rounded-box bg-base-100 p-6 shadow-2xl"
+				>
+					<Dialog.Title class="text-xl font-bold">
+						Leave group?
+					</Dialog.Title>
+
+					<Dialog.Description class="mt-2 text-base-content/70">
+						{m["group.leaveConfirm"]({ name: data.group.name })}
+					</Dialog.Description>
+
+					<div class="mt-6 flex justify-end gap-2">
+						<Dialog.Close class="btn btn-ghost">
+							Cancel
+						</Dialog.Close>
+
+						<form
+							method="POST"
+							action="?/leaveGroup"
+							use:enhance={async () => {
+								return async ({ result, update }) => {
+									await update();
+
+									if (result.type === "success") {
+										leaveDialogOpen = false;
+
+										await goto("..");
+									}
+								};
+							}}
+						>
+							<button
+								type={$session.data?.user ? "submit" : "button"}
+								class="btn btn-error"
+								onclick={async () => {
+									removeStoredGroupID(groupId);
+
+									if (!$session.data?.user) {
+										leaveDialogOpen = false;
+
+										await goto("..");
+									}
+								}}
+							>
+								{m["group.leave"]()}
+							</button>
+						</form>
+					</div>
+				</Dialog.Content>
+			</Dialog.Portal>
+		</Dialog.Root>
 	</div>
 </div>
 

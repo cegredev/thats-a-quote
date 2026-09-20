@@ -4,10 +4,10 @@ import { readStoredGroupIDs, type Group } from "$lib/client/storage";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ data }) => {
-	const groups: Group[] = [];
+	const groups: Set<Group> = new Set();
 
 	if (data.groups) {
-		groups.push(...data.groups);
+		for (const group of data.groups) groups.add(group);
 	}
 
 	if (browser) {
@@ -15,9 +15,9 @@ export const load: PageLoad = async ({ data }) => {
 		const result = await groupsApi.getByIDs(groupIDs);
 
 		if (result.ok) {
-			groups.push(...result.data);
+			for (const group of result.data) groups.add(group);
 		}
 	}
 
-	return { groupCreationForm: data.groupCreationForm, groups };
+	return { groupCreationForm: data.groupCreationForm, groups: [...groups] };
 };

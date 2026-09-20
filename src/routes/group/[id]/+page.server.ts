@@ -1,4 +1,8 @@
-import { getGroupDetails, listPeople } from "$lib/server/groups";
+import {
+	getGroupDetails,
+	listPeople,
+	removeMembersFromGroup,
+} from "$lib/server/groups";
 import zodSchemas from "$lib/zod-schemas";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
@@ -47,8 +51,6 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		console.log(form.data, new Date(form.data.quotedAt));
-
 		const id = await addQuote(
 			groupId,
 			form.data.text,
@@ -57,5 +59,17 @@ export const actions = {
 		);
 
 		return { form, id };
+	},
+	leaveGroup: async ({ params, locals }) => {
+		const groupId = params.id;
+		const userId = locals.user?.id;
+
+		if (!userId) {
+			return fail(401, "No user logged in");
+		}
+
+		await removeMembersFromGroup([{ groupId, userId }]);
+
+		return {};
 	},
 };
