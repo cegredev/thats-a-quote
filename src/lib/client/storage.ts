@@ -1,4 +1,59 @@
-const GROUPS_KEY = "thats-a-quote:groups";
+const genKey = (key: string) => `thats-a-quote:${key}`;
+const VERSION_KEY = genKey("local-storage-version");
+const GROUPS_KEY = genKey("groups");
+
+type Version = {
+	next?: string;
+	migrateTo?: (storage: Storage) => void;
+};
+
+const versions: Record<string, Version> = {
+	"0": {
+		next: "1",
+	},
+	"1": {
+		migrateTo: (storage: Storage) => {
+			const genKey = (key: string) => `thats-a-quote:${key}`;
+			const OLD_GROUPS_KEY = genKey("groups");
+
+			const groups = JSON.parse(
+				storage.getItem(OLD_GROUPS_KEY) ?? "[]",
+			) as {
+				id: string;
+				name: string;
+				password: string | null;
+			}[];
+
+			storage.removeItem(OLD_GROUPS_KEY);
+
+			storage.setItem(
+				GROUPS_KEY,
+				JSON.stringify(groups.map((g) => g.id)),
+			);
+		},
+	},
+};
+
+export const migrateStorage = () => {
+	if (!window?.localStorage) {
+		console.error(
+			"Tried to migrate, but window.localStorage does not exist!",
+		);
+		return;
+	}
+
+	let versionKey = window.localStorage.getItem(VERSION_KEY) ?? "0";
+	let version = versions[versionKey];
+	while (version.next) {
+		versionKey = version.next;
+		version = versions[versionKey];
+		if (!version.migrateTo) continue;
+
+		version.migrateTo(window.localStorage);
+	}
+
+	window.localStorage.setItem(VERSION_KEY, versionKey);
+};
 
 export type GroupID = string;
 export type Group = { id: GroupID; name: string };
