@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { readStoredGroupIDs } from "$lib/client/storage";
-	import { _ } from "$lib/client/i18n";
 	import { authClient } from "$lib/client/frontend-auth";
+	import { m } from "$lib/paraglide/messages";
 
 	const session = authClient.useSession();
 
@@ -31,18 +31,19 @@
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					vault: readStoredGroupIDs().map((g) => g.id),
+					vault: readStoredGroupIDs(),
 				}),
 			});
 			const data = await res.json();
 			if (!res.ok) {
-				if (!silent) formErr = data.message || $_("account.syncFailed");
+				if (!silent)
+					formErr = data.message || m["account.syncFailed"]();
 				return false;
 			}
 
 			return true;
 		} catch {
-			if (!silent) formErr = $_("account.serverUnavailable");
+			if (!silent) formErr = m["account.serverUnavailable"]();
 			return false;
 		} finally {
 			busy = false;
@@ -53,7 +54,7 @@
 		e.preventDefault();
 		formErr = "";
 		if (!username.trim() || !password) {
-			formErr = $_("account.fillFields");
+			formErr = m["account.fillFields"]();
 			return;
 		}
 		busy = true;
@@ -67,7 +68,7 @@
 
 				if (user.error)
 					throw new Error(
-						user.error.message || $_("account.somethingWrong"),
+						user.error.message || m["account.somethingWrong"](),
 					);
 			} else {
 				const user = await authClient.signIn.email({
@@ -77,7 +78,7 @@
 
 				if (user.error)
 					throw new Error(
-						user.error.message || $_("account.somethingWrong"),
+						user.error.message || m["account.somethingWrong"](),
 					);
 			}
 
@@ -86,7 +87,7 @@
 			formErr =
 				err instanceof Error
 					? err.message
-					: $_("account.somethingWrong");
+					: m["account.somethingWrong"]();
 		} finally {
 			busy = false;
 		}
@@ -101,33 +102,31 @@
 </script>
 
 <svelte:head>
-	<title>{$_("syncDevices")} · {$_("brand")}</title>
+	<title>{m["syncDevices"]()} · {m["brand"]()}</title>
 </svelte:head>
 
 <h1 class="font-display text-2xl font-semibold">
-	{$_("account.title")}
+	{m["account.title"]()}
 </h1>
 <p class="mt-2 max-w-lg text-base-content/70">
-	{$_("account.intro")}
+	{m["account.intro"]()}
 </p>
 
 {#if $session.data}
 	<div
 		class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
 	>
-		<p class="text-sm text-base-content/60">{$_("account.signedInAs")}</p>
+		<p class="text-sm text-base-content/60">{m["account.signedInAs"]()}</p>
 		<p class="font-display text-lg font-semibold">
 			{$session.data.user.name}
 		</p>
 		<p class="mt-3 text-sm text-base-content/70">
-			{$_("account.groupsOnDevice", {
-				values: {
-					count: groupCount,
-					s:
-						groupCount === 1
-							? $_("account.groupSuffixOne")
-							: $_("account.groupSuffix"),
-				},
+			{m["account.groupsOnDevice"]({
+				count: groupCount,
+				s:
+					groupCount === 1
+						? m["account.groupSuffixOne"]()
+						: m["account.groupSuffix"](),
 			})}
 		</p>
 		{#if status}
@@ -141,10 +140,10 @@
 					syncVault();
 				}}
 			>
-				{busy ? $_("account.syncing") : $_("account.syncNow")}
+				{busy ? m["account.syncing"]() : m["account.syncNow"]()}
 			</button>
 			<button class="btn btn-ghost btn-sm" onclick={forgetDevice}
-				>{$_("account.forget")}</button
+				>{m["account.forget"]()}</button
 			>
 		</div>
 	</div>
@@ -158,20 +157,20 @@
 				class="tab {mode === 'login' ? 'tab-active' : ''}"
 				onclick={() => (mode = "login")}
 			>
-				{$_("account.login")}
+				{m["account.login"]()}
 			</button>
 			<button
 				type="button"
 				class="tab {mode === 'register' ? 'tab-active' : ''}"
 				onclick={() => (mode = "register")}
 			>
-				{$_("account.register")}
+				{m["account.register"]()}
 			</button>
 		</div>
 
 		<form class="flex flex-col gap-3" onsubmit={submit}>
 			<label class="fieldset-label" for="acct-username"
-				>{$_("account.username")}</label
+				>{m["account.username"]()}</label
 			>
 			<input
 				id="acct-username"
@@ -181,7 +180,7 @@
 			/>
 
 			<label class="fieldset-label" for="acct-password"
-				>{$_("account.password")}</label
+				>{m["account.password"]()}</label
 			>
 			<input
 				id="acct-password"
@@ -197,7 +196,7 @@
 					class="checkbox checkbox-sm"
 					bind:checked={remember}
 				/>
-				<span class="label-text">{$_("account.remember")}</span>
+				<span class="label-text">{m["account.remember"]()}</span>
 			</label>
 
 			{#if formErr}
@@ -206,10 +205,10 @@
 
 			<button class="btn btn-primary mt-1 self-start" disabled={busy}>
 				{busy
-					? $_("account.pleaseWait")
+					? m["account.pleaseWait"]()
 					: mode === "register"
-						? $_("account.createAndSync")
-						: $_("account.loginAndSync")}
+						? m["account.createAndSync"]()
+						: m["account.loginAndSync"]()}
 			</button>
 		</form>
 	</div>

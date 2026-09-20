@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { addStoredGroupID } from "$lib/client/storage";
-	import { _ } from "$lib/client/i18n";
 	import { superForm } from "sveltekit-superforms";
 	import { untrack } from "svelte";
 	import type { PageProps } from "./$types";
+	import { m } from "$lib/paraglide/messages";
 
 	let { data }: PageProps = $props();
 
@@ -32,21 +32,21 @@
 </script>
 
 <svelte:head>
-	<title>{$_("brand")}</title>
+	<title>{m["brand"]()}</title>
 </svelte:head>
 
 <section class="mb-10">
 	<h1 class="font-display text-3xl leading-tight font-semibold text-balance">
-		{$_("home.title")}
+		{m["home.title"]()}
 	</h1>
 	<p class="mt-3 max-w-lg text-base-content/70">
-		{$_("home.intro")}
+		{m["home.intro"]()}
 	</p>
 </section>
 
 <section class="mb-12">
 	<h2 class="mb-3 font-display text-lg font-semibold">
-		{$_("home.yourGroups")}
+		{m["home.yourGroups"]()}
 	</h2>
 
 	{#if data.groups.length === 0}
@@ -54,7 +54,7 @@
 			class="rounded-box border border-dashed border-base-300 px-5 py-8 text-center"
 		>
 			<p class="text-base-content/70">
-				{$_("home.empty")}
+				{m["home.empty"]()}
 			</p>
 		</div>
 	{:else}
@@ -80,7 +80,7 @@
 		action="?/createGroup"
 		use:groupCreationEnhance
 	>
-		<label class="fieldset-label" for="name">{$_("home.groupName")}</label>
+		<label class="fieldset-label" for="name">{m["home.groupName"]()}</label>
 		<input
 			type="text"
 			name="name"
@@ -96,8 +96,8 @@
 		{/if}
 
 		<label class="fieldset-label" for="id"
-			>{$_("home.customId")}
-			<span class="text-base-content/50">({$_("home.optional")})</span
+			>{m["home.customId"]()}
+			<span class="text-base-content/50">({m["home.optional"]()})</span
 			></label
 		>
 		<input
@@ -117,8 +117,8 @@
 			disabled={$groupCreationSubmitting}
 		>
 			{$groupCreationSubmitting
-				? $_("home.createBusy")
-				: $_("home.create")}
+				? m["home.createBusy"]()
+				: m["home.create"]()}
 		</button>
 	</form>
 </section>

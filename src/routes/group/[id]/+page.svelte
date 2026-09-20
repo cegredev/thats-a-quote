@@ -3,10 +3,11 @@
 	import { goto } from "$app/navigation";
 	import { onMount, untrack } from "svelte";
 	import { addStoredGroupID } from "$lib/client/storage";
-	import { _, locale } from "$lib/client/i18n";
 	import { authClient } from "$lib/client/frontend-auth";
 	import { superForm } from "sveltekit-superforms";
 	import type { PageProps } from "./$types";
+	import { m } from "$lib/paraglide/messages";
+	import { getLocale } from "$lib/paraglide/runtime";
 
 	let { data }: PageProps = $props();
 
@@ -41,11 +42,7 @@
 	}
 
 	async function leaveGroup() {
-		if (
-			!confirm(
-				$_("group.leaveConfirm", { values: { name: data.group.name } }),
-			)
-		) {
+		if (!confirm(m["group.leaveConfirm"]({ name: data.group.name }))) {
 			return;
 		}
 
@@ -69,7 +66,7 @@
 
 	function formatDate(ts: number): string {
 		return new Date(ts).toLocaleString(
-			$locale === "de" ? "de-DE" : "en-US",
+			getLocale() === "de" ? "de-DE" : "en-US",
 			{
 				month: "short",
 				day: "numeric",
@@ -92,7 +89,7 @@
 
 <svelte:head>
 	<title>
-		{data.group.name ?? $_("group.fallbackTitle")} · {$_("brand")}
+		{data.group.name ?? m["group.fallbackTitle"]()} · {m["brand"]()}
 	</title>
 </svelte:head>
 
@@ -102,23 +99,21 @@
 			{data.group.name}
 		</h1>
 		<p class="text-sm text-base-content/60">
-			{$_("group.quoteCount", {
-				values: {
-					count: data.quotes.length,
-					s:
-						data.quotes.length === 1
-							? $_("group.quoteSuffixOne")
-							: $_("group.quoteSuffix"),
-				},
+			{m["group.quoteCount"]({
+				count: data.quotes.length,
+				s:
+					data.quotes.length === 1
+						? m["group.quoteSuffixOne"]()
+						: m["group.quoteSuffix"](),
 			})}
 		</p>
 	</div>
 	<div class="flex shrink-0 gap-2">
 		<button class="btn btn-ghost btn-sm" onclick={copyLink}>
-			{copied ? $_("group.copied") : $_("group.copyLink")}
+			{copied ? m["group.copied"]() : m["group.copyLink"]()}
 		</button>
 		<button class="btn btn-ghost btn-sm text-error" onclick={leaveGroup}>
-			{$_("group.leave")}
+			{m["group.leave"]()}
 		</button>
 	</div>
 </div>
@@ -130,12 +125,12 @@
 	use:quoteCreationEnhance
 >
 	<label class="fieldset-label" for="text">
-		{$_("group.whatDidTheySay")}
+		{m["group.whatDidTheySay"]()}
 	</label>
 	<textarea
 		class="textarea w-full"
 		rows="2"
-		placeholder={$_("group.quotePlaceholder")}
+		placeholder={m["group.quotePlaceholder"]()}
 		name="text"
 		aria-invalid={$quoteCreationErrors.text ? "true" : undefined}
 		bind:value={$quoteCreationForm.text}
@@ -148,12 +143,12 @@
 	{/if}
 
 	<label class="fieldset-label" for="person">
-		{$_("group.whoSaidIt")}
+		{m["group.whoSaidIt"]()}
 	</label>
 	<input
 		class="input w-full"
 		list="people"
-		placeholder={$_("group.personPlaceholder")}
+		placeholder={m["group.personPlaceholder"]()}
 		name="person"
 		aria-invalid={$quoteCreationErrors.person ? "true" : undefined}
 		bind:value={$quoteCreationForm.person}
@@ -171,7 +166,7 @@
 	</datalist>
 
 	<label class="fieldset-label" for="quote-date-time"
-		>{$_("group.dateTime")}</label
+		>{m["group.dateTime"]()}</label
 	>
 	<input
 		type="datetime-local"
@@ -192,7 +187,7 @@
 		class="btn btn-primary mt-1 self-start"
 		disabled={$quoteCreationSubmitting}
 	>
-		{$quoteCreationSubmitting ? $_("group.adding") : $_("group.addQuote")}
+		{$quoteCreationSubmitting ? m["group.adding"]() : m["group.addQuote"]()}
 	</button>
 </form>
 
@@ -202,18 +197,18 @@
 >
 	<input
 		class="input w-full"
-		placeholder={$_("group.searchContent")}
+		placeholder={m["group.searchContent"]()}
 		name="text"
 		value={page.url.searchParams.get("text") ?? ""}
 	/>
 	<input
 		class="input w-full"
-		placeholder={$_("group.searchPerson")}
+		placeholder={m["group.searchPerson"]()}
 		name="person"
 		value={page.url.searchParams.get("person") ?? ""}
 	/>
 	<div class="flex gap-2">
-		<button class="btn btn-primary">{$_("group.search")}</button>
+		<button class="btn btn-primary">{m["group.search"]()}</button>
 		<a class="btn btn-ghost" type="button" href={page.url.pathname}>
 			Clear
 		</a>
@@ -226,8 +221,8 @@
 	>
 		<p class="text-base-content/70">
 			{searchQueryExists
-				? $_("group.noMatchingQuotes")
-				: $_("group.noQuotes")}
+				? m["group.noMatchingQuotes"]()
+				: m["group.noQuotes"]()}
 		</p>
 	</div>
 {:else}
@@ -240,7 +235,7 @@
 					&ldquo;{quote.text}&rdquo;
 				</p>
 				<p class="mt-3 text-sm text-base-content/60">
-					— {quote.person || $_("group.anonymousPersonDisplay")}
+					— {quote.person || m["group.anonymousPersonDisplay"]()}
 					<span class="text-base-content/40">
 						· {formatDate(quote.quotedAt)}
 					</span>

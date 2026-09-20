@@ -1,6 +1,16 @@
 <script lang="ts">
+	import type { Pathname } from "$app/types";
+	import { resolve } from "$app/paths";
+	import { page } from "$app/state";
+	import {
+		getLocale,
+		locales,
+		localizeHref,
+		setLocale,
+	} from "$lib/paraglide/runtime";
+	import { m } from "$lib/paraglide/messages";
 	import "../app.css";
-	import { _, locale, setLanguage } from "$lib/client/i18n";
+
 	let { children } = $props();
 </script>
 
@@ -12,35 +22,45 @@
 			<a
 				href="/"
 				class="font-display text-xl font-semibold tracking-tight"
+				>{m.brand()}</a
 			>
-				{$_("brand")}
-			</a>
+
 			<div class="flex items-center gap-4">
 				<a
 					href="/account"
 					class="link link-hover text-sm text-base-content/70"
-					>{$_("syncDevices")}</a
+					>{m.syncDevices()}</a
 				>
+
 				<label
 					class="flex items-center gap-2 text-sm text-base-content/70"
 				>
-					<span class="sr-only">{$_("language")}</span>
+					<span class="sr-only">{m.language()}</span>
+
 					<select
 						class="select select-bordered select-xs"
-						value={$locale}
+						value={getLocale()}
 						onchange={(event) =>
-							setLanguage(event.currentTarget.value)}
-						aria-label={$_("language")}
+							setLocale(event.currentTarget.value as any)}
+						aria-label={m.language()}
 					>
-						<option value="en">{$_("english")}</option>
-						<option value="de">{$_("german")}</option>
+						<option value="en">{m.english()}</option>
+						<option value="de">{m.german()}</option>
 					</select>
 				</label>
 			</div>
 		</div>
 	</header>
 
-	<main class="mx-auto max-w-3xl px-5 py-8">
-		{@render children()}
-	</main>
+	<main class="mx-auto max-w-3xl px-5 py-8">{@render children()}</main>
+</div>
+
+<div style="display:none">
+	{#each locales as locale (locale)}
+		<a
+			href={resolve(
+				localizeHref(page.url.pathname, { locale }) as Pathname,
+			)}>{locale}</a
+		>
+	{/each}
 </div>
