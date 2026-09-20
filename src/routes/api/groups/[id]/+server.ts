@@ -1,5 +1,6 @@
 import { json, error } from "@sveltejs/kit";
-import { getGroup, listQuotesMatching, listPeople } from "$lib/server/groups";
+import { getGroup, listPeople } from "$lib/server/groups";
+import { listQuotesMatching } from "$lib/server/quotes";
 
 export async function GET({ params, url }) {
 	const group = await getGroup(params.id);
@@ -8,7 +9,7 @@ export async function GET({ params, url }) {
 	return json({
 		name: group.name,
 		quotes: await listQuotesMatching(group.id, {
-			content: url.searchParams.get("content") || undefined,
+			text: url.searchParams.get("content") || undefined,
 			person: url.searchParams.get("person") || undefined,
 		}),
 		people: await listPeople(group.id),

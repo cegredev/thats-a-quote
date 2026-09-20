@@ -1,5 +1,6 @@
 import { json, error } from "@sveltejs/kit";
-import { getGroup, addQuote, listQuotes, listPeople } from "$lib/server/groups";
+import { getGroup, listPeople } from "$lib/server/groups";
+import { addQuote, listQuotesMatching } from "$lib/server/quotes";
 
 export async function POST({ params, request }) {
 	const group = await getGroup(params.id);
@@ -23,7 +24,7 @@ export async function POST({ params, request }) {
 	await addQuote(group.id, text, person, quotedAt);
 
 	return json({
-		quotes: await listQuotes(group.id),
+		quotes: await listQuotesMatching(group.id, {}),
 		people: await listPeople(group.id),
 	});
 }
