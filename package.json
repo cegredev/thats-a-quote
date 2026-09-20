@@ -39,6 +39,7 @@
 		"dotenv": "^17.4.2",
 		"drizzle-orm": "1.0.0-rc.4",
 		"nanoid": "^6.0.1",
-		"relations-v2": "link:better-auth/drizzle-adapter/relations-v2"
+		"relations-v2": "link:better-auth/drizzle-adapter/relations-v2",
+		"uuid": "^14.0.2"
 	}
 }

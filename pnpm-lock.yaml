@@ -35,6 +35,9 @@ importers:
       relations-v2:
         specifier: link:better-auth/drizzle-adapter/relations-v2
         version: link:better-auth/drizzle-adapter/relations-v2
+      uuid:
+        specifier: ^14.0.2
+        version: 14.0.2
     devDependencies:
       '@inlang/paraglide-js':
         specifier: ^2.18.2

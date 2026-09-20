@@ -1,7 +1,7 @@
 import { and, desc, eq, like, type SQL } from "drizzle-orm";
 import { quotesTable } from "./db/schema";
 import { db } from "./db";
-import { nanoid } from "nanoid";
+import { v7 as uuidv7 } from "uuid";
 
 export type Quote = {
 	id: string;
@@ -48,7 +48,9 @@ export async function addQuote(
 	person: string,
 	quotedAt: number,
 ): Promise<Quote> {
-	const id = nanoid(16);
+	// UUID v7 should be used for most database primary keys
+	// (https://createuuid.com/articles/uuid-versions-explained)
+	const id = uuidv7();
 	const createdAt = Date.now();
 
 	await db
