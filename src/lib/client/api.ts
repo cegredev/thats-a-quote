@@ -1,4 +1,4 @@
-import type { Group } from "./storage";
+import type { Group } from "$lib/types";
 
 export async function api<T>(
 	url: string,

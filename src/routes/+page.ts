@@ -1,6 +1,7 @@
 import { browser } from "$app/environment";
 import { groupsApi } from "$lib/client/api";
-import { readStoredGroupIDs, type Group } from "$lib/client/storage";
+import { readStoredGroupIDs, setGroupIDs } from "$lib/client/storage";
+import type { Group } from "$lib/types";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ data }) => {
@@ -17,6 +18,13 @@ export const load: PageLoad = async ({ data }) => {
 		if (result.ok) {
 			for (const group of result.data) groups.add(group);
 		}
+
+		setGroupIDs(
+			groups
+				.values()
+				.map((g) => g.id)
+				.toArray(),
+		);
 	}
 
 	return { groupCreationForm: data.groupCreationForm, groups: [...groups] };

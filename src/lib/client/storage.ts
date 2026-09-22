@@ -1,3 +1,5 @@
+import type { GroupID } from "$lib/types";
+
 const genKey = (key: string) => `thats-a-quote:${key}`;
 const VERSION_KEY = genKey("local-storage-version");
 const GROUPS_KEY = genKey("groups");
@@ -55,9 +57,6 @@ export const migrateStorage = () => {
 	window.localStorage.setItem(VERSION_KEY, versionKey);
 };
 
-export type GroupID = string;
-export type Group = { id: GroupID; name: string };
-
 function hasStorage() {
 	return (
 		typeof window !== "undefined" &&
@@ -80,7 +79,7 @@ export function readStoredGroupIDs(): GroupID[] {
 	return safeParse(window.localStorage.getItem(GROUPS_KEY), []);
 }
 
-function storeGroupIDs(groupIDs: GroupID[]): void {
+export function setGroupIDs(groupIDs: GroupID[]): void {
 	if (!hasStorage()) return;
 	window.localStorage.setItem(GROUPS_KEY, JSON.stringify(groupIDs));
 }
@@ -91,11 +90,11 @@ export function addStoredGroupID(groupID: GroupID): void {
 	if (!groupIDs.includes(groupID)) {
 		groupIDs.push(groupID);
 
-		storeGroupIDs(groupIDs);
+		setGroupIDs(groupIDs);
 	}
 }
 
 export function removeStoredGroupID(id: GroupID): void {
 	const groupIDs = readStoredGroupIDs().filter((g) => g !== id);
-	storeGroupIDs(groupIDs);
+	setGroupIDs(groupIDs);
 }

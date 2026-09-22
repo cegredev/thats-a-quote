@@ -1,4 +1,5 @@
 import {
+	addMembersToGroup,
 	createGroup,
 	getGroupDetails,
 	getUserGroupMemberships,
@@ -28,7 +29,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions = {
-	createGroup: async ({ request }) => {
+	createGroup: async ({ request, locals }) => {
 		const form = await superValidate(
 			request,
 			zod4(zodSchemas.groups.create),
@@ -40,6 +41,15 @@ export const actions = {
 		}
 
 		const id = await createGroup(form.data.name, form.data.id);
+
+		if (locals.user) {
+			await addMembersToGroup([
+				{
+					groupId: id,
+					userId: locals.user.id,
+				},
+			]);
+		}
 
 		return { form, id };
 	},
