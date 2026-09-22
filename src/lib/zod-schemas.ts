@@ -30,7 +30,7 @@ export default {
 			password: z.string().min(8).max(128),
 		}),
 		login: z.object({
-			email: z.string(),
+			email: z.email(),
 			password: z.string(),
 		}),
 	},

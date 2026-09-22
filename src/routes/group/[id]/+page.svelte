@@ -114,12 +114,6 @@
 			{copied ? m["group.copied"]() : m["group.copyLink"]()}
 		</button>
 
-		<script lang="ts">
-			import { Dialog } from "bits-ui";
-
-			let open = $state(false);
-		</script>
-
 		<Dialog.Root bind:open={leaveDialogOpen}>
 			<Dialog.Trigger class="btn btn-ghost btn-sm text-error">
 				{m["group.leave"]()}

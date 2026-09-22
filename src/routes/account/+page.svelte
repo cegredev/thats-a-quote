@@ -9,7 +9,7 @@
 
 	const session = authClient.useSession();
 
-	let mode = $state("login"); // 'login' | 'register'
+	let mode: "login" | "register" = $state("login");
 
 	const {
 		form: registerForm,
@@ -21,7 +21,11 @@
 		untrack(() => data.registerForm),
 		{
 			delayMs: 300,
-			onResult: async ({ result }) => {},
+			onResult: async ({ result }) => {
+				if (result.type === "success") {
+					await $session.refetch();
+				}
+			},
 		},
 	);
 
@@ -35,15 +39,16 @@
 		untrack(() => data.loginForm),
 		{
 			delayMs: 300,
-			onResult: async ({ result }) => {},
+			onResult: async ({ result }) => {
+				if (result.type === "success") {
+					await $session.refetch();
+				}
+			},
 		},
 	);
 
-	let status = $state(""); // last sync status message
-
 	async function forgetDevice() {
 		await authClient.signOut();
-		status = "";
 	}
 </script>
 
@@ -66,9 +71,6 @@
 		<p class="font-display text-lg font-semibold">
 			{$session.data.user.name}
 		</p>
-		{#if status}
-			<p class="mt-1 text-sm text-success">{status}</p>
-		{/if}
 		<div class="mt-5 flex gap-2">
 			<button class="btn btn-ghost btn-sm" onclick={forgetDevice}>
 				{m["account.forget"]()}
@@ -121,13 +123,13 @@
 				<label class="fieldset-label" for="email">
 					{m["account.username"]()}
 				</label>
+				<!-- FIXME Email constraints don't work, maybe a bug in superforms or zod -->
 				<input
 					type="email"
 					name="email"
 					class="input w-full validator"
 					aria-invalid={$registerErrors.email ? "true" : undefined}
 					bind:value={$registerForm.email}
-					{...$registerConstraints.email}
 				/>
 				{#if $registerErrors.email}
 					<span class="validator-hint hidden">
@@ -167,13 +169,13 @@
 				<label class="fieldset-label" for="email">
 					{m["account.username"]()}
 				</label>
+				<!-- FIXME Email constraints don't work, maybe a bug in superforms or zod -->
 				<input
 					type="email"
 					name="email"
 					class="input w-full validator"
 					aria-invalid={$loginErrors.email ? "true" : undefined}
 					bind:value={$loginForm.email}
-					{...$loginConstraints.email}
 				/>
 				{#if $loginErrors.email}
 					<span class="validator-hint hidden">
@@ -193,6 +195,12 @@
 				{#if $loginErrors.password}
 					<span class="validator-hint hidden">
 						{$loginErrors.password}
+					</span>
+				{/if}
+
+				{#if $loginErrors._errors}
+					<span class="text-error">
+						{$loginErrors._errors[0]}
 					</span>
 				{/if}
 
