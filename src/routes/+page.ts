@@ -1,14 +1,14 @@
 import { browser } from "$app/environment";
 import { groupsApi } from "$lib/client/api";
 import { readStoredGroupIDs, setGroupIDs } from "$lib/client/storage";
-import type { Group } from "$lib/types";
+import { type GroupID, type Group } from "$lib/types";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ data }) => {
-	const groups: Set<Group> = new Set();
+	let groups: Group[] = [];
 
 	if (data.groups) {
-		for (const group of data.groups) groups.add(group);
+		groups.push(...data.groups);
 	}
 
 	if (browser) {
@@ -16,15 +16,22 @@ export const load: PageLoad = async ({ data }) => {
 		const result = await groupsApi.getByIDs(groupIDs);
 
 		if (result.ok) {
-			for (const group of result.data) groups.add(group);
+			groups.push(...result.data);
 		}
 
-		setGroupIDs(
-			groups
-				.values()
-				.map((g) => g.id)
-				.toArray(),
-		);
+		const uniqueGroups: Group[] = [];
+		const ids = new Set<GroupID>();
+		for (const group of groups) {
+			if (!ids.has(group.id)) {
+				uniqueGroups.push(group);
+			}
+
+			ids.add(group.id);
+		}
+
+		groups = uniqueGroups;
+
+		setGroupIDs(ids.values().toArray());
 	}
 
 	return { groupCreationForm: data.groupCreationForm, groups: [...groups] };
