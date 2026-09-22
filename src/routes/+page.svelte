@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { addStoredGroupID } from "$lib/client/storage";
 	import { superForm } from "sveltekit-superforms";
 	import { untrack } from "svelte";
 	import type { PageProps } from "./$types";
 	import { m } from "$lib/paraglide/messages";
+	import { groupIDsStore } from "$lib/client/storage.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -23,7 +23,7 @@
 					const id = result.data?.id;
 					if (!id) return;
 
-					addStoredGroupID(id);
+					groupIDsStore.add(id);
 					await goto(`/group/${id}`);
 				}
 			},

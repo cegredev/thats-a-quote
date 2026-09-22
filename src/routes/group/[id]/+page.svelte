@@ -2,7 +2,6 @@
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { onMount, untrack } from "svelte";
-	import { addStoredGroupID, removeStoredGroupID } from "$lib/client/storage";
 	import { authClient } from "$lib/client/frontend-auth";
 	import { superForm } from "sveltekit-superforms";
 	import type { PageProps } from "./$types";
@@ -10,6 +9,7 @@
 	import { getLocale } from "$lib/paraglide/runtime";
 	import { Dialog } from "bits-ui";
 	import { enhance } from "$app/forms";
+	import { groupIDsStore } from "$lib/client/storage.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -34,32 +34,12 @@
 
 	onMount(async () => {
 		$quoteCreationForm.quotedAt = toDateTimeLocal(new Date());
-		addStoredGroupID(groupId);
 	});
 
 	async function copyLink() {
 		await navigator.clipboard.writeText(window.location.href);
 		copied = true;
 		setTimeout(() => (copied = false), 1500);
-	}
-
-	async function leaveGroup() {
-		if ($session.data?.user) {
-			try {
-				await fetch("/api/groups/" + groupId + "/members", {
-					method: "DELETE",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						userId: $session.data.user.id,
-					}),
-				});
-			} catch {
-				// Best effort sync: even if the request fails, the local device is
-				// already updated and the user has left the group.
-			}
-		}
-
-		await goto("/");
 	}
 
 	function formatDate(ts: number): string {
@@ -114,67 +94,82 @@
 			{copied ? m["group.copied"]() : m["group.copyLink"]()}
 		</button>
 
-		<Dialog.Root bind:open={leaveDialogOpen}>
-			<Dialog.Trigger class="btn btn-ghost btn-sm text-error">
-				{m["group.leave"]()}
-			</Dialog.Trigger>
+		{#if groupIDsStore.has(groupId) || leaveDialogOpen}
+			<Dialog.Root bind:open={leaveDialogOpen}>
+				<Dialog.Trigger class="btn btn-ghost btn-sm text-error">
+					{m["group.leave"]()}
+				</Dialog.Trigger>
 
-			<Dialog.Portal>
-				<Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
+				<Dialog.Portal>
+					<Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
 
-				<Dialog.Content
-					class="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg
+					<Dialog.Content
+						class="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg
 			       -translate-x-1/2 -translate-y-1/2
 			       rounded-box bg-base-100 p-6 shadow-2xl"
-				>
-					<Dialog.Title class="text-xl font-bold">
-						Leave group?
-					</Dialog.Title>
+					>
+						<Dialog.Title class="text-xl font-bold">
+							Leave group?
+						</Dialog.Title>
 
-					<Dialog.Description class="mt-2 text-base-content/70">
-						{m["group.leaveConfirm"]({ name: data.group.name })}
-					</Dialog.Description>
+						<Dialog.Description class="mt-2 text-base-content/70">
+							{m["group.leaveConfirm"]({ name: data.group.name })}
+						</Dialog.Description>
 
-					<div class="mt-6 flex justify-end gap-2">
-						<Dialog.Close class="btn btn-ghost">
-							Cancel
-						</Dialog.Close>
+						<div class="mt-6 flex justify-end gap-2">
+							<Dialog.Close class="btn btn-ghost">
+								Cancel
+							</Dialog.Close>
 
-						<form
-							method="POST"
-							action="?/leaveGroup"
-							use:enhance={async () => {
-								return async ({ result, update }) => {
-									await update();
+							<form
+								method="POST"
+								action="?/leaveGroup"
+								use:enhance={async () => {
+									return async ({ result, update }) => {
+										await update();
 
-									if (result.type === "success") {
-										leaveDialogOpen = false;
+										if (result.type === "success") {
+											leaveDialogOpen = false;
 
-										await goto("..");
-									}
-								};
-							}}
-						>
-							<button
-								type={$session.data?.user ? "submit" : "button"}
-								class="btn btn-error"
-								onclick={async () => {
-									removeStoredGroupID(groupId);
-
-									if (!$session.data?.user) {
-										leaveDialogOpen = false;
-
-										await goto("..");
-									}
+											await goto("..");
+										}
+									};
 								}}
 							>
-								{m["group.leave"]()}
-							</button>
-						</form>
-					</div>
-				</Dialog.Content>
-			</Dialog.Portal>
-		</Dialog.Root>
+								<button
+									type={$session.data?.user
+										? "submit"
+										: "button"}
+									class="btn btn-error"
+									onclick={async () => {
+										groupIDsStore.remove(groupId);
+
+										if (!$session.data?.user) {
+											leaveDialogOpen = false;
+
+											await goto("..");
+										}
+									}}
+								>
+									{m["group.leave"]()}
+								</button>
+							</form>
+						</div>
+					</Dialog.Content>
+				</Dialog.Portal>
+			</Dialog.Root>
+		{:else}
+			<form method="POST" action="?/joinGroup" use:enhance>
+				<button
+					type={$session.data?.user ? "submit" : "button"}
+					class="btn btn-ghost btn-sm text-success"
+					onclick={() =>
+						setTimeout(() => groupIDsStore.add(groupId), 100)}
+				>
+					{m["group.join"]()}
+				</button>
+			</form>
+		{/if}
 	</div>
 </div>
 

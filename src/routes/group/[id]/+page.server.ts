@@ -1,4 +1,5 @@
 import {
+	addMembersToGroup,
 	getGroupDetails,
 	listPeople,
 	removeMembersFromGroup,
@@ -59,6 +60,18 @@ export const actions = {
 		);
 
 		return { form, id };
+	},
+	joinGroup: async ({ params, locals }) => {
+		const groupId = params.id;
+		const userId = locals.user?.id;
+
+		if (!userId) {
+			return fail(401, "No user logged in");
+		}
+
+		await addMembersToGroup([{ groupId, userId }]);
+
+		return {};
 	},
 	leaveGroup: async ({ params, locals }) => {
 		const groupId = params.id;

@@ -1,5 +1,5 @@
 import { authClient } from "$lib/client/frontend-auth";
-import { migrateStorage } from "$lib/client/storage";
+import { migrateStorage } from "$lib/client/storage.svelte";
 import type { LayoutLoad } from "./$types";
 
 export const ssr = false;
