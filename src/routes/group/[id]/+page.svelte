@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
-	import { onMount, untrack } from "svelte";
 	import { authClient } from "$lib/client/frontend-auth";
-	import { superForm } from "sveltekit-superforms";
 	import type { PageProps } from "./$types";
 	import { m } from "$lib/paraglide/messages";
 	import { getLocale } from "$lib/paraglide/runtime";
@@ -11,20 +9,14 @@
 	import { enhance } from "$app/forms";
 	import { groupIDsStore } from "$lib/client/storage.svelte";
 	import CreateQuoteForm from "$lib/components/forms/CreateQuoteForm.svelte";
+	import CopyButton from "$lib/components/util/CopyButton.svelte";
+	import Title from "$lib/components/util/Title.svelte";
 
 	let { data }: PageProps = $props();
 
 	const session = authClient.useSession();
 
 	const groupId = page.params.id ?? "";
-
-	let copied = $state(false);
-
-	async function copyLink() {
-		await navigator.clipboard.writeText(window.location.href);
-		copied = true;
-		setTimeout(() => (copied = false), 1500);
-	}
 
 	function formatDate(ts: number): string {
 		return new Date(ts).toLocaleString(
@@ -45,17 +37,16 @@
 	let leaveDialogOpen: boolean = $state(false);
 </script>
 
-<svelte:head>
-	<title>
-		{data.group.name ?? m["group.fallbackTitle"]()} · {m["brand"]()}
-	</title>
-</svelte:head>
+<Title
+	text={data.group.name ?? `${m["group.fallbackTitle"]()} · {m["brand"]()}`}
+/>
 
 <div class="mb-6 flex items-start justify-between gap-4">
 	<div>
 		<h1 class="font-display text-2xl font-semibold">
 			{data.group.name}
 		</h1>
+
 		<p class="text-sm text-base-content/60">
 			{m["group.quoteCount"]({
 				count: data.quotes.length,
@@ -68,9 +59,10 @@
 	</div>
 
 	<div class="flex shrink-0 gap-2">
-		<button class="btn btn-ghost btn-sm" onclick={copyLink}>
-			{copied ? m["group.copied"]() : m["group.copyLink"]()}
-		</button>
+		<CopyButton
+			content={window.location.href}
+			copyText={m["group.copyLink"]()}
+		/>
 
 		{#if groupIDsStore.has(groupId) || leaveDialogOpen}
 			<Dialog.Root bind:open={leaveDialogOpen}>

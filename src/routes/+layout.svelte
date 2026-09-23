@@ -1,15 +1,7 @@
 <script lang="ts">
-	import type { Pathname } from "$app/types";
-	import { resolve } from "$app/paths";
-	import { page } from "$app/state";
-	import {
-		getLocale,
-		locales,
-		localizeHref,
-		setLocale,
-	} from "$lib/paraglide/runtime";
 	import { m } from "$lib/paraglide/messages";
 	import "../app.css";
+	import LocaleSwitcher from "$lib/components/meta/LocaleSwitcher.svelte";
 
 	let { children } = $props();
 </script>
@@ -22,45 +14,22 @@
 			<a
 				href="/"
 				class="font-display text-xl font-semibold tracking-tight"
-				>{m.brand()}</a
 			>
+				{m.brand()}
+			</a>
 
 			<div class="flex items-center gap-4">
 				<a
 					href="/account"
 					class="link link-hover text-sm text-base-content/70"
-					>{m.syncDevices()}</a
 				>
+					{m.syncDevices()}
+				</a>
 
-				<label
-					class="flex items-center gap-2 text-sm text-base-content/70"
-				>
-					<span class="sr-only">{m.language()}</span>
-
-					<select
-						class="select select-bordered select-xs"
-						value={getLocale()}
-						onchange={(event) =>
-							setLocale(event.currentTarget.value as any)}
-						aria-label={m.language()}
-					>
-						<option value="en">{m.english()}</option>
-						<option value="de">{m.german()}</option>
-					</select>
-				</label>
+				<LocaleSwitcher />
 			</div>
 		</div>
 	</header>
 
 	<main class="mx-auto max-w-3xl px-5 py-8">{@render children()}</main>
-</div>
-
-<div style="display:none">
-	{#each locales as locale (locale)}
-		<a
-			href={resolve(
-				localizeHref(page.url.pathname, { locale }) as Pathname,
-			)}>{locale}</a
-		>
-	{/each}
 </div>
