@@ -1,5 +1,5 @@
-import { json, error } from "@sveltejs/kit";
-import { createGroup, getGroup, getGroupDetails } from "$lib/server/groups";
+import { json } from "@sveltejs/kit";
+import { getGroupDetails } from "$lib/server/groups";
 
 export async function GET({ url }) {
 	const ids = url.searchParams.getAll("id");
@@ -7,24 +7,4 @@ export async function GET({ url }) {
 	const groups = await getGroupDetails(ids);
 
 	return json(groups);
-}
-
-export async function POST({ request }) {
-	const body = await request.json().catch(() => ({}));
-	const name = (body.name || "").trim();
-	const customId = typeof body.id === "string" ? body.id.trim() : "";
-
-	if (!name) throw error(400, "A group name is required.");
-	if (name.length > 80)
-		throw error(400, "Group name must be under 80 characters.");
-	if (customId && !/^[A-Za-z0-9_-]{3,64}$/.test(customId)) {
-		throw error(400, "Custom group IDs must be 3-64 URL-safe characters.");
-	}
-	if (customId && (await getGroup(customId))) {
-		throw error(409, "That group ID is already taken.");
-	}
-
-	const id = await createGroup(name, customId || undefined);
-
-	return json({ id, name });
 }

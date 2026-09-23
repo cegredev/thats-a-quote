@@ -10,6 +10,7 @@
 	import { Dialog } from "bits-ui";
 	import { enhance } from "$app/forms";
 	import { groupIDsStore } from "$lib/client/storage.svelte";
+	import CreateQuoteForm from "$lib/components/forms/CreateQuoteForm.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -17,24 +18,7 @@
 
 	const groupId = page.params.id ?? "";
 
-	const {
-		form: quoteCreationForm,
-		errors: quoteCreationErrors,
-		constraints: quoteCreationConstraints,
-		enhance: quoteCreationEnhance,
-		submitting: quoteCreationSubmitting,
-	} = superForm(
-		untrack(() => data.quoteCreationForm),
-		{
-			delayMs: 300,
-		},
-	);
-
 	let copied = $state(false);
-
-	onMount(async () => {
-		$quoteCreationForm.quotedAt = toDateTimeLocal(new Date());
-	});
 
 	async function copyLink() {
 		await navigator.clipboard.writeText(window.location.href);
@@ -54,12 +38,6 @@
 				second: "2-digit",
 			},
 		);
-	}
-
-	function toDateTimeLocal(date: Date): string {
-		const offset = date.getTimezoneOffset();
-		const localDate = new Date(date.getTime() - offset * 60_000);
-		return localDate.toISOString().slice(0, 19);
 	}
 
 	let searchQueryExists = $derived(page.url.searchParams.size > 0);
@@ -173,78 +151,7 @@
 	</div>
 </div>
 
-<form
-	class="mb-10 flex flex-col gap-3 rounded-box border border-base-300 bg-base-100 p-5"
-	method="POST"
-	action="?/createQuote"
-	use:quoteCreationEnhance
->
-	<label class="fieldset-label" for="text">
-		{m["group.whatDidTheySay"]()}
-	</label>
-	<textarea
-		class="textarea w-full"
-		rows="2"
-		placeholder={m["group.quotePlaceholder"]()}
-		name="text"
-		aria-invalid={$quoteCreationErrors.text ? "true" : undefined}
-		bind:value={$quoteCreationForm.text}
-		{...$quoteCreationConstraints.text}
-	></textarea>
-	{#if $quoteCreationErrors.text}
-		<span class="validator-hint hidden">
-			{$quoteCreationErrors.text}
-		</span>
-	{/if}
-
-	<label class="fieldset-label" for="person">
-		{m["group.whoSaidIt"]()}
-	</label>
-	<input
-		class="input w-full"
-		list="people"
-		placeholder={m["group.personPlaceholder"]()}
-		name="person"
-		aria-invalid={$quoteCreationErrors.person ? "true" : undefined}
-		bind:value={$quoteCreationForm.person}
-		{...$quoteCreationConstraints.person}
-	/>
-	{#if $quoteCreationErrors.person}
-		<span class="validator-hint hidden">
-			{$quoteCreationErrors.person}
-		</span>
-	{/if}
-	<datalist id="people">
-		{#each data.people as person (person)}
-			<option value={person}></option>
-		{/each}
-	</datalist>
-
-	<label class="fieldset-label" for="quote-date-time"
-		>{m["group.dateTime"]()}</label
-	>
-	<input
-		type="datetime-local"
-		class="input w-full"
-		step="1"
-		name="quotedAt"
-		aria-invalid={$quoteCreationErrors.quotedAt ? "true" : undefined}
-		bind:value={$quoteCreationForm.quotedAt}
-		{...$quoteCreationConstraints.quotedAt}
-	/>
-	{#if $quoteCreationErrors.quotedAt}
-		<span class="validator-hint hidden">
-			{$quoteCreationErrors.quotedAt}
-		</span>
-	{/if}
-
-	<button
-		class="btn btn-primary mt-1 self-start"
-		disabled={$quoteCreationSubmitting}
-	>
-		{$quoteCreationSubmitting ? m["group.adding"]() : m["group.addQuote"]()}
-	</button>
-</form>
+<CreateQuoteForm form={data.quoteCreationForm} />
 
 <form
 	class="mb-6 grid gap-3 rounded-box border border-base-300 bg-base-100 p-4 sm:grid-cols-[1fr_1fr_auto]"

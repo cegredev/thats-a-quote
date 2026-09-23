@@ -1,0 +1,161 @@
+<script module lang="ts">
+	export type FieldConfig = {
+		/** Must match a key of the form's schema */
+		name: string;
+		label: string;
+		/** HTML input type, defaults to "text" */
+		type?: string;
+		optional?: boolean;
+		/** Text shown next to the label when `optional` is true, e.g. "(optional)" */
+		optionalLabel?: string;
+		placeholder?: string;
+		autocomplete?: string;
+		other?: any;
+	};
+</script>
+
+<script lang="ts" generics="T extends Record<string, unknown>">
+	import {
+		type InputConstraints,
+		superForm,
+		type SuperValidated,
+		type ValidationErrors,
+	} from "sveltekit-superforms";
+	import { untrack, type Snippet } from "svelte";
+	import type { Readable } from "svelte/store";
+
+	type SuperFormOptions = NonNullable<Parameters<typeof superForm<T>>[1]>;
+	type SuperFormReturn = ReturnType<typeof superForm<T>>;
+	type UnwrapStore<S> = S extends Readable<infer T> ? T : never;
+
+	type CustomFieldSnippet = Snippet<
+		[
+			{
+				config: FieldConfig;
+				form: UnwrapStore<SuperFormReturn["form"]>;
+				errors: UnwrapStore<SuperFormReturn["errors"]>;
+				constraints: UnwrapStore<SuperFormReturn["constraints"]>;
+			},
+		]
+	>;
+
+	type X = {
+		hi: 3;
+		bye: 4;
+	};
+
+	type CustomFieldsKey = `field_${Extract<keyof T, string>}`;
+	type CustomFields = Partial<Record<CustomFieldsKey, CustomFieldSnippet>>;
+
+	let {
+		form,
+		fields,
+		action,
+		submitLabel,
+		submitBusyLabel,
+		submitClass,
+		options,
+		class: className = "flex flex-col gap-3",
+		field,
+		footer,
+		...customFields
+	}: {
+		/** The SuperValidated form data passed down from a `+page.server.ts` load */
+		form: SuperValidated<T>;
+		/** Declarative description of the fields to render, in order */
+		fields: Record<keyof T, FieldConfig>;
+		/** Form `action` attribute, e.g. "?/createGroup" */
+		action: string;
+		submitLabel: string;
+		submitBusyLabel: string;
+		submitClass?: string;
+		/** Anything else you'd normally pass as the 2nd arg to superForm (onResult, onUpdated, validators, ...) */
+		options?: SuperFormOptions;
+		class?: string;
+		/** Override rendering of a single field; omit to use the default <input> */
+		field?: CustomFieldSnippet;
+		/** Override the submit area; receives current submitting state */
+		footer?: Snippet<[{ submitting: boolean }]>;
+	} & CustomFields = $props();
+
+	let customFieldsTyped: CustomFields = $derived(
+		customFields as unknown as CustomFields,
+	);
+
+	const {
+		form: formData,
+		errors,
+		constraints,
+		enhance,
+		submitting,
+	} = superForm<T>(
+		untrack(() => form),
+		{
+			delayMs: 300,
+			...options,
+		},
+	);
+</script>
+
+<form class={className} method="POST" {action} use:enhance>
+	{#each Object.entries(fields) as [name, cfg] (cfg.name)}
+		{@const customField =
+			customFieldsTyped[`field_${name}` as CustomFieldsKey]}
+
+		{#if customField}
+			{@render customField({
+				config: cfg,
+				form: $formData,
+				errors: $errors,
+				constraints: $constraints,
+			})}
+		{:else if field}
+			{@render field({
+				config: cfg,
+				form: $formData,
+				errors: $errors,
+				constraints: $constraints,
+			})}
+		{:else}
+			<label class="fieldset-label" for={cfg.name}>
+				{cfg.label}
+				{#if cfg.optional}
+					<span class="text-base-content/50">
+						({cfg.optionalLabel ?? "optional"})
+					</span>
+				{/if}
+			</label>
+			<input
+				type={cfg.type ?? "text"}
+				id={cfg.name}
+				name={cfg.name}
+				placeholder={cfg.placeholder}
+				class="input w-full validator"
+				aria-invalid={$errors[cfg.name as keyof ValidationErrors<T>]
+					? "true"
+					: undefined}
+				bind:value={$formData[cfg.name as keyof T]}
+				{...$constraints[
+					cfg.name as keyof InputConstraints<T>
+				] as Record<string, unknown>}
+				{...cfg.other ?? {}}
+			/>
+			{#if $errors[cfg.name as keyof ValidationErrors<T>]}
+				<span class="validator-hint hidden"
+					>{$errors[cfg.name as keyof ValidationErrors<T>]}</span
+				>
+			{/if}
+		{/if}
+	{/each}
+
+	{#if footer}
+		{@render footer({ submitting: $submitting })}
+	{:else}
+		<button
+			class={submitClass ?? "btn btn-primary mt-1 self-start"}
+			disabled={$submitting}
+		>
+			{$submitting ? submitBusyLabel : submitLabel}
+		</button>
+	{/if}
+</form>

@@ -36,6 +36,7 @@
 		"bcryptjs": "^3.0.3",
 		"better-auth": "^1.7.3",
 		"bits-ui": "^2.19.2",
+		"classnames": "^2.5.1",
 		"dotenv": "^17.4.2",
 		"drizzle-orm": "1.0.0-rc.4",
 		"nanoid": "^6.0.1",

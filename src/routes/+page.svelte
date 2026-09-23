@@ -1,34 +1,9 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
-	import { superForm } from "sveltekit-superforms";
-	import { untrack } from "svelte";
 	import type { PageProps } from "./$types";
 	import { m } from "$lib/paraglide/messages";
-	import { groupIDsStore } from "$lib/client/storage.svelte";
+	import GroupCreationForm from "$lib/components/forms/GroupCreationForm.svelte";
 
 	let { data }: PageProps = $props();
-
-	const {
-		form: groupCreationForm,
-		errors: groupCreationErrors,
-		constraints: groupCreationConstraints,
-		enhance: groupCreationEnhance,
-		submitting: groupCreationSubmitting,
-	} = superForm(
-		untrack(() => data.groupCreationForm),
-		{
-			delayMs: 300,
-			onResult: async ({ result }) => {
-				if (result.type === "success") {
-					const id = result.data?.id;
-					if (!id) return;
-
-					groupIDsStore.add(id);
-					await goto(`/group/${id}`);
-				}
-			},
-		},
-	);
 </script>
 
 <svelte:head>
@@ -74,53 +49,5 @@
 </section>
 
 <section class="rounded-box border border-base-300 bg-base-100 p-5">
-	<form
-		class="flex flex-col gap-3"
-		method="POST"
-		action="?/createGroup"
-		use:groupCreationEnhance
-	>
-		<label class="fieldset-label" for="name">{m["home.groupName"]()}</label>
-		<input
-			type="text"
-			name="name"
-			class="input w-full validator"
-			aria-invalid={$groupCreationErrors.name ? "true" : undefined}
-			bind:value={$groupCreationForm.name}
-			{...$groupCreationConstraints.name}
-		/>
-		{#if $groupCreationErrors.name}
-			<span class="validator-hint hidden"
-				>{$groupCreationErrors.name}</span
-			>
-		{/if}
-
-		<label class="fieldset-label" for="id">
-			{m["home.customId"]()}
-
-			<span class="text-base-content/50">
-				({m["home.optional"]()})
-			</span>
-		</label>
-		<input
-			type="text"
-			name="id"
-			class="input w-full"
-			aria-invalid={$groupCreationErrors.id ? "true" : undefined}
-			bind:value={$groupCreationForm.id}
-			{...$groupCreationConstraints.id}
-		/>
-		{#if $groupCreationErrors.id}
-			<span class="invalid">{$groupCreationErrors.id}</span>
-		{/if}
-
-		<button
-			class="btn btn-primary mt-1 self-start"
-			disabled={$groupCreationSubmitting}
-		>
-			{$groupCreationSubmitting
-				? m["home.createBusy"]()
-				: m["home.create"]()}
-		</button>
-	</form>
+	<GroupCreationForm form={data.groupCreationForm} />
 </section>
