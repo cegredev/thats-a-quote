@@ -3,7 +3,7 @@
 	import type { SuperValidated } from "sveltekit-superforms";
 	import { m } from "$lib/paraglide/messages";
 	import { groupIDsStore } from "$lib/client/storage.svelte";
-	import SchemaForm from "$lib/components/SchemaForm.svelte";
+	import SchemaForm from "$lib/components/forms/SchemaForm.svelte";
 	import type zodSchemas from "$lib/zod-schemas";
 	import type z from "zod";
 

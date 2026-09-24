@@ -3,7 +3,6 @@
 	import { goto } from "$app/navigation";
 	import type { PageProps } from "./$types";
 	import { m } from "$lib/paraglide/messages";
-	import { Dialog } from "bits-ui";
 	import { groupIDsStore } from "$lib/client/storage.svelte";
 	import CreateQuoteForm from "$lib/components/forms/CreateQuoteForm.svelte";
 	import CopyButton from "$lib/components/util/CopyButton.svelte";
@@ -13,12 +12,11 @@
 	import FormButton from "$lib/components/forms/FormButton.svelte";
 	import classNames from "classnames";
 	import { onMount } from "svelte";
+	import GenericDialog from "$lib/components/dialogs/GenericDialog.svelte";
 
 	let { data }: PageProps = $props();
 
 	const groupId = page.params.id ?? "";
-
-	let leaveDialogOpen: boolean = $state(false);
 
 	onMount(() => {
 		if (data.userIsMember) {
@@ -54,50 +52,30 @@
 			copyText={m["group.copyLink"]()}
 		/>
 
-		{#if groupIDsStore.has(groupId) || leaveDialogOpen}
-			<Dialog.Root bind:open={leaveDialogOpen}>
-				<Dialog.Trigger class="btn btn-ghost btn-sm text-error">
-					{m["group.leave"]()}
-				</Dialog.Trigger>
+		{#if groupIDsStore.has(groupId)}
+			<GenericDialog
+				text={{
+					trigger: m["group.leave"](),
+					title: "Leave group?",
+					description: m["group.leaveConfirm"]({
+						name: data.group.name,
+					}),
+				}}
+			>
+				{#snippet buttons()}
+					<FormButton
+						action="?/leaveGroup"
+						serverRequiresUser
+						text={m["group.leave"]()}
+						onSuccess={async () => {
+							groupIDsStore.remove(groupId);
 
-				<Dialog.Portal>
-					<Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
-
-					<Dialog.Content
-						class="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg
-			       -translate-x-1/2 -translate-y-1/2
-			       rounded-box bg-base-100 p-6 shadow-2xl"
-					>
-						<Dialog.Title class="text-xl font-bold">
-							Leave group?
-						</Dialog.Title>
-
-						<Dialog.Description class="mt-2 text-base-content/70">
-							{m["group.leaveConfirm"]({ name: data.group.name })}
-						</Dialog.Description>
-
-						<div class="mt-6 flex justify-end gap-2">
-							<Dialog.Close class="btn btn-ghost">
-								Cancel
-							</Dialog.Close>
-
-							<FormButton
-								action="?/leaveGroup"
-								serverRequiresUser
-								text={m["group.leave"]()}
-								onSuccess={async () => {
-									groupIDsStore.remove(groupId);
-
-									leaveDialogOpen = false;
-
-									await goto("..");
-								}}
-								classes={classNames("btn btn-error")}
-							/>
-						</div>
-					</Dialog.Content>
-				</Dialog.Portal>
-			</Dialog.Root>
+							await goto("..");
+						}}
+						classes={classNames("btn btn-error")}
+					/>
+				{/snippet}
+			</GenericDialog>
 		{:else}
 			<FormButton
 				text={m["group.join"]()}
