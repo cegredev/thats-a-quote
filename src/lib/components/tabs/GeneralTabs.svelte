@@ -20,18 +20,10 @@
 	let contentTabs = $derived(content as unknown as ContentTabs);
 </script>
 
-<Tabs.Root
-	value="login"
-	class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
->
-	<Tabs.List
-		class="rounded-9px bg-dark-10 shadow-mini-inset dark:bg-background grid w-full grid-cols-2 gap-1 p-1 text-sm font-semibold leading-[0.01em] dark:border dark:border-neutral-600/30"
-	>
+<Tabs.Root value="login">
+	<Tabs.List class="tabs tabs-box w-fit">
 		{#each values as value}
-			<Tabs.Trigger
-				{value}
-				class="data-[state=active]:shadow-mini dark:data-[state=active]:bg-muted h-8 rounded-[7px] bg-transparent py-2 data-[state=active]:bg-white"
-			>
+			<Tabs.Trigger {value} class="tab data-[state=active]:tab-active">
 				{configs[value as T].label}
 			</Tabs.Trigger>
 		{/each}

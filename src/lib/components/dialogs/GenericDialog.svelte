@@ -10,11 +10,10 @@
 			close?: string;
 		};
 		buttons: Snippet;
+		open?: boolean;
 	};
 
-	let { text, buttons }: Props = $props();
-
-	let open: boolean = $state(false);
+	let { text, buttons, open = $bindable(false) }: Props = $props();
 </script>
 
 <Dialog.Root bind:open>
@@ -23,12 +22,19 @@
 	</Dialog.Trigger>
 
 	<Dialog.Portal>
-		<Dialog.Overlay class="fixed inset-0 z-50 bg-black/50" />
+		<Dialog.Overlay
+			class="fixed inset-0 z-50 bg-black/50
+  				   transition-opacity duration-200 ease-out
+				   data-[state=open]:opacity-100 data-[state=closed]:opacity-0"
+		/>
 
 		<Dialog.Content
-			class="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg
-			       -translate-x-1/2 -translate-y-1/2
-			       rounded-box bg-base-100 p-6 shadow-2xl"
+			class="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2
+				   sm:max-w-122.5 md:w-full max-w-lg
+			       rounded-box bg-base-100 p-6 shadow-2xl
+  				   transition-opacity duration-200 ease-out
+				   data-[state=open]:opacity-100 data-[state=closed]:opacity-0
+				   outline-hidden"
 		>
 			<Dialog.Title class="text-xl font-bold">{text.title}</Dialog.Title>
 

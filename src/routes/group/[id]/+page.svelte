@@ -23,6 +23,8 @@
 			groupIDsStore.add(groupId);
 		}
 	});
+
+	let leaveDialogOpen: boolean = $state(false);
 </script>
 
 <Title
@@ -52,7 +54,7 @@
 			copyText={m["group.copyLink"]()}
 		/>
 
-		{#if groupIDsStore.has(groupId)}
+		{#if groupIDsStore.has(groupId) || leaveDialogOpen}
 			<GenericDialog
 				text={{
 					trigger: m["group.leave"](),
@@ -61,6 +63,7 @@
 						name: data.group.name,
 					}),
 				}}
+				bind:open={leaveDialogOpen}
 			>
 				{#snippet buttons()}
 					<FormButton

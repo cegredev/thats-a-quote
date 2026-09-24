@@ -26,24 +26,27 @@
 {#if $session.data}
 	<UserCard user={$session.data.user} />
 {:else}
-	<GeneralTabs
-		values={["login", "register"]}
-		configs={{
-			login: {
-				label: "Log in",
-			},
-			register: {
-				label: "Sign up",
-			},
-		}}
-		default="login"
+	<div
+		class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
 	>
-		{#snippet content_login()}
-			<LoginForm form={data.loginForm} />
-		{/snippet}
-
-		{#snippet content_register()}
-			<RegisterForm form={data.registerForm} />
-		{/snippet}
-	</GeneralTabs>
+		<GeneralTabs
+			values={["login", "register"]}
+			configs={{
+				login: {
+					label: "Log in",
+				},
+				register: {
+					label: "Sign up",
+				},
+			}}
+			default="login"
+		>
+			{#snippet content_login()}
+				<LoginForm form={data.loginForm} />
+			{/snippet}
+			{#snippet content_register()}
+				<RegisterForm form={data.registerForm} />
+			{/snippet}
+		</GeneralTabs>
+	</div>
 {/if}
