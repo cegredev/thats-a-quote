@@ -99,7 +99,6 @@ class GroupIDsStore {
 		// the cleanup function is returned in case you ever need it.
 		$effect.root(() => {
 			$effect(() => {
-				console.log("running effect");
 				// Reading this.ids here is what makes the effect re-run
 				// whenever the array changes.
 				const ids = this.ids;

@@ -1,25 +1,30 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
-	import { authClient } from "$lib/client/frontend-auth";
 	import type { PageProps } from "./$types";
 	import { m } from "$lib/paraglide/messages";
 	import { Dialog } from "bits-ui";
-	import { enhance } from "$app/forms";
 	import { groupIDsStore } from "$lib/client/storage.svelte";
 	import CreateQuoteForm from "$lib/components/forms/CreateQuoteForm.svelte";
 	import CopyButton from "$lib/components/util/CopyButton.svelte";
 	import Title from "$lib/components/util/Title.svelte";
 	import SearchQuotesForm from "$lib/components/forms/SearchQuotesForm.svelte";
 	import QuotesList from "$lib/components/quotes/QuotesList.svelte";
+	import FormButton from "$lib/components/forms/FormButton.svelte";
+	import classNames from "classnames";
+	import { onMount } from "svelte";
 
 	let { data }: PageProps = $props();
-
-	const session = authClient.useSession();
 
 	const groupId = page.params.id ?? "";
 
 	let leaveDialogOpen: boolean = $state(false);
+
+	onMount(() => {
+		if (data.userIsMember) {
+			groupIDsStore.add(groupId);
+		}
+	});
 </script>
 
 <Title
@@ -76,54 +81,31 @@
 								Cancel
 							</Dialog.Close>
 
-							<form
-								method="POST"
+							<FormButton
 								action="?/leaveGroup"
-								use:enhance={async () => {
-									return async ({ result, update }) => {
-										await update();
+								serverRequiresUser
+								text={m["group.leave"]()}
+								onSuccess={async () => {
+									groupIDsStore.remove(groupId);
 
-										if (result.type === "success") {
-											leaveDialogOpen = false;
+									leaveDialogOpen = false;
 
-											await goto("..");
-										}
-									};
+									await goto("..");
 								}}
-							>
-								<button
-									type={$session.data?.user
-										? "submit"
-										: "button"}
-									class="btn btn-error"
-									onclick={async () => {
-										groupIDsStore.remove(groupId);
-
-										if (!$session.data?.user) {
-											leaveDialogOpen = false;
-
-											await goto("..");
-										}
-									}}
-								>
-									{m["group.leave"]()}
-								</button>
-							</form>
+								classes={classNames("btn btn-error")}
+							/>
 						</div>
 					</Dialog.Content>
 				</Dialog.Portal>
 			</Dialog.Root>
 		{:else}
-			<form method="POST" action="?/joinGroup" use:enhance>
-				<button
-					type={$session.data?.user ? "submit" : "button"}
-					class="btn btn-ghost btn-sm text-success"
-					onclick={() =>
-						setTimeout(() => groupIDsStore.add(groupId), 100)}
-				>
-					{m["group.join"]()}
-				</button>
-			</form>
+			<FormButton
+				text={m["group.join"]()}
+				action="?/joinGroup"
+				serverRequiresUser
+				classes={classNames("btn btn-ghost btn-sm text-success")}
+				onSuccess={() => groupIDsStore.add(groupId)}
+			/>
 		{/if}
 	</div>
 </div>
