@@ -10,6 +10,7 @@
 		optionalLabel?: string;
 		placeholder?: string;
 		autocomplete?: string;
+		skipConstraints?: boolean;
 		other?: any;
 	};
 </script>
@@ -151,9 +152,11 @@
 					? "true"
 					: undefined}
 				bind:value={$formData[cfg.name as keyof T]}
-				{...$constraints[
-					cfg.name as keyof InputConstraints<T>
-				] as Record<string, unknown>}
+				{...cfg.skipConstraints
+					? {}
+					: ($constraints[
+							cfg.name as keyof InputConstraints<T>
+						] as Record<string, unknown>)}
 				{...cfg.other ?? {}}
 			/>
 			{#if $errors[cfg.name as keyof ValidationErrors<T>]}

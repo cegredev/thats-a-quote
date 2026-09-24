@@ -9,10 +9,7 @@
 
 	type QuoteCreationData = z.infer<typeof zodSchemas.quotes.create>;
 
-	let {
-		form,
-	}: { form: SuperValidated<QuoteCreationData, any, QuoteCreationData> } =
-		$props();
+	let { form }: { form: SuperValidated<QuoteCreationData> } = $props();
 
 	onMount(async () => {
 		form.data.quotedAt = toDateTimeLocal(new Date());

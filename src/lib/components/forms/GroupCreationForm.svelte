@@ -9,10 +9,7 @@
 
 	type GroupCreationData = z.infer<typeof zodSchemas.groups.create>;
 
-	let {
-		form,
-	}: { form: SuperValidated<GroupCreationData, any, GroupCreationData> } =
-		$props();
+	let { form }: { form: SuperValidated<GroupCreationData> } = $props();
 </script>
 
 <SchemaForm
