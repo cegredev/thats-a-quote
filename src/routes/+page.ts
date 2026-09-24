@@ -4,7 +4,7 @@ import { type GroupID, type Group } from "$lib/types";
 import type { PageLoad } from "./$types";
 import { groupIDsStore } from "$lib/client/storage.svelte";
 
-export const load: PageLoad = async ({ data }) => {
+export const load: PageLoad = async ({ data, fetch }) => {
 	let groups: Group[] = [];
 
 	if (data.groups) {
@@ -12,7 +12,7 @@ export const load: PageLoad = async ({ data }) => {
 	}
 
 	if (browser) {
-		const result = await groupsApi.getByIDs(groupIDsStore.ids);
+		const result = await groupsApi(fetch).getByIDs(groupIDsStore.ids);
 
 		if (result.ok) {
 			groups.push(...result.data);

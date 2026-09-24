@@ -54,7 +54,7 @@
 		},
 	}}
 >
-	{#snippet field_text({ constraints, errors, form })}
+	{#snippet field_text({ constraints, errors, value, setValue })}
 		<label class="fieldset-label" for="text">
 			{m["group.whatDidTheySay"]()}
 		</label>
@@ -64,7 +64,8 @@
 			placeholder={m["group.quotePlaceholder"]()}
 			name="text"
 			aria-invalid={errors.text ? "true" : undefined}
-			bind:value={form.text}
+			{value}
+			onchange={(e) => setValue(e.currentTarget.value)}
 			{...constraints.text}
 		></textarea>
 		{#if errors.text}

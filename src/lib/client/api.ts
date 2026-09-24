@@ -1,7 +1,10 @@
 import type { Group } from "$lib/types";
 
+type FetchFunction = typeof fetch;
+
 export async function api<T>(
 	url: string,
+	fetch: FetchFunction,
 	options?: RequestInit,
 ): Promise<
 	| {
@@ -29,9 +32,10 @@ export async function api<T>(
 	return { ok: true, data };
 }
 
-export const groupsApi = {
+export const groupsApi = (customFetch?: FetchFunction) => ({
 	getByIDs: async (ids: string[]) =>
 		api<Group[]>(
 			`/api/groups?${ids.map((id) => `id=${encodeURIComponent(id)}`).join("&")}`,
+			customFetch ?? fetch,
 		),
-};
+});
