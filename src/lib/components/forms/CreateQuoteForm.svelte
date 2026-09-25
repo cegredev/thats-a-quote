@@ -32,7 +32,11 @@
 	submitBusyLabel={m["group.adding"]()}
 	submitClass={classNames("btn btn-primary mt-1 self-start")}
 	fields={{
-		text: { name: "text", label: m["group.whatDidTheySay"]() },
+		text: {
+			name: "text",
+			type: "textarea",
+			label: m["group.whatDidTheySay"](),
+		},
 		person: {
 			name: "person",
 			label: m["group.personRequired"](),
@@ -66,25 +70,4 @@
 			}
 		},
 	}}
->
-	{#snippet field_text({ constraints, errors, value, setValue })}
-		<label class="fieldset-label" for="text">
-			{m["group.whatDidTheySay"]()}
-		</label>
-		<textarea
-			class="textarea w-full"
-			rows="2"
-			placeholder={m["group.quotePlaceholder"]()}
-			name="text"
-			aria-invalid={errors.text ? "true" : undefined}
-			{value}
-			onchange={(e) => setValue(e.currentTarget.value)}
-			{...constraints.text}
-		></textarea>
-		{#if errors.text}
-			<span class="validator-hint hidden">
-				{errors.text}
-			</span>
-		{/if}
-	{/snippet}
-</SchemaForm>
+></SchemaForm>

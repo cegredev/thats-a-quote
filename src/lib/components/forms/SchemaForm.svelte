@@ -24,6 +24,7 @@
 	} from "sveltekit-superforms";
 	import { untrack, type Snippet } from "svelte";
 	import { type Readable } from "svelte/store";
+	import { autogrow } from "$lib/client/component-utils";
 
 	type SuperFormOptions = NonNullable<Parameters<typeof superForm<T>>[1]>;
 	type SuperFormReturn = ReturnType<typeof superForm<T>>;
@@ -103,7 +104,7 @@
 		untrack(() => form),
 		{
 			delayMs: 300,
-			...options,
+			...untrack(() => options),
 		},
 	);
 
@@ -134,6 +135,21 @@
 				constraints: $constraints,
 			})}
 		{:else}
+			{@const inputProps = {
+				id: cfg.name,
+				name: cfg.name,
+				placeholder: cfg.placeholder,
+				"aria-invalid": $errors[cfg.name as keyof ValidationErrors<T>]
+					? "true"
+					: undefined,
+				...(cfg.skipConstraints
+					? {}
+					: ($constraints[
+							cfg.name as keyof InputConstraints<T>
+						] as Record<string, unknown>)),
+				...cfg.other,
+			}}
+
 			<label class="fieldset-label" for={cfg.name}>
 				{cfg.label}
 				{#if cfg.optional}
@@ -142,23 +158,23 @@
 					</span>
 				{/if}
 			</label>
-			<input
-				type={cfg.type ?? "text"}
-				id={cfg.name}
-				name={cfg.name}
-				placeholder={cfg.placeholder}
-				class="input w-full validator"
-				aria-invalid={$errors[cfg.name as keyof ValidationErrors<T>]
-					? "true"
-					: undefined}
-				bind:value={$formData[cfg.name as keyof T]}
-				{...cfg.skipConstraints
-					? {}
-					: ($constraints[
-							cfg.name as keyof InputConstraints<T>
-						] as Record<string, unknown>)}
-				{...cfg.other ?? {}}
-			/>
+
+			{#if cfg.type === "textarea"}
+				<textarea
+					class="textarea w-full validator resize-none"
+					rows="2"
+					bind:value={$formData[cfg.name as keyof T]}
+					use:autogrow
+					{...inputProps}
+				></textarea>
+			{:else}
+				<input
+					type={cfg.type ?? "text"}
+					class="input w-full validator"
+					bind:value={$formData[cfg.name as keyof T]}
+					{...inputProps}
+				/>
+			{/if}
 			{#if $errors[cfg.name as keyof ValidationErrors<T>]}
 				<span class="validator-hint hidden">
 					{$errors[cfg.name as keyof ValidationErrors<T>]}
