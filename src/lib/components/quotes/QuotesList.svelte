@@ -3,8 +3,8 @@
 	import { m } from "$lib/paraglide/messages";
 	import { getLocale } from "$lib/paraglide/runtime";
 	import type { Quote } from "$lib/server/quotes";
-	import { Info } from "@lucide/svelte";
-	import { Popover } from "bits-ui";
+	import { CircleQuestionMark } from "@lucide/svelte";
+	import GeneralPopover from "../GeneralPopover.svelte";
 
 	let { quotes }: { quotes: Quote[] } = $props();
 
@@ -54,27 +54,18 @@
 				</p>
 
 				{#if quote.context}
-					<Popover.Root>
-						<Popover.Trigger
-							class="absolute top-2 right-2 inline-flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-base-200 hover:text-base-content"
-							aria-label="More information"
-						>
-							<Info class="size-4" />
-						</Popover.Trigger>
-
-						<Popover.Content
-							class="z-50 w-64 rounded-lg border bg-base-100 p-4 shadow-lg"
-							side="bottom"
-							align="end"
-							sideOffset={6}
-						>
-							<p class="text-sm">
-								{quote.context}
-							</p>
-
-							<Popover.Arrow class="fill-base-100" />
-						</Popover.Content>
-					</Popover.Root>
+					<div class="absolute top-2 right-2">
+						<GeneralPopover>
+							{#snippet trigger()}
+								<CircleQuestionMark class="size-4" />
+							{/snippet}
+							{#snippet content()}
+								<p class="text-sm">
+									{quote.context}
+								</p>
+							{/snippet}
+						</GeneralPopover>
+					</div>
 				{/if}
 			</li>
 		{/each}
