@@ -63,7 +63,7 @@ export const actions = {
 
 		const id = await addQuote(groupId, {
 			text: form.data.text,
-			person: form.data.person ?? "someone",
+			person: form.data.person,
 			quotedAt: new Date(form.data.quotedAt).getTime(),
 			context: form.data.context,
 		});

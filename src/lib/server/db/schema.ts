@@ -20,17 +20,17 @@ export const groupsTable = sqliteTable("groups", {
 export const quotesTable = sqliteTable(
 	"quotes",
 	{
-		id: text()
-			.primaryKey()
-			.$default(() => crypto.randomUUID()),
+		id: text().primaryKey(),
 		groupId: text()
 			.notNull()
 			.references(() => groupsTable.id, { onDelete: "cascade" }),
 		text: text().notNull(),
-		person: text().notNull(),
+		person: text(),
 		context: text(),
-		createdAt: int().notNull(),
-		quotedAt: int().notNull().default(0),
+		createdAt: int()
+			.notNull()
+			.$default(() => Date.now()),
+		quotedAt: int().notNull(),
 	},
 	(table) => [index("idx_quotes_group").on(table.groupId)],
 );

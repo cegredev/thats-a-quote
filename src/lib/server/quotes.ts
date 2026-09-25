@@ -7,7 +7,7 @@ export type Quote = {
 	id: string;
 	createdAt: number;
 	text: string;
-	person: string;
+	person?: string;
 	context?: string;
 	quotedAt: number;
 };
@@ -50,9 +50,8 @@ export async function addQuote(
 	// UUID v7 should be used for most database primary keys
 	// (https://createuuid.com/articles/uuid-versions-explained)
 	const id = uuidv7();
-	const createdAt = Date.now();
 
-	await db.insert(quotesTable).values({ id, groupId, createdAt, ...quote });
+	await db.insert(quotesTable).values({ id, groupId, ...quote });
 
 	return id;
 }
