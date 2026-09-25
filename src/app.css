@@ -51,17 +51,3 @@ body {
 .font-display {
 	font-family: var(--font-display);
 }
-
-.quote-card {
-	background: color-mix(in oklch, var(--color-base-100) 100%, transparent);
-	border: 1.5px solid var(--color-base-300);
-	transition:
-		transform 0.15s ease,
-		box-shadow 0.15s ease;
-}
-
-.quote-card:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 6px 18px -8px
-		color-mix(in oklch, var(--color-neutral) 35%, transparent);
-}

@@ -28,6 +28,7 @@ export const quotesTable = sqliteTable(
 			.references(() => groupsTable.id, { onDelete: "cascade" }),
 		text: text().notNull(),
 		person: text().notNull(),
+		context: text(),
 		createdAt: int().notNull(),
 		quotedAt: int().notNull().default(0),
 	},

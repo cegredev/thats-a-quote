@@ -5,9 +5,10 @@ import { v7 as uuidv7 } from "uuid";
 
 export type Quote = {
 	id: string;
+	createdAt: number;
 	text: string;
 	person: string;
-	createdAt: number;
+	context?: string;
 	quotedAt: number;
 };
 
@@ -44,18 +45,14 @@ export async function listQuotesMatching(
 
 export async function addQuote(
 	groupId: string,
-	text: string,
-	person: string,
-	quotedAt: number,
-): Promise<Quote> {
+	quote: Omit<Quote, "id" | "createdAt">,
+): Promise<string> {
 	// UUID v7 should be used for most database primary keys
 	// (https://createuuid.com/articles/uuid-versions-explained)
 	const id = uuidv7();
 	const createdAt = Date.now();
 
-	await db
-		.insert(quotesTable)
-		.values({ id, groupId, text, person, createdAt, quotedAt });
+	await db.insert(quotesTable).values({ id, groupId, createdAt, ...quote });
 
-	return { id, text, person, createdAt, quotedAt };
+	return id;
 }

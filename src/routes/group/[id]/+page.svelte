@@ -93,6 +93,12 @@
 
 <CreateQuoteForm form={data.quoteCreationForm} />
 
+<datalist id="people">
+	{#each data.people as person (person)}
+		<option value={person}></option>
+	{/each}
+</datalist>
+
 <SearchQuotesForm />
 
 <QuotesList quotes={data.quotes} />

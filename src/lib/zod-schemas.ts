@@ -17,6 +17,7 @@ export default {
 			text: z.string(),
 			person: z.string().optional(),
 			quotedAt: z.iso.datetime({ local: true }),
+			context: z.string().optional(),
 		}),
 		search: z.object({
 			text: z.string().optional(),

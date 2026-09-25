@@ -5,15 +5,17 @@
 	import type zodSchemas from "$lib/zod-schemas";
 	import type z from "zod";
 	import classNames from "classnames";
-	import { onMount } from "svelte";
 
 	type QuoteCreationData = z.infer<typeof zodSchemas.quotes.create>;
 
 	let { form }: { form: SuperValidated<QuoteCreationData> } = $props();
 
-	onMount(async () => {
+	function setTime() {
+		form.data.quotedAt = "";
 		form.data.quotedAt = toDateTimeLocal(new Date());
-	});
+	}
+
+	setTime();
 
 	function toDateTimeLocal(date: Date): string {
 		const offset = date.getTimezoneOffset();
@@ -49,6 +51,20 @@
 				step: 1,
 			},
 		},
+		context: {
+			name: "context",
+			label: "Context",
+			type: "textarea",
+			optional: true,
+		},
+	}}
+	options={{
+		onResult: async ({ result }) => {
+			if (result.type === "success") {
+				console.log("hi");
+				setTimeout(() => setTime(), 2000);
+			}
+		},
 	}}
 >
 	{#snippet field_text({ constraints, errors, value, setValue })}
@@ -72,9 +88,3 @@
 		{/if}
 	{/snippet}
 </SchemaForm>
-
-<!-- <datalist id="people">
-	{#each data.people as person (person)}
-		<option value={person}></option>
-	{/each}
-</datalist> -->

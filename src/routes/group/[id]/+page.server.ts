@@ -61,12 +61,12 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const id = await addQuote(
-			groupId,
-			form.data.text,
-			form.data.person ?? "someone",
-			new Date(form.data.quotedAt).getTime(),
-		);
+		const id = await addQuote(groupId, {
+			text: form.data.text,
+			person: form.data.person ?? "someone",
+			quotedAt: new Date(form.data.quotedAt).getTime(),
+			context: form.data.context,
+		});
 
 		return { form, id };
 	},

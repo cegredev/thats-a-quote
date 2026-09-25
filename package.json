@@ -33,6 +33,7 @@
 	"dependencies": {
 		"@better-auth/drizzle-adapter": "^1.7.3",
 		"@libsql/client": "^0.18.0",
+		"@lucide/svelte": "^1.47.0",
 		"bcryptjs": "^3.0.3",
 		"better-auth": "^1.7.3",
 		"bits-ui": "^2.19.2",
