@@ -1,4 +1,4 @@
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 import { groupsApi } from "$lib/client/api";
 import { type GroupID, type Group } from "$lib/types";
 import type { PageLoad } from "./$types";

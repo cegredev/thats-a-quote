@@ -16,6 +16,9 @@ export default defineConfig({
 						: true,
 			},
 			adapter: adapter(),
+			experimental: {
+				explicitEnvironmentVariables: true,
+			},
 		}),
 		paraglideVitePlugin({
 			project: "./project.inlang",

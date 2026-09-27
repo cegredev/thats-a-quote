@@ -4,7 +4,11 @@ import { getTextDirection } from "$lib/paraglide/runtime";
 import { paraglideMiddleware } from "$lib/paraglide/server";
 import { auth } from "$lib/server/auth";
 import { svelteKitHandler } from "better-auth/svelte-kit";
-import { building } from "$app/environment";
+import { building } from "$app/env";
+import { logger } from "$lib/server/logging";
+import { nanoid } from "nanoid";
+
+logger.info("thats-a-quote server started!");
 
 const originalHandle: Handle = async ({ event, resolve }) => {
 	// Fetch current session from Better Auth
@@ -17,6 +21,8 @@ const originalHandle: Handle = async ({ event, resolve }) => {
 		event.locals.session = session.session;
 		event.locals.user = session.user;
 	}
+
+	event.locals.logger = logger.child({ reqId: nanoid() });
 
 	return svelteKitHandler({ event, resolve, auth, building });
 };
