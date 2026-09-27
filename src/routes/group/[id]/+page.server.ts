@@ -9,7 +9,7 @@ import zodSchemas from "$lib/zod-schemas";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { fail } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import { listQuotesMatching, addQuote } from "$lib/server/quotes";
 import { rateLimit } from "$lib/server/rate-limiting";
 
@@ -52,6 +52,10 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 export const actions = {
 	createQuote: rateLimit("medium", async ({ request, params }) => {
 		const groupId = params.id;
+		if (!groupId)
+			error(400, {
+				message: "No group id param",
+			});
 
 		const form = await superValidate(
 			request,
@@ -73,6 +77,11 @@ export const actions = {
 	}),
 	joinGroup: rateLimit("medium", async ({ params, locals }) => {
 		const groupId = params.id;
+		if (!groupId)
+			error(400, {
+				message: "No group id param",
+			});
+
 		const userId = locals.user?.id;
 
 		if (!userId) {
@@ -85,6 +94,11 @@ export const actions = {
 	}),
 	leaveGroup: rateLimit("medium", async ({ params, locals }) => {
 		const groupId = params.id;
+		if (!groupId)
+			error(400, {
+				message: "No group id param",
+			});
+
 		const userId = locals.user?.id;
 
 		if (!userId) {
