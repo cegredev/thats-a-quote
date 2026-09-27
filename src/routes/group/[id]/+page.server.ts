@@ -11,6 +11,7 @@ import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { listQuotesMatching, addQuote } from "$lib/server/quotes";
+import { rateLimit } from "$lib/server/rate-limiting";
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;
@@ -49,27 +50,36 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 };
 
 export const actions = {
-	createQuote: async ({ request, params }) => {
-		const groupId = params.id;
+	createQuote: rateLimit(
+		{
+			IP: [100, "h"],
+			IPUA: [
+				[10, "m"],
+				[50, "h"],
+			],
+		},
+		async ({ request, params }) => {
+			const groupId = params.id;
 
-		const form = await superValidate(
-			request,
-			zod4(zodSchemas.quotes.create),
-		);
+			const form = await superValidate(
+				request,
+				zod4(zodSchemas.quotes.create),
+			);
 
-		if (!form.valid) {
-			return fail(400, { form });
-		}
+			if (!form.valid) {
+				return fail(400, { form });
+			}
 
-		const id = await addQuote(groupId, {
-			text: form.data.text,
-			person: form.data.person,
-			quotedAt: new Date(form.data.quotedAt).getTime(),
-			context: form.data.context,
-		});
+			const id = await addQuote(groupId, {
+				text: form.data.text,
+				person: form.data.person,
+				quotedAt: new Date(form.data.quotedAt).getTime(),
+				context: form.data.context,
+			});
 
-		return { form, id };
-	},
+			return { form, id };
+		},
+	),
 	joinGroup: async ({ params, locals }) => {
 		const groupId = params.id;
 		const userId = locals.user?.id;
