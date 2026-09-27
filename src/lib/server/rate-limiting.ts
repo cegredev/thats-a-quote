@@ -1,4 +1,5 @@
 import {
+	RateLimiter,
 	RetryAfterRateLimiter,
 	type Rate,
 	type RateLimiterPlugin,
@@ -13,10 +14,37 @@ type RateLimitConfig = {
 	loggedIn?: Rates;
 };
 
+export const RATE_LIMIT_CONFIGS = {
+	strict: {
+		IP: [
+			[10, "m"],
+			[30, "h"],
+		],
+		IPUA: [
+			[5, "m"],
+			[20, "h"],
+		],
+	},
+	medium: {
+		IP: [
+			[15, "m"],
+			[60, "h"],
+		],
+		IPUA: [
+			[10, "m"],
+			[30, "h"],
+		],
+	},
+} as const satisfies Record<string, RateLimitConfig>;
+
 export const rateLimit = (
-	config: RateLimitConfig,
-	formAction: Action,
+	config: RateLimitConfig | keyof typeof RATE_LIMIT_CONFIGS,
+	handler: Action,
 ): Action => {
+	if (!(config instanceof Object)) {
+		config = RATE_LIMIT_CONFIGS[config];
+	}
+
 	const plugins: RateLimiterPlugin[] = [];
 
 	if (config.loggedIn) {
@@ -48,14 +76,14 @@ export const rateLimit = (
 			// return response;
 		}
 
-		return await formAction(event);
+		return await handler(event);
 	};
 };
 
 class LoggedInUserRateLimiter implements RateLimiterPlugin {
-	readonly rate: Rate | Rate[];
+	readonly rate: Rates;
 
-	constructor(rate: Rate | Rate[]) {
+	constructor(rate: Rates) {
 		this.rate = rate;
 	}
 
@@ -66,3 +94,22 @@ class LoggedInUserRateLimiter implements RateLimiterPlugin {
 		return userId;
 	}
 }
+
+type ExtraDataType = { keys: string[] };
+
+export class ExtraDataRateLimiter implements RateLimiterPlugin<ExtraDataType> {
+	readonly rate: Rates;
+
+	constructor(rate: Rates) {
+		this.rate = rate;
+	}
+
+	async hash(_: RequestEvent, extraData: ExtraDataType) {
+		return extraData.keys.join(",");
+	}
+}
+
+export const limiterOnData = (rates: Rates) =>
+	new RetryAfterRateLimiter<ExtraDataType>({
+		plugins: [new ExtraDataRateLimiter(rates)],
+	});

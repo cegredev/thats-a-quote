@@ -9,6 +9,7 @@ import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
+import { rateLimit } from "$lib/server/rate-limiting";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	let groups: { id: string; name: string }[] | undefined = undefined;
@@ -29,7 +30,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions = {
-	createGroup: async ({ request, locals }) => {
+	createGroup: rateLimit("medium", async ({ request, locals }) => {
 		const form = await superValidate(
 			request,
 			zod4(zodSchemas.groups.create),
@@ -52,5 +53,5 @@ export const actions = {
 		}
 
 		return { form, id };
-	},
+	}),
 };

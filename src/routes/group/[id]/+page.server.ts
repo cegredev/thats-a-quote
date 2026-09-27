@@ -50,37 +50,28 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 };
 
 export const actions = {
-	createQuote: rateLimit(
-		{
-			IP: [100, "h"],
-			IPUA: [
-				[10, "m"],
-				[50, "h"],
-			],
-		},
-		async ({ request, params }) => {
-			const groupId = params.id;
+	createQuote: rateLimit("medium", async ({ request, params }) => {
+		const groupId = params.id;
 
-			const form = await superValidate(
-				request,
-				zod4(zodSchemas.quotes.create),
-			);
+		const form = await superValidate(
+			request,
+			zod4(zodSchemas.quotes.create),
+		);
 
-			if (!form.valid) {
-				return fail(400, { form });
-			}
+		if (!form.valid) {
+			return fail(400, { form });
+		}
 
-			const id = await addQuote(groupId, {
-				text: form.data.text,
-				person: form.data.person,
-				quotedAt: new Date(form.data.quotedAt).getTime(),
-				context: form.data.context,
-			});
+		const id = await addQuote(groupId, {
+			text: form.data.text,
+			person: form.data.person,
+			quotedAt: new Date(form.data.quotedAt).getTime(),
+			context: form.data.context,
+		});
 
-			return { form, id };
-		},
-	),
-	joinGroup: async ({ params, locals }) => {
+		return { form, id };
+	}),
+	joinGroup: rateLimit("medium", async ({ params, locals }) => {
 		const groupId = params.id;
 		const userId = locals.user?.id;
 
@@ -91,8 +82,8 @@ export const actions = {
 		await addMembersToGroup([{ groupId, userId }]);
 
 		return {};
-	},
-	leaveGroup: async ({ params, locals }) => {
+	}),
+	leaveGroup: rateLimit("medium", async ({ params, locals }) => {
 		const groupId = params.id;
 		const userId = locals.user?.id;
 
@@ -103,5 +94,5 @@ export const actions = {
 		await removeMembersFromGroup([{ groupId, userId }]);
 
 		return {};
-	},
+	}),
 };
