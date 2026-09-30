@@ -10,8 +10,8 @@ import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { error, fail } from "@sveltejs/kit";
-import { listQuotesMatching, addQuote } from "$lib/server/quotes";
 import { rateLimit } from "$lib/server/rate-limiting";
+import { quotesCrud } from "$lib/server/db/crud";
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;
@@ -25,7 +25,32 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const result = zodSchemas.quotes.search.safeParse(searchRaw);
 	const searchOptions = result.success ? result.data : {};
 
-	const quotes = await listQuotesMatching(groupId, searchOptions);
+	const quotesPagination = await quotesCrud.list({
+		filters: {
+			groupId,
+			person: searchOptions.person
+				? {
+						like: `%${searchOptions.person}%`,
+					}
+				: undefined,
+			text: searchOptions.text
+				? {
+						like: `%${searchOptions.text}%`,
+					}
+				: undefined,
+		},
+		orderBy: [
+			{
+				field: "quotedAt",
+				direction: "desc",
+			},
+
+			{
+				field: "createdAt",
+				direction: "desc",
+			},
+		],
+	});
 
 	const people = await listPeople(groupId);
 
@@ -42,7 +67,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 
 	return {
 		group,
-		quotes,
+		quotesPagination,
 		people,
 		quoteCreationForm,
 		userIsMember,
@@ -66,14 +91,20 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const id = await addQuote(groupId, {
-			text: form.data.text,
-			person: form.data.person,
-			quotedAt: new Date(form.data.quotedAt).getTime(),
-			context: form.data.context,
-		});
+		const quote = await quotesCrud.create(
+			{
+				groupId,
+				text: form.data.text,
+				person: form.data.person,
+				quotedAt: new Date(form.data.quotedAt).getTime(),
+				context: form.data.context,
+			},
+			{
+				skipValidation: true,
+			},
+		);
 
-		return { form, id };
+		return { form, id: quote.id };
 	}),
 	joinGroup: rateLimit("medium", async ({ params, locals }) => {
 		const groupId = params.id;

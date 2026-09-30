@@ -8,11 +8,13 @@ import {
 	unique,
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
+import { v7 as uuidv7 } from "uuid";
+import { nanoid } from "nanoid";
 
 export const groupsTable = sqliteTable("groups", {
 	id: text()
 		.primaryKey()
-		.$default(() => crypto.randomUUID()),
+		.$default(() => nanoid()),
 	name: text().notNull(),
 	createdAt: int().notNull(),
 });
@@ -20,7 +22,9 @@ export const groupsTable = sqliteTable("groups", {
 export const quotesTable = sqliteTable(
 	"quotes",
 	{
-		id: text().primaryKey(),
+		id: text()
+			.primaryKey()
+			.$default(() => uuidv7()),
 		groupId: text()
 			.notNull()
 			.references(() => groupsTable.id, { onDelete: "cascade" }),

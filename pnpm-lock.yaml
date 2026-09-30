@@ -35,6 +35,9 @@ importers:
       drizzle-orm:
         specifier: 1.0.0-rc.4
         version: 1.0.0-rc.4(@libsql/client@0.18.0)(arktype@2.2.3)(typebox@1.3.33)(valibot@1.5.0(typescript@6.0.3))(zod@4.6.5)
+      drizzle-zod:
+        specifier: ^0.8.3
+        version: 0.8.3(drizzle-orm@1.0.0-rc.4(@libsql/client@0.18.0)(arktype@2.2.3)(typebox@1.3.33)(valibot@1.5.0(typescript@6.0.3))(zod@4.6.5))(zod@4.6.5)
       nanoid:
         specifier: ^6.0.1
         version: 6.0.1
@@ -1727,6 +1730,12 @@ packages:
         optional: true
       zod:
         optional: true
+
+  drizzle-zod@0.8.3:
+    resolution: {integrity: sha512-66yVOuvGhKJnTdiqj1/Xaaz9/qzOdRJADpDa68enqS6g3t0kpNkwNYjUuaeXgZfO/UWuIM9HIhSlJ6C5ZraMww==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: ^3.25.0 || ^4.0.0
 
   effect@3.22.2:
     resolution: {integrity: sha512-fm1CQXCs7GTMwpadZxwU5rnAb2bN6mbQpknq/pXBGCzSKkosNYb9k0wsoL0TfB10rSa5xOEZJjo77u/KLXSANg==}
@@ -3459,6 +3468,11 @@ snapshots:
       arktype: 2.2.3
       typebox: 1.3.33
       valibot: 1.5.0(typescript@6.0.3)
+      zod: 4.6.5
+
+  drizzle-zod@0.8.3(drizzle-orm@1.0.0-rc.4(@libsql/client@0.18.0)(arktype@2.2.3)(typebox@1.3.33)(valibot@1.5.0(typescript@6.0.3))(zod@4.6.5))(zod@4.6.5):
+    dependencies:
+      drizzle-orm: 1.0.0-rc.4(@libsql/client@0.18.0)(arktype@2.2.3)(typebox@1.3.33)(valibot@1.5.0(typescript@6.0.3))(zod@4.6.5)
       zod: 4.6.5
 
   effect@3.22.2:

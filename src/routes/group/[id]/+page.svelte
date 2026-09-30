@@ -39,9 +39,9 @@
 
 		<p class="text-sm text-base-content/60">
 			{m["group.quoteCount"]({
-				count: data.quotes.length,
+				count: data.quotesPagination.totalItems,
 				s:
-					data.quotes.length === 1
+					data.quotesPagination.totalItems === 1
 						? m["group.quoteSuffixOne"]()
 						: m["group.quoteSuffix"](),
 			})}
@@ -101,4 +101,4 @@
 
 <SearchQuotesForm />
 
-<QuotesList quotes={data.quotes} />
+<QuotesList quotes={data.quotesPagination.results} />
