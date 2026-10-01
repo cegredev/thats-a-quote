@@ -1,22 +1,26 @@
-import {
-	addMembersToGroup,
-	createGroup,
-	getGroupDetails,
-	getUserGroupMemberships,
-} from "$lib/server/groups";
+import { addMembersToGroup, getUserGroupMemberships } from "$lib/server/groups";
 import zodSchemas from "$lib/zod-schemas";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { rateLimit } from "$lib/server/rate-limiting";
+import { groupsCrud } from "$lib/server/db/crud";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	let groups: { id: string; name: string }[] | undefined = undefined;
 
 	if (locals.user) {
 		const memberships = await getUserGroupMemberships(locals.user.id);
-		groups = await getGroupDetails(memberships.map((m) => m.groupId));
+		const groupsPagination = await groupsCrud.list({
+			filters: {
+				id: {
+					in: memberships.map((m) => m.groupId),
+				},
+			},
+		});
+
+		groups = groupsPagination.results;
 	}
 
 	const groupCreationForm = await superValidate(
@@ -38,16 +42,24 @@ export const actions = {
 
 		if (!form.valid) return fail(400, { form });
 
-		const id = await createGroup(form.data.name, form.data.id);
+		const group = await groupsCrud.create(
+			{
+				name: form.data.name,
+				id: form.data.id,
+			},
+			{
+				skipValidation: true,
+			},
+		);
 
 		if (locals.user)
 			await addMembersToGroup([
 				{
-					groupId: id,
+					groupId: group.id,
 					userId: locals.user.id,
 				},
 			]);
 
-		return { form, id };
+		return { form, id: group.id };
 	}),
 };

@@ -16,7 +16,9 @@ export const groupsTable = sqliteTable("groups", {
 		.primaryKey()
 		.$default(() => nanoid()),
 	name: text().notNull(),
-	createdAt: int().notNull(),
+	createdAt: int()
+		.notNull()
+		.$default(() => Date.now()),
 });
 
 export const quotesTable = sqliteTable(

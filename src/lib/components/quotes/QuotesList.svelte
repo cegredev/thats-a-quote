@@ -2,9 +2,9 @@
 	import { page } from "$app/state";
 	import { m } from "$lib/paraglide/messages";
 	import { getLocale } from "$lib/paraglide/runtime";
-	import type { Quote } from "$lib/server/quotes";
 	import { CircleQuestionMark } from "@lucide/svelte";
 	import GeneralPopover from "../GeneralPopover.svelte";
+	import type { Quote } from "$lib/zod-schemas";
 
 	let { quotes }: { quotes: Quote[] } = $props();
 

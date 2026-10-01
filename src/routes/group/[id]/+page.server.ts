@@ -1,6 +1,5 @@
 import {
 	addMembersToGroup,
-	getGroupDetails,
 	getUserGroupMemberships,
 	listPeople,
 	removeMembersFromGroup,

@@ -1,40 +1,6 @@
-import { nanoid } from "nanoid";
 import { db } from "./db";
-import { groupMembers, groupsTable, quotesTable } from "./db/schema";
-import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
-
-export type GroupRow = {
-	id: string;
-	name: string;
-	createdAt: number;
-};
-
-/** Create a new group and return its long unique id. */
-export async function createGroup(
-	name: string,
-	customId?: string,
-): Promise<string> {
-	const id = customId || nanoid(24);
-
-	await db.insert(groupsTable).values({ id, name, createdAt: Date.now() });
-
-	return id;
-}
-
-export async function getGroup(id: string): Promise<GroupRow | undefined> {
-	const result = await db
-		.select()
-		.from(groupsTable)
-		.where(eq(groupsTable.id, id));
-
-	if (result.length !== 1) return undefined;
-
-	return {
-		id: result[0].id,
-		name: result[0].name,
-		createdAt: result[0].createdAt,
-	};
-}
+import { groupMembers, quotesTable } from "./db/schema";
+import { and, desc, eq, isNotNull, sql } from "drizzle-orm";
 
 /** Distinct people who have been quoted in this group, most recently used first. */
 export async function listPeople(groupId: string): Promise<string[]> {
@@ -45,13 +11,16 @@ export async function listPeople(groupId: string): Promise<string[]> {
 		})
 		.from(quotesTable)
 		.where(
-			and(eq(quotesTable.groupId, groupId), ne(quotesTable.person, "")),
+			and(
+				eq(quotesTable.groupId, groupId),
+				isNotNull(quotesTable.person),
+			),
 		)
 		.groupBy(quotesTable.person)
 		.orderBy(({ lastUsed }) => desc(lastUsed))
 		.all();
 
-	return result.map((r) => r.person);
+	return result.map((r) => r.person!);
 }
 
 export async function addMembersToGroup(
@@ -88,12 +57,4 @@ export async function getUserGroupMemberships(userId: string) {
 		},
 	});
 	return memberships;
-}
-
-export async function getGroupDetails(groupIds: string[]) {
-	const groups = await db
-		.select()
-		.from(groupsTable)
-		.where(inArray(groupsTable.id, groupIds));
-	return groups;
 }

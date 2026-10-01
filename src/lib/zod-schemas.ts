@@ -6,7 +6,7 @@ import {
 import { z } from "zod";
 import { groupsTable, quotesTable } from "./server/db/schema";
 
-export default {
+const schemas = {
 	groups: {
 		create: {
 			select: createSelectSchema(groupsTable),
@@ -55,3 +55,13 @@ export default {
 		}),
 	},
 };
+
+export default schemas;
+
+export type Group = z.infer<typeof schemas.groups.create.select>;
+export type GroupInsert = z.infer<typeof schemas.groups.create.insert>;
+export type GroupUpdate = z.infer<typeof schemas.groups.create.update>;
+
+export type Quote = z.infer<typeof schemas.quotes.create.select>;
+export type QuoteInsert = z.infer<typeof schemas.quotes.create.insert>;
+export type QuoteUpdate = z.infer<typeof schemas.quotes.create.update>;
