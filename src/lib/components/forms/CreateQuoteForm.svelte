@@ -6,7 +6,7 @@
 	import type z from "zod";
 	import classNames from "classnames";
 
-	type QuoteCreationData = z.infer<typeof zodSchemas.quotes.create>;
+	type QuoteCreationData = z.infer<typeof zodSchemas.quotes.create.insert>;
 
 	let { form }: { form: SuperValidated<QuoteCreationData> } = $props();
 

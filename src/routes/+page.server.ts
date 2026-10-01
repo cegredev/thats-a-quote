@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	const groupCreationForm = await superValidate(
-		zod4(zodSchemas.groups.create),
+		zod4(zodSchemas.groups.create.insert),
 	);
 
 	return {
@@ -33,24 +33,20 @@ export const actions = {
 	createGroup: rateLimit("medium", async ({ request, locals }) => {
 		const form = await superValidate(
 			request,
-			zod4(zodSchemas.groups.create),
+			zod4(zodSchemas.groups.create.insert),
 		);
 
-		if (!form.valid) {
-			// Return { form } and things will just work.
-			return fail(400, { form });
-		}
+		if (!form.valid) return fail(400, { form });
 
 		const id = await createGroup(form.data.name, form.data.id);
 
-		if (locals.user) {
+		if (locals.user)
 			await addMembersToGroup([
 				{
 					groupId: id,
 					userId: locals.user.id,
 				},
 			]);
-		}
 
 		return { form, id };
 	}),

@@ -7,7 +7,7 @@
 	import type zodSchemas from "$lib/zod-schemas";
 	import type z from "zod";
 
-	type GroupCreationData = z.infer<typeof zodSchemas.groups.create>;
+	type GroupCreationData = z.infer<typeof zodSchemas.groups.create.insert>;
 
 	let { form }: { form: SuperValidated<GroupCreationData> } = $props();
 </script>
