@@ -3,6 +3,7 @@ import { groupsApi } from "$lib/client/api";
 import { type GroupID, type Group } from "$lib/types";
 import type { PageLoad } from "./$types";
 import { groupIDsStore } from "$lib/client/storage.svelte";
+import { DUMMY_DATA_INTERVAL_SECONDS } from "$app/env/public";
 
 export const load: PageLoad = async ({ data, fetch }) => {
 	let groups: Group[] = [];
@@ -12,7 +13,13 @@ export const load: PageLoad = async ({ data, fetch }) => {
 	}
 
 	if (browser) {
-		const result = await groupsApi(fetch).getByIDs(groupIDsStore.ids);
+		const storedIds = groupIDsStore.ids;
+
+		if (DUMMY_DATA_INTERVAL_SECONDS !== undefined) {
+			storedIds.push(...["demo-group-1", "demo-group-2"]);
+		}
+
+		const result = await groupsApi(fetch).getByIDs(storedIds);
 
 		if (result.ok) {
 			groups.push(...result.data);

@@ -7,6 +7,7 @@ import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/env";
 import { logger } from "$lib/server/logging";
 import { nanoid } from "nanoid";
+import { DUMMY_DATA_INTERVAL_SECONDS } from "$app/env/public";
 
 logger.info("thats-a-quote server started!");
 
@@ -40,3 +41,19 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 	});
 
 export const handle = sequence(originalHandle, handleParaglide);
+
+if (
+	DUMMY_DATA_INTERVAL_SECONDS !== undefined &&
+	DUMMY_DATA_INTERVAL_SECONDS >= 0
+) {
+	const { fillWithDummyData } = await import("$lib/server/db/dummy-data");
+
+	await fillWithDummyData();
+
+	if (DUMMY_DATA_INTERVAL_SECONDS > 0) {
+		setInterval(async () => {
+			console.log("Filling database with dummy data...");
+			await fillWithDummyData();
+		}, DUMMY_DATA_INTERVAL_SECONDS * 1000);
+	}
+}
