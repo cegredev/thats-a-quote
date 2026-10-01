@@ -55,7 +55,7 @@
 
 				{#if quote.context}
 					<div class="absolute top-2 right-2">
-						<GeneralPopover>
+						<GeneralPopover contentProps={{ side: "top" }}>
 							{#snippet trigger()}
 								<CircleQuestionMark class="size-4" />
 							{/snippet}
