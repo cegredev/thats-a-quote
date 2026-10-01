@@ -101,4 +101,4 @@
 
 <SearchQuotesForm />
 
-<QuotesList quotes={data.quotesPagination.results} />
+<QuotesList pagination={data.quotesPagination} />

@@ -5,8 +5,10 @@
 	import { CircleQuestionMark } from "@lucide/svelte";
 	import GeneralPopover from "../GeneralPopover.svelte";
 	import type { Quote } from "$lib/zod-schemas";
+	import type { PaginatedResponse } from "$lib/server/crud";
+	import Pagination from "../meta/Pagination.svelte";
 
-	let { quotes }: { quotes: Quote[] } = $props();
+	let { pagination }: { pagination: PaginatedResponse<Quote> } = $props();
 
 	function formatDate(ts: number): string {
 		return new Date(ts).toLocaleString(
@@ -25,7 +27,7 @@
 	let searchQueryExists = $derived(page.url.searchParams.size > 0);
 </script>
 
-{#if quotes.length === 0}
+{#if pagination.totalItems === 0}
 	<div
 		class="rounded-box border border-dashed border-base-300 px-5 py-10 textsearchContent || searchPerson-center"
 	>
@@ -36,8 +38,14 @@
 		</p>
 	</div>
 {:else}
+	<Pagination
+		count={pagination.totalItems}
+		perPage={pagination.perPage}
+		page={pagination.page}
+	/>
+
 	<ul class="grid gap-4 sm:grid-cols-2">
-		{#each quotes as quote (quote.id)}
+		{#each pagination.results as quote (quote.id)}
 			<li class="quote-card rounded-box p-4 relative">
 				<p
 					class="font-display text-[1.05rem] leading-snug text-balance"
