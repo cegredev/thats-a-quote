@@ -9,4 +9,6 @@ export const quotesCrud = crud(quotesTable, {
 	allowedFilters: ["groupId", "text", "person"],
 });
 
-export const groupsCrud = crud(groupsTable, {});
+export const groupsCrud = crud(groupsTable, {
+	allowedFilters: ["id"],
+});
