@@ -38,11 +38,13 @@
 		</p>
 	</div>
 {:else}
-	<Pagination
-		count={pagination.totalItems}
-		perPage={pagination.perPage}
-		page={pagination.page}
-	/>
+	{#if pagination.totalPages > 0}
+		<Pagination
+			count={pagination.totalItems}
+			perPage={pagination.perPage}
+			page={pagination.page}
+		/>
+	{/if}
 
 	<ul class="grid gap-4 sm:grid-cols-2">
 		{#each pagination.results as quote (quote.id)}

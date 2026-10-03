@@ -22,3 +22,13 @@ export function parseSearchParams<TSchema extends z.ZodType>(
 
 	return searchRaw;
 }
+
+export function parsePaginationParams(searchParams: URLSearchParams) {
+	const page = parseInt(searchParams.get("page") ?? "");
+	const perPage = parseInt(searchParams.get("perPage") ?? "");
+
+	return {
+		page: isNaN(page) ? undefined : page,
+		perPage: isNaN(perPage) ? undefined : perPage,
+	};
+}

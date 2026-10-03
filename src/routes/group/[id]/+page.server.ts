@@ -11,7 +11,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { error, fail } from "@sveltejs/kit";
 import { rateLimit } from "$lib/server/rate-limiting";
 import { groupsCrud, quotesCrud } from "$lib/server/db/crud";
-import { parseSearchParams } from "$lib/server/utils";
+import { parsePaginationParams, parseSearchParams } from "$lib/server/utils";
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;
@@ -25,6 +25,8 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		url.searchParams,
 		zodSchemas.quotes.search,
 	);
+
+	const { page, perPage } = parsePaginationParams(url.searchParams);
 
 	const quotesPagination = await quotesCrud.list({
 		filters: {
@@ -44,6 +46,8 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 			{ field: "quotedAt", direction: "desc" },
 			{ field: "createdAt", direction: "desc" },
 		],
+		page: page,
+		perPage: perPage ?? 20,
 	});
 
 	const people = await listPeople(groupId);
