@@ -6,7 +6,7 @@
 	import GeneralPopover from "../GeneralPopover.svelte";
 	import type { Quote } from "$lib/zod-schemas";
 	import type { PaginatedResponse } from "$lib/server/crud";
-	import Pagination from "../meta/Pagination.svelte";
+	import FullPagination from "$lib/components/meta/FullPagination.svelte";
 
 	let { pagination }: { pagination: PaginatedResponse<Quote> } = $props();
 
@@ -40,61 +40,42 @@
 		</p>
 	</div>
 {:else}
-	<div bind:this={scrollTarget}></div>
+	<FullPagination {pagination} key="quotes-list">
+		<ul class="grid gap-4 sm:grid-cols-2">
+			{#each pagination.results as quote (quote.id)}
+				<li class="quote-card rounded-box p-4 relative">
+					<p
+						class="font-display text-[1.05rem] leading-snug text-balance"
+					>
+						&ldquo;{quote.text}&rdquo;
+					</p>
 
-	{#if pagination.totalPages > 0}
-		<Pagination
-			count={pagination.totalItems}
-			perPage={pagination.perPage}
-			page={pagination.page}
-			persistPerPageKey="quotes-list-per-page"
-		/>
-	{/if}
+					<p class="mt-3 text-sm text-base-content/60">
+						— {quote.person ?? m["group.anonymousPersonDisplay"]()}
 
-	<ul class="grid gap-4 sm:grid-cols-2">
-		{#each pagination.results as quote (quote.id)}
-			<li class="quote-card rounded-box p-4 relative">
-				<p
-					class="font-display text-[1.05rem] leading-snug text-balance"
-				>
-					&ldquo;{quote.text}&rdquo;
-				</p>
+						<span class="text-base-content/40">
+							· {formatDate(quote.quotedAt)}
+						</span>
+					</p>
 
-				<p class="mt-3 text-sm text-base-content/60">
-					— {quote.person ?? m["group.anonymousPersonDisplay"]()}
-
-					<span class="text-base-content/40">
-						· {formatDate(quote.quotedAt)}
-					</span>
-				</p>
-
-				{#if quote.context}
-					<div class="absolute top-2 right-2">
-						<GeneralPopover contentProps={{ side: "top" }}>
-							{#snippet trigger()}
-								<CircleQuestionMark class="size-4" />
-							{/snippet}
-							{#snippet content()}
-								<p class="text-sm">
-									{quote.context}
-								</p>
-							{/snippet}
-						</GeneralPopover>
-					</div>
-				{/if}
-			</li>
-		{/each}
-	</ul>
-
-	{#if pagination.totalPages > 0}
-		<Pagination
-			count={pagination.totalItems}
-			perPage={pagination.perPage}
-			page={pagination.page}
-			hidePerPageSelect
-			scrollTo={scrollTarget}
-		/>
-	{/if}
+					{#if quote.context}
+						<div class="absolute top-2 right-2">
+							<GeneralPopover contentProps={{ side: "top" }}>
+								{#snippet trigger()}
+									<CircleQuestionMark class="size-4" />
+								{/snippet}
+								{#snippet content()}
+									<p class="text-sm">
+										{quote.context}
+									</p>
+								{/snippet}
+							</GeneralPopover>
+						</div>
+					{/if}
+				</li>
+			{/each}
+		</ul>
+	</FullPagination>
 {/if}
 
 <style lang="scss">

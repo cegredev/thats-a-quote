@@ -129,10 +129,14 @@ class GroupIDsStore {
 
 export const groupIDsStore = new GroupIDsStore();
 
-export function maybePersistedState<T>(defaultValue: T, key?: string) {
-	let value = $state(defaultValue);
+export function maybePersistedState<T>(props: {
+	overrideValue?: T;
+	fallbackValue: T;
+	key?: string;
+}) {
+	let value = $state(props.fallbackValue);
 
-	if (!key) {
+	if (!props.key) {
 		return {
 			get value() {
 				return value;
@@ -143,9 +147,11 @@ export function maybePersistedState<T>(defaultValue: T, key?: string) {
 		};
 	}
 
-	key = genKey(`persist:${key}`);
+	const key = genKey(`persist:${props.key}`);
 
-	if (typeof localStorage !== "undefined") {
+	if (props.overrideValue !== undefined) {
+		value = props.overrideValue;
+	} else if (typeof localStorage !== "undefined") {
 		const stored = localStorage.getItem(key);
 
 		if (stored !== null) {

@@ -19,13 +19,12 @@ export const autogrow = (node: HTMLTextAreaElement) => {
 	};
 };
 
-export const updateUrlParameter = async (
-	key: string,
-	value: string,
+export const updateUrlParameters = async (
+	entries: [string, string][],
 	searchParams?: URLSearchParams,
 ) => {
 	const targetParams = new URLSearchParams(searchParams);
-	targetParams.set(key, value);
+	entries.forEach(([k, v]) => targetParams.set(k, v));
 
 	await goto(`?${targetParams.toString()}`, {
 		keepFocus: true,
@@ -35,16 +34,28 @@ export const updateUrlParameter = async (
 
 export const setPaginationPerPage = async (
 	perPage: number,
+	currentPerPage: number,
 	searchParams?: URLSearchParams,
 ) => {
-	await updateUrlParameter("perPage", String(perPage), searchParams);
+	const parameters: [string, string][] = [["perPage", String(perPage)]];
+
+	const page = parseInt(searchParams?.get("page") ?? "");
+	if (!isNaN(page)) {
+		const currentlySkippedItems = currentPerPage * (page - 1);
+		const newPage = Math.floor(currentlySkippedItems / perPage) + 1;
+		console.log(page, currentPerPage, perPage);
+		console.log("newPage", newPage);
+		parameters.push(["page", String(newPage)]);
+	}
+
+	await updateUrlParameters(parameters, searchParams);
 };
 
 export const setPaginationPage = async (
 	page: number,
 	searchParams?: URLSearchParams,
 ) => {
-	await updateUrlParameter("page", String(page), searchParams);
+	await updateUrlParameters([["page", String(page)]], searchParams);
 };
 
 export const shiftPaginationPage = async (

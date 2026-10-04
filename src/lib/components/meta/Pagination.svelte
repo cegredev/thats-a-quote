@@ -5,7 +5,6 @@
 		setPaginationPerPage,
 		shiftPaginationPage,
 	} from "$lib/client/component-utils.svelte";
-	import { maybePersistedState } from "$lib/client/storage.svelte";
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
 	import { Pagination } from "bits-ui";
 	import GeneralSelect from "../util/GeneralSelect.svelte";
@@ -18,10 +17,34 @@
 		scrollTo?: HTMLElement;
 	} = $props();
 
-	let perPage = maybePersistedState(
-		"20",
-		untrack(() => props.persistPerPageKey),
-	);
+	function parsePerPageFromParams() {
+		const parsed = parseInt(page.url.searchParams.get("perPage") ?? "");
+		return isNaN(parsed) ? undefined : String(parsed);
+	}
+
+	let perPage = $state(parsePerPageFromParams() ?? "20");
+
+	let previousPerPage: { previous: string | undefined; current: string } =
+		$state({
+			previous: undefined,
+			current: untrack(() => perPage),
+		});
+	$effect(() => {
+		const previous = untrack(() => previousPerPage.current);
+
+		if (previous === perPage) return;
+
+		previousPerPage = {
+			previous,
+			current: perPage,
+		};
+
+		setPaginationPerPage(
+			parseInt(perPage),
+			parseInt(previous),
+			page.url.searchParams,
+		);
+	});
 
 	let shiftPage = $derived((amount: number) => {
 		shiftPaginationPage(page.url, amount);
@@ -91,17 +114,12 @@
 			{#if !props.hidePerPageSelect}
 				<div class="flex items-center justify-end gap-2">
 					<GeneralSelect
-						bind:value={perPage.value}
+						bind:value={perPage}
 						type="single"
 						items={[5, 10, 20, 50, 100].map((v) => ({
 							value: String(v),
 							label: String(v),
 						}))}
-						onValueChange={(v) =>
-							setPaginationPerPage(
-								parseInt(v),
-								page.url.searchParams,
-							)}
 					/>
 					<div>Per Page</div>
 				</div>
