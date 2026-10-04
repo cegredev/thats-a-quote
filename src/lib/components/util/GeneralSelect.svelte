@@ -23,22 +23,26 @@ get along, so we shut typescript up by casting `value` to `never`, however,
 from the perspective of the consumer of this component, it will be typed appropriately.
 -->
 <Select.Root {items} bind:value={value as never} {...restProps}>
-	<Select.Trigger class="select">
+	<Select.Trigger class="select w-min pr-8">
 		<Select.Value {placeholder} />
 	</Select.Trigger>
+
 	<Select.Portal>
-		<Select.Content {...contentProps}>
+		<Select.Content
+			class="bg-base-100 border outline-hidden z-50 h-fit max-h-[--bits-select-content-available-height] w-[--bits-select-anchor-width] min-w-[--bits-select-anchor-width] select-none rounded-xl px-1 py-3"
+			{...contentProps}
+		>
 			<!-- <Select.ScrollUpButton>up</Select.ScrollUpButton> -->
-			<Select.Viewport>
+			<Select.Viewport class="p-1">
 				{#each items as { value, label, disabled } (value)}
 					<Select.Item
 						{value}
 						{label}
 						{disabled}
-						class="btn data-highlighted:bg-muted outline-hidden data-disabled:opacity-50 flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
+						class="btn btn-ghost border-0 flex h-10 w-full select-none items-center justify-center py-3 px-3 text-sm capitalize"
 					>
 						{#snippet children({ selected })}
-							{selected ? "✅" : ""}
+							<!-- {selected ? "✅" : ""} -->
 							{label}
 						{/snippet}
 					</Select.Item>

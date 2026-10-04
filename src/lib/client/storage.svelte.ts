@@ -69,9 +69,8 @@ export function migrateStorage(): void {
 		if (!version.migrateTo) continue;
 
 		version.migrateTo(window.localStorage);
+		window.localStorage.setItem(VERSION_KEY, versionKey);
 	}
-
-	window.localStorage.setItem(VERSION_KEY, versionKey);
 }
 
 function loadInitialGroupIDs(): GroupID[] {
@@ -129,3 +128,38 @@ class GroupIDsStore {
 }
 
 export const groupIDsStore = new GroupIDsStore();
+
+export function maybePersistedState<T>(defaultValue: T, key?: string) {
+	let value = $state(defaultValue);
+
+	if (!key) {
+		return {
+			get value() {
+				return value;
+			},
+			set value(newValue: T) {
+				value = newValue;
+			},
+		};
+	}
+
+	key = genKey(`persist:${key}`);
+
+	if (typeof localStorage !== "undefined") {
+		const stored = localStorage.getItem(key);
+
+		if (stored !== null) {
+			value = JSON.parse(stored);
+		}
+	}
+
+	return {
+		get value() {
+			return value;
+		},
+		set value(newValue: T) {
+			value = newValue;
+			localStorage.setItem(key, JSON.stringify(newValue));
+		},
+	};
+}

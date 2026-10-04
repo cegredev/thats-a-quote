@@ -56,7 +56,7 @@ export const shiftPaginationPage = async (
 
 	let targetPage: number = isNaN(page) ? 1 : page;
 
-	targetPage += Math.min(Math.max(1, amount), max ?? Infinity);
+	targetPage = Math.min(Math.max(1, targetPage + amount), max ?? Infinity);
 
 	await setPaginationPage(targetPage, url.searchParams);
 };

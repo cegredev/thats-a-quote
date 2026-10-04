@@ -25,6 +25,8 @@
 	}
 
 	let searchQueryExists = $derived(page.url.searchParams.size > 0);
+
+	let scrollTarget: HTMLElement | undefined = $state(undefined);
 </script>
 
 {#if pagination.totalItems === 0}
@@ -38,11 +40,14 @@
 		</p>
 	</div>
 {:else}
+	<div bind:this={scrollTarget}></div>
+
 	{#if pagination.totalPages > 0}
 		<Pagination
 			count={pagination.totalItems}
 			perPage={pagination.perPage}
 			page={pagination.page}
+			persistPerPageKey="quotes-list-per-page"
 		/>
 	{/if}
 
@@ -80,6 +85,16 @@
 			</li>
 		{/each}
 	</ul>
+
+	{#if pagination.totalPages > 0}
+		<Pagination
+			count={pagination.totalItems}
+			perPage={pagination.perPage}
+			page={pagination.page}
+			hidePerPageSelect
+			scrollTo={scrollTarget}
+		/>
+	{/if}
 {/if}
 
 <style lang="scss">
