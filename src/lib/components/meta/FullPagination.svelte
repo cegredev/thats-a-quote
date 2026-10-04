@@ -6,35 +6,37 @@
 	type Props = {
 		pagination: PaginatedResponse<any>;
 		children: Snippet;
-		key?: string;
 	};
 
-	let { pagination, children, key }: Props = $props();
-
-	let keyFull = $derived(key ? `pagination-${key}` : undefined);
+	let { pagination, children }: Props = $props();
 
 	let scrollTarget: HTMLElement | undefined = $state(undefined);
+
+	const perPageOptions = [10, 30, 50, 80, 100];
+
+	let showPagination = $derived(
+		pagination.totalItems > Math.min(...perPageOptions),
+	);
 </script>
 
 <div bind:this={scrollTarget}></div>
 
-{#if pagination.totalPages > 0}
+{#if showPagination}
 	<Pagination
 		count={pagination.totalItems}
 		perPage={pagination.perPage}
 		page={pagination.page}
-		persistPerPageKey={keyFull}
+		{perPageOptions}
 	/>
 {/if}
 
 {@render children()}
 
-{#if pagination.totalPages > 0}
+{#if pagination.totalPages > 1}
 	<Pagination
 		count={pagination.totalItems}
 		perPage={pagination.perPage}
 		page={pagination.page}
-		hidePerPageSelect
 		scrollTo={scrollTarget}
 	/>
 {/if}

@@ -11,10 +11,9 @@
 	import { untrack } from "svelte";
 
 	let props: Pagination.RootProps & {
-		/** Cannot change dynamically (is untracked) */
-		persistPerPageKey?: string;
-		hidePerPageSelect?: boolean;
 		scrollTo?: HTMLElement;
+		perPageOptions?: number[];
+		perPageDefault?: number;
 	} = $props();
 
 	function parsePerPageFromParams() {
@@ -22,7 +21,9 @@
 		return isNaN(parsed) ? undefined : String(parsed);
 	}
 
-	let perPage = $state(parsePerPageFromParams() ?? "20");
+	let perPage = $state(
+		parsePerPageFromParams() ?? String(untrack(() => props.perPageDefault)),
+	);
 
 	let previousPerPage: { previous: string | undefined; current: string } =
 		$state({
@@ -111,17 +112,17 @@
 				</Pagination.NextButton>
 			</div>
 
-			{#if !props.hidePerPageSelect}
+			{#if props.perPageOptions}
 				<div class="flex items-center justify-end gap-2">
 					<GeneralSelect
 						bind:value={perPage}
 						type="single"
-						items={[5, 10, 20, 50, 100].map((v) => ({
+						items={props.perPageOptions.map((v) => ({
 							value: String(v),
 							label: String(v),
 						}))}
 					/>
-					<div>Per Page</div>
+					<div>per page</div>
 				</div>
 			{:else}
 				<div>

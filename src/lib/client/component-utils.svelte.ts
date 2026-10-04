@@ -43,8 +43,6 @@ export const setPaginationPerPage = async (
 	if (!isNaN(page)) {
 		const currentlySkippedItems = currentPerPage * (page - 1);
 		const newPage = Math.floor(currentlySkippedItems / perPage) + 1;
-		console.log(page, currentPerPage, perPage);
-		console.log("newPage", newPage);
 		parameters.push(["page", String(newPage)]);
 	}
 
