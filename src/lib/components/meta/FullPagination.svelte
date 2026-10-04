@@ -27,6 +27,7 @@
 		perPage={pagination.perPage}
 		page={pagination.page}
 		{perPageOptions}
+		perPageDefault={30}
 	/>
 {/if}
 
