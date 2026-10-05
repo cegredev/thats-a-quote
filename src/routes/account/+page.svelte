@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { authClient } from "$lib/client/frontend-auth";
-	import { m } from "$lib/paraglide/messages";
+	import { authClient } from "#lib/client/frontend-auth.js";
+	import { m } from "#lib/paraglide/messages.js";
 	import type { PageProps } from "./$types";
-	import LoginForm from "$lib/components/forms/LoginForm.svelte";
-	import RegisterForm from "$lib/components/forms/RegisterForm.svelte";
+	import LoginForm from "#lib/components/forms/LoginForm.svelte";
+	import RegisterForm from "#lib/components/forms/RegisterForm.svelte";
 	import UserCard from "./UserCard.svelte";
-	import Title from "$lib/components/util/Title.svelte";
-	import GeneralTabs from "$lib/components/tabs/GeneralTabs.svelte";
+	import Title from "#lib/components/util/Title.svelte";
+	import GeneralTabs from "#lib/components/tabs/GeneralTabs.svelte";
 
 	let { data }: PageProps = $props();
 

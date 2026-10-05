@@ -4,7 +4,7 @@
 		setPaginationPage,
 		setPaginationPerPage,
 		shiftPaginationPage,
-	} from "$lib/client/component-utils.svelte";
+	} from "#lib/client/component-utils.svelte.js";
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
 	import { Pagination } from "bits-ui";
 	import GeneralSelect from "../util/GeneralSelect.svelte";

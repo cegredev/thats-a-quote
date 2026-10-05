@@ -1,5 +1,4 @@
-import { json } from "@sveltejs/kit";
-import { groupsCrud } from "$lib/server/db/crud";
+import { groupsCrud } from "#lib/server/db/crud.js";
 
 export async function GET({ url }) {
 	const ids = url.searchParams.getAll("id");
@@ -13,5 +12,5 @@ export async function GET({ url }) {
 	});
 
 	const groups = groupsPagination.results;
-	return json(groups);
+	return Response.json(groups);
 }

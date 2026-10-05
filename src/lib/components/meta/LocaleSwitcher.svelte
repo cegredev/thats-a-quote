@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { m } from "$lib/paraglide/messages";
-	import { getLocale, setLocale } from "$lib/paraglide/runtime";
+	import { m } from "#lib/paraglide/messages.js";
+	import { getLocale, setLocale } from "#lib/paraglide/runtime.js";
 </script>
 
 <label class="flex items-center gap-2 text-sm text-base-content/70">

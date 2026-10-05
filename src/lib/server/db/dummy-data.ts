@@ -1,7 +1,7 @@
 import { groupsCrud, quotesCrud } from "./crud";
 import * as schema from "./schema";
-import { db } from "$lib/server/db";
-import { auth } from "$lib/server/auth";
+import { db } from "#lib/server/db.js";
+import { auth } from "#lib/server/auth.js";
 import { sql, is } from "drizzle-orm";
 import { SQLiteTable, getTableConfig } from "drizzle-orm/sqlite-core";
 

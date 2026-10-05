@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { authClient } from "$lib/client/frontend-auth";
-	import { m } from "$lib/paraglide/messages";
+	import { authClient } from "#lib/client/frontend-auth.js";
+	import { m } from "#lib/paraglide/messages.js";
 	import type { User } from "better-auth";
 
 	let { user }: { user: User } = $props();

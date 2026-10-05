@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PaginatedResponse } from "$lib/server/crud";
+	import type { PaginatedResponse } from "#lib/server/crud/index.js";
 	import type { Snippet } from "svelte";
 	import Pagination from "./Pagination.svelte";
 

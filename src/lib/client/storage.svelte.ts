@@ -1,4 +1,4 @@
-import type { GroupID } from "$lib/types";
+import type { GroupID } from "#lib/types.js";
 
 const genKey = (key: string) => `thats-a-quote:${key}`;
 const VERSION_KEY = genKey("local-storage-version");

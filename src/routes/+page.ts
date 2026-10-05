@@ -1,8 +1,8 @@
 import { browser } from "$app/env";
-import { groupsApi } from "$lib/client/api";
-import { type GroupID, type Group } from "$lib/types";
+import { groupsApi } from "#lib/client/api.js";
+import { type GroupID, type Group } from "#lib/types.js";
 import type { PageLoad } from "./$types";
-import { groupIDsStore } from "$lib/client/storage.svelte";
+import { groupIDsStore } from "#lib/client/storage.svelte.js";
 import { DUMMY_DATA_INTERVAL_SECONDS } from "$app/env/public";
 
 export const load: PageLoad = async ({ data, fetch }) => {

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { m } from "$lib/paraglide/messages";
-	import type { Group } from "$lib/types";
+	import { m } from "#lib/paraglide/messages.js";
+	import type { Group } from "#lib/types.js";
 
 	let { groups }: { groups: Group[] } = $props();
 </script>

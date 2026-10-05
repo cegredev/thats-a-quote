@@ -1,4 +1,4 @@
-import { migrateStorage } from "$lib/client/storage.svelte";
+import { migrateStorage } from "#lib/client/storage.svelte.js";
 import type { LayoutLoad } from "./$types";
 
 export const ssr = false;

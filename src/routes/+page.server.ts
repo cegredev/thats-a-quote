@@ -1,11 +1,11 @@
-import { addMembersToGroup, getUserGroupMemberships } from "$lib/server/groups";
-import zodSchemas from "$lib/zod-schemas";
+import { addMembersToGroup, getUserGroupMemberships } from "#lib/server/groups.js";
+import zodSchemas from "#lib/zod-schemas.js";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
-import { rateLimit } from "$lib/server/rate-limiting";
-import { groupsCrud } from "$lib/server/db/crud";
+import { rateLimit } from "#lib/server/rate-limiting.js";
+import { groupsCrud } from "#lib/server/db/crud.js";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	let groups: { id: string; name: string }[] | undefined = undefined;

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { PageProps } from "./$types";
-	import { m } from "$lib/paraglide/messages";
-	import GroupCreationForm from "$lib/components/forms/GroupCreationForm.svelte";
-	import GroupsList from "$lib/components/groups/GroupsList.svelte";
-	import Title from "$lib/components/util/Title.svelte";
+	import { m } from "#lib/paraglide/messages.js";
+	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
+	import GroupsList from "#lib/components/groups/GroupsList.svelte";
+	import Title from "#lib/components/util/Title.svelte";
 
 	let { data }: PageProps = $props();
 </script>

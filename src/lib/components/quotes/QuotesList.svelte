@@ -4,13 +4,13 @@
 
 <script lang="ts">
 	import { page } from "$app/state";
-	import { m } from "$lib/paraglide/messages";
-	import { getLocale } from "$lib/paraglide/runtime";
+	import { m } from "#lib/paraglide/messages.js";
+	import { getLocale } from "#lib/paraglide/runtime.js";
 	import { CircleQuestionMark } from "@lucide/svelte";
 	import GeneralPopover from "../GeneralPopover.svelte";
-	import type { Quote } from "$lib/zod-schemas";
-	import type { PaginatedResponse } from "$lib/server/crud";
-	import FullPagination from "$lib/components/meta/FullPagination.svelte";
+	import type { Quote } from "#lib/zod-schemas.js";
+	import type { PaginatedResponse } from "#lib/server/crud/index.js";
+	import FullPagination from "#lib/components/meta/FullPagination.svelte";
 
 	let { pagination }: { pagination: PaginatedResponse<Quote> } = $props();
 

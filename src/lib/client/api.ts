@@ -1,4 +1,4 @@
-import type { Group } from "$lib/types";
+import type { Group } from "#lib/types.js";
 
 type FetchFunction = typeof fetch;
 

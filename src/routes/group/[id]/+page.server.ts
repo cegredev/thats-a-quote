@@ -3,16 +3,16 @@ import {
 	getUserGroupMemberships,
 	listPeople,
 	removeMembersFromGroup,
-} from "$lib/server/groups";
-import zodSchemas from "$lib/zod-schemas";
+} from "#lib/server/groups.js";
+import zodSchemas from "#lib/zod-schemas.js";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { error, fail } from "@sveltejs/kit";
-import { rateLimit } from "$lib/server/rate-limiting";
-import { groupsCrud, quotesCrud } from "$lib/server/db/crud";
-import { parsePaginationParams, parseSearchParams } from "$lib/server/utils";
-import { QUOTES_DEFAULT_PAGE_SIZE } from "$lib/components/quotes/QuotesList.svelte";
+import { rateLimit } from "#lib/server/rate-limiting.js";
+import { groupsCrud, quotesCrud } from "#lib/server/db/crud.js";
+import { parsePaginationParams, parseSearchParams } from "#lib/server/utils.js";
+import { QUOTES_DEFAULT_PAGE_SIZE } from "#lib/components/quotes/QuotesList.svelte";
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;
@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupDetails = await groupsCrud.findOne({
 		id: groupId,
 	});
-	if (!groupDetails) error(404, { message: "Group not found" });
+	if (!groupDetails) error(404, "Group not found");
 
 	const searchOptions = parseSearchParams(
 		url.searchParams,
@@ -76,10 +76,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 export const actions = {
 	createQuote: rateLimit("medium", async ({ request, params }) => {
 		const groupId = params.id;
-		if (!groupId)
-			error(400, {
-				message: "No group id param",
-			});
+		if (!groupId) error(400, "No group id param");
 
 		const form = await superValidate(
 			request,

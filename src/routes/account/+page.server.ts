@@ -1,11 +1,11 @@
-import zodSchemas from "$lib/zod-schemas";
+import zodSchemas from "#lib/zod-schemas.js";
 import type { PageServerLoad } from "./$types";
 import { setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { error, fail } from "@sveltejs/kit";
-import { auth } from "$lib/server/auth";
+import { auth } from "#lib/server/auth.js";
 import { isAPIError } from "better-auth/api";
-import { limiterOnData, rateLimit } from "$lib/server/rate-limiting";
+import { limiterOnData, rateLimit } from "#lib/server/rate-limiting.js";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const loginForm = await superValidate(zod4(zodSchemas.users.login));
@@ -57,7 +57,7 @@ export const actions = {
 		}
 
 		if (await loginLimiter.isLimited(event, { keys: [form.data.email] }))
-			throw error(429, "rate limited on username");
+			error(429, "rate limited on username");
 
 		try {
 			await auth.api.signInEmail({

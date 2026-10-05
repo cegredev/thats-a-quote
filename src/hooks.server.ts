@@ -1,11 +1,10 @@
-import { sequence } from "@sveltejs/kit/hooks";
-import type { Handle } from "@sveltejs/kit";
-import { getTextDirection } from "$lib/paraglide/runtime";
-import { paraglideMiddleware } from "$lib/paraglide/server";
-import { auth } from "$lib/server/auth";
+import { sequence, type Handle } from "@sveltejs/kit/hooks";
+import { getTextDirection } from "#lib/paraglide/runtime.js";
+import { paraglideMiddleware } from "#lib/paraglide/server.js";
+import { auth } from "#lib/server/auth.js";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/env";
-import { logger } from "$lib/server/logging";
+import { logger } from "#lib/server/logging.js";
 import { nanoid } from "nanoid";
 import { DUMMY_DATA_INTERVAL_SECONDS } from "$app/env/public";
 
@@ -32,13 +31,13 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
 		event.request = request;
 
-		return resolve(event, {
+	return resolve(event, {
 			transformPageChunk: ({ html }) =>
 				html
 					.replace("%paraglide.lang%", locale)
 					.replace("%paraglide.dir%", getTextDirection(locale)),
-		});
 	});
+});
 
 export const handle = sequence(originalHandle, handleParaglide);
 
@@ -46,7 +45,7 @@ if (
 	DUMMY_DATA_INTERVAL_SECONDS !== undefined &&
 	DUMMY_DATA_INTERVAL_SECONDS >= 0
 ) {
-	const { fillWithDummyData } = await import("$lib/server/db/dummy-data");
+	const { fillWithDummyData } = await import("#lib/server/db/dummy-data.js");
 
 	await fillWithDummyData();
 

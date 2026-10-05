@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { SuperValidated } from "sveltekit-superforms";
-	import { m } from "$lib/paraglide/messages";
-	import SchemaForm from "$lib/components/forms/SchemaForm.svelte";
-	import type zodSchemas from "$lib/zod-schemas";
+	import { m } from "#lib/paraglide/messages.js";
+	import SchemaForm from "#lib/components/forms/SchemaForm.svelte";
+	import type zodSchemas from "#lib/zod-schemas.js";
 	import type z from "zod";
-	import { authClient } from "$lib/client/frontend-auth";
+	import { authClient } from "#lib/client/frontend-auth.js";
 
 	type LoginData = z.infer<typeof zodSchemas.users.login>;
 

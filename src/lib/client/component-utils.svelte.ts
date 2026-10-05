@@ -27,8 +27,7 @@ export const updateUrlParameters = async (
 	entries.forEach(([k, v]) => targetParams.set(k, v));
 
 	await goto(`?${targetParams.toString()}`, {
-		keepFocus: true,
-		noScroll: true,
+		reset: false,
 	});
 };
 

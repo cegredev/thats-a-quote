@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-	import { authClient } from "$lib/client/frontend-auth";
-	import type { MaybePromise } from "$lib/types";
+	import { authClient } from "#lib/client/frontend-auth.js";
+	import type { MaybePromise } from "#lib/types.js";
 
 	let {
 		action,

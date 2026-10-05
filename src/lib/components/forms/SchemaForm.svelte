@@ -24,7 +24,7 @@
 	} from "sveltekit-superforms";
 	import { untrack, type Snippet } from "svelte";
 	import { type Readable } from "svelte/store";
-	import { autogrow } from "$lib/client/component-utils.svelte";
+	import { autogrow } from "#lib/client/component-utils.svelte.js";
 
 	type SuperFormOptions = NonNullable<Parameters<typeof superForm<T>>[1]>;
 	type SuperFormReturn = ReturnType<typeof superForm<T>>;

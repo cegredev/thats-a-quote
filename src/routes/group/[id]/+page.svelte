@@ -2,17 +2,17 @@
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import type { PageProps } from "./$types";
-	import { m } from "$lib/paraglide/messages";
-	import { groupIDsStore } from "$lib/client/storage.svelte";
-	import CreateQuoteForm from "$lib/components/forms/CreateQuoteForm.svelte";
-	import CopyButton from "$lib/components/util/CopyButton.svelte";
-	import Title from "$lib/components/util/Title.svelte";
-	import SearchQuotesForm from "$lib/components/forms/SearchQuotesForm.svelte";
-	import QuotesList from "$lib/components/quotes/QuotesList.svelte";
-	import FormButton from "$lib/components/forms/FormButton.svelte";
+	import { m } from "#lib/paraglide/messages.js";
+	import { groupIDsStore } from "#lib/client/storage.svelte.js";
+	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
+	import CopyButton from "#lib/components/util/CopyButton.svelte";
+	import Title from "#lib/components/util/Title.svelte";
+	import SearchQuotesForm from "#lib/components/forms/SearchQuotesForm.svelte";
+	import QuotesList from "#lib/components/quotes/QuotesList.svelte";
+	import FormButton from "#lib/components/forms/FormButton.svelte";
 	import classNames from "classnames";
 	import { onMount } from "svelte";
-	import GenericDialog from "$lib/components/dialogs/GenericDialog.svelte";
+	import GenericDialog from "#lib/components/dialogs/GenericDialog.svelte";
 
 	let { data }: PageProps = $props();
 
