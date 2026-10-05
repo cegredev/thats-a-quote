@@ -1,3 +1,7 @@
+<script lang="ts" module>
+	export const QUOTES_DEFAULT_PAGE_SIZE = 30;
+</script>
+
 <script lang="ts">
 	import { page } from "$app/state";
 	import { m } from "$lib/paraglide/messages";
@@ -25,8 +29,6 @@
 	}
 
 	let searchQueryExists = $derived(page.url.searchParams.size > 0);
-
-	let scrollTarget: HTMLElement | undefined = $state(undefined);
 </script>
 
 {#if pagination.totalItems === 0}
@@ -40,7 +42,11 @@
 		</p>
 	</div>
 {:else}
-	<FullPagination {pagination} key="quotes-list">
+	<FullPagination
+		{pagination}
+		perPageOptions={[10, 30, 50, 80, 100]}
+		defaultPerPage={QUOTES_DEFAULT_PAGE_SIZE}
+	>
 		<ul class="grid gap-4 sm:grid-cols-2">
 			{#each pagination.results as quote (quote.id)}
 				<li class="quote-card rounded-box p-4 relative">

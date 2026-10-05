@@ -6,13 +6,14 @@
 	type Props = {
 		pagination: PaginatedResponse<any>;
 		children: Snippet;
+		perPageOptions: number[];
+		defaultPerPage: number;
 	};
 
-	let { pagination, children }: Props = $props();
+	let { pagination, children, perPageOptions, defaultPerPage }: Props =
+		$props();
 
 	let scrollTarget: HTMLElement | undefined = $state(undefined);
-
-	const perPageOptions = [10, 30, 50, 80, 100];
 
 	let showPagination = $derived(
 		pagination.totalItems > Math.min(...perPageOptions),
@@ -27,7 +28,7 @@
 		perPage={pagination.perPage}
 		page={pagination.page}
 		{perPageOptions}
-		perPageDefault={30}
+		perPageDefault={defaultPerPage}
 	/>
 {/if}
 

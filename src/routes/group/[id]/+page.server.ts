@@ -12,6 +12,7 @@ import { error, fail } from "@sveltejs/kit";
 import { rateLimit } from "$lib/server/rate-limiting";
 import { groupsCrud, quotesCrud } from "$lib/server/db/crud";
 import { parsePaginationParams, parseSearchParams } from "$lib/server/utils";
+import { QUOTES_DEFAULT_PAGE_SIZE } from "$lib/components/quotes/QuotesList.svelte";
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;
@@ -47,7 +48,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 			{ field: "createdAt", direction: "desc" },
 		],
 		page: page,
-		perPage: perPage ?? 20,
+		perPage: perPage ?? QUOTES_DEFAULT_PAGE_SIZE,
 	});
 
 	const people = await listPeople(groupId);
