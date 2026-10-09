@@ -63,6 +63,13 @@ export const groupMembers = sqliteTable(
 	],
 );
 
+export const pushSubscriptions = sqliteTable("push_subscriptions", {
+	endpoint: text().primaryKey(),
+	p256dh: text().notNull(),
+	auth: text().notNull(),
+	userId: text().references(() => user.id, { onDelete: "set null" }),
+});
+
 export const user = sqliteTable("user", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),

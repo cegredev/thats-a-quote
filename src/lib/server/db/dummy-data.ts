@@ -4,6 +4,7 @@ import { db } from "#lib/server/db.js";
 import { auth } from "#lib/server/auth.js";
 import { sql, is } from "drizzle-orm";
 import { SQLiteTable, getTableConfig } from "drizzle-orm/sqlite-core";
+import { addMembersToGroup } from "../groups";
 
 const resetDbManually = async () => {
 	await db.run(sql`PRAGMA foreign_keys = OFF`);
@@ -31,21 +32,34 @@ export const fillWithDummyData = async () => {
 				JSON.stringify(result),
 		);
 
+	const userId = await createDemoUser();
+
 	for (const group of result.items)
 		await quotesCrud.bulkCreate(
 			quotes.map((quote) => ({ ...quote, groupId: group.id })),
 		);
 
-	await createDemoUser();
+	await addMembersToGroup(
+		result.items.map((i) => ({
+			groupId: i.id,
+			userId,
+		})),
+	);
 };
+
+export const DEMO_EMAIL = "demo@example.com";
+export const DEMO_PASSWORD = "demo";
 
 const createDemoUser = async () => {
 	const ctx = await auth.$context;
 
+	const email = DEMO_EMAIL;
+	const password = DEMO_PASSWORD;
+
 	const user = await ctx.internalAdapter.createUser(
 		{
 			name: "Demo User",
-			email: "demo@example.com",
+			email,
 			emailVerified: true,
 		},
 		{
@@ -57,8 +71,10 @@ const createDemoUser = async () => {
 		userId: user.id,
 		providerId: "credential",
 		accountId: user.id,
-		password: await ctx.password.hash("demo"),
+		password: await ctx.password.hash(password),
 	});
+
+	return user.id;
 };
 
 // drizzle-seed does not yet support drizzle-orm v1

@@ -1,0 +1,1 @@
+ALTER TABLE `push_subscriptions` ADD `userId` text REFERENCES user(id) ON DELETE SET NULL;

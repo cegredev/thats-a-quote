@@ -15,4 +15,16 @@ export const variables = defineEnvVars({
 			.transform((v) => (v ? Number(v) : undefined)),
 		public: true,
 	},
+	VAPID_SUBJECT: {
+		description: "Needed if you want to have push notifications",
+		schema: z
+			.string()
+			.regex(/^(mailto:|https:\/\/)/)
+			.optional(),
+	},
+	DATA_DIR: {
+		description:
+			"Base directory where all data is stored. Only meant to be modified in development, but do what you want to.",
+		schema: z.string().default("/app/data"),
+	},
 });

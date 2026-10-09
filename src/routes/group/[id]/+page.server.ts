@@ -13,6 +13,10 @@ import { rateLimit } from "#lib/server/rate-limiting.js";
 import { groupsCrud, quotesCrud } from "#lib/server/db/crud.js";
 import { parsePaginationParams, parseSearchParams } from "#lib/server/utils.js";
 import { QUOTES_DEFAULT_PAGE_SIZE } from "#lib/components/quotes/QuotesList.svelte";
+import { sendPush } from "#lib/server/push.js";
+import { db } from "#lib/server/db.js";
+import { groupMembers } from "#lib/server/db/schema.js";
+import { eq } from "drizzle-orm";
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;
@@ -78,6 +82,11 @@ export const actions = {
 		const groupId = params.id;
 		if (!groupId) error(400, "No group id param");
 
+		const group = await groupsCrud.findOne({
+			id: groupId,
+		});
+		if (!group) error(400, "group does not exist");
+
 		const form = await superValidate(
 			request,
 			zod4(zodSchemas.quotes.create.insert),
@@ -98,14 +107,23 @@ export const actions = {
 			},
 		);
 
+		const members = await db
+			.select()
+			.from(groupMembers)
+			.where(eq(groupMembers.groupId, groupId));
+		await sendPush(
+			members.map((m) => m.userId),
+			{
+				title: `Quote added in ${group.name}`,
+				body: quote.text,
+			},
+		);
+
 		return { form, id: quote.id };
 	}),
 	joinGroup: rateLimit("medium", async ({ params, locals }) => {
 		const groupId = params.id;
-		if (!groupId)
-			error(400, {
-				message: "No group id param",
-			});
+		if (!groupId) error(400, "No group id param");
 
 		const userId = locals.user?.id;
 
@@ -117,10 +135,7 @@ export const actions = {
 	}),
 	leaveGroup: rateLimit("medium", async ({ params, locals }) => {
 		const groupId = params.id;
-		if (!groupId)
-			error(400, {
-				message: "No group id param",
-			});
+		if (!groupId) error(400, "No group id param");
 
 		const userId = locals.user?.id;
 

@@ -4,6 +4,7 @@
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
 	import GroupsList from "#lib/components/groups/GroupsList.svelte";
 	import Title from "#lib/components/util/Title.svelte";
+	import { subscribeToPush } from "#lib/client/push.ts";
 
 	let { data }: PageProps = $props();
 </script>
@@ -31,3 +32,12 @@
 <section class="rounded-box border border-base-300 bg-base-100 p-5">
 	<GroupCreationForm form={data.groupCreationForm} />
 </section>
+
+<button
+	class="btn"
+	onclick={async () => {
+		await subscribeToPush();
+	}}
+>
+	Activate notifications
+</button>
