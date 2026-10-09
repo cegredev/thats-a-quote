@@ -11,8 +11,7 @@ function urlBase64ToUint8Array(base64: string) {
 	return Uint8Array.from(raw, (c) => c.charCodeAt(0));
 }
 
-export async function subscribeToPush() {
-	// ...support checks and permission request as before...
+async function _getActivePushSubscription() {
 	const registration = await navigator.serviceWorker.ready;
 	const publicKey = await getPublicKey();
 	const applicationServerKey = urlBase64ToUint8Array(publicKey);
@@ -32,6 +31,28 @@ export async function subscribeToPush() {
 		subscription = null;
 	}
 
+	return { subscription, registration, applicationServerKey };
+}
+
+export async function getActivePushSubscription() {
+	return (await _getActivePushSubscription()).subscription;
+}
+
+async function _makePushApiRequest(
+	subscribe: boolean,
+	subscription: PushSubscription,
+) {
+	await fetch("/api/push/subscribe", {
+		method: subscribe ? "POST" : "DELETE",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(subscription.toJSON()),
+	});
+}
+
+export async function subscribeToPush() {
+	let { subscription, registration, applicationServerKey } =
+		await _getActivePushSubscription();
+
 	if (!subscription) {
 		subscription = await registration.pushManager.subscribe({
 			userVisibleOnly: true,
@@ -39,13 +60,19 @@ export async function subscribeToPush() {
 		});
 	}
 
-	await fetch("/api/push/subscribe", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(subscription.toJSON()),
-	});
+	_makePushApiRequest(true, subscription);
 
 	return subscription;
+}
+
+export async function unsubscribeFromPush() {
+	const { subscription } = await _getActivePushSubscription();
+
+	if (!subscription) return;
+
+	await subscription.unsubscribe();
+
+	_makePushApiRequest(false, subscription);
 }
 
 function keysMatch(a: ArrayBuffer | null, b: Uint8Array) {

@@ -5,6 +5,8 @@
 	import type { LayoutProps } from "./$types";
 	import { onMount } from "svelte";
 	import { authClient } from "#lib/client/frontend-auth.js";
+	import NavTabs from "#lib/components/tabs/NavTabs.svelte";
+	import { HouseIcon, SettingsIcon } from "@lucide/svelte";
 
 	let { data, children }: LayoutProps = $props();
 
@@ -41,4 +43,24 @@
 	</header>
 
 	<main class="mx-auto max-w-3xl px-5 py-8">{@render children()}</main>
+
+	<nav
+		class="flex mx-auto lg:max-w-xl lg:py-5 justify-center fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full"
+	>
+		<NavTabs
+			values={["home", "settings"]}
+			configs={{
+				home: {
+					icon: HouseIcon,
+					label: "Home",
+					navigate: "/",
+				},
+				settings: {
+					icon: SettingsIcon,
+					label: "Settings",
+					navigate: "/settings",
+				},
+			}}
+		/>
+	</nav>
 </div>

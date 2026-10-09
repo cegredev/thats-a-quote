@@ -15,12 +15,17 @@
 		>;
 	} & ContentTabs;
 
-	let { values, configs, ...content }: Props = $props();
+	let {
+		values,
+		configs,
+		default: defaultValue,
+		...content
+	}: Props = $props();
 
 	let contentTabs = $derived(content as unknown as ContentTabs);
 </script>
 
-<Tabs.Root value="login">
+<Tabs.Root value={defaultValue}>
 	<Tabs.List class="tabs tabs-box w-fit">
 		{#each values as value}
 			<Tabs.Trigger {value} class="tab data-[state=active]:tab-active">
