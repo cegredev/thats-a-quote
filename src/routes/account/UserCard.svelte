@@ -2,6 +2,8 @@
 	import { authClient } from "#lib/client/frontend-auth.js";
 	import { m } from "#lib/paraglide/messages.js";
 	import type { User } from "better-auth";
+	import * as Button from "#lib/components_shadcn/ui/button/index.js";
+	import * as Card from "#lib/components_shadcn/ui/card/index.js";
 
 	let { user }: { user: User } = $props();
 
@@ -10,16 +12,16 @@
 	}
 </script>
 
-<div class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6">
-	<p class="text-sm text-base-content/60">{m["account.signedInAs"]()}</p>
+<Card.Root class="mt-8 max-w-sm p-6">
+	<p class="text-sm text-muted-foreground">{m["account.signedInAs"]()}</p>
 
 	<p class="font-display text-lg font-semibold">
 		{user.name}
 	</p>
 
 	<div class="mt-5 flex gap-2">
-		<button class="btn btn-ghost btn-sm" onclick={signOut}>
+		<Button.Root variant="ghost" size="sm" onclick={signOut}>
 			{m["account.forget"]()}
-		</button>
+		</Button.Root>
 	</div>
-</div>
+</Card.Root>

@@ -10,7 +10,6 @@
 	import SearchQuotesForm from "#lib/components/forms/SearchQuotesForm.svelte";
 	import QuotesList from "#lib/components/quotes/QuotesList.svelte";
 	import FormButton from "#lib/components/forms/FormButton.svelte";
-	import classNames from "classnames";
 	import { onMount } from "svelte";
 	import GenericDialog from "#lib/components/dialogs/GenericDialog.svelte";
 
@@ -37,7 +36,7 @@
 			{data.group.name}
 		</h1>
 
-		<p class="text-sm text-base-content/60">
+		<p class="text-sm text-muted-foreground">
 			{m["group.quoteCount"]({
 				count: data.quotesPagination.totalItems,
 				s:
@@ -70,12 +69,14 @@
 						action="?/leaveGroup"
 						serverRequiresUser
 						text={m["group.leave"]()}
+						variant="destructive"
+						size="sm"
 						onSuccess={async () => {
 							groupIDsStore.remove(groupId);
 
 							await goto("..");
 						}}
-						classes={classNames("btn btn-error")}
+						classes=""
 					/>
 				{/snippet}
 			</GenericDialog>
@@ -84,7 +85,9 @@
 				text={m["group.join"]()}
 				action="?/joinGroup"
 				serverRequiresUser
-				classes={classNames("btn btn-ghost btn-sm text-success")}
+				variant="ghost"
+				size="sm"
+				classes="text-green-700 hover:text-green-800"
 				onSuccess={() => groupIDsStore.add(groupId)}
 			/>
 		{/if}

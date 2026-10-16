@@ -2,7 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
 	import type { LucideIcon } from "@lucide/svelte";
-	import { Tabs } from "bits-ui";
+	import * as Tabs from "#lib/components_shadcn/ui/tabs/index.js";
 
 	type Config = {
 		label: string;
@@ -41,13 +41,13 @@
 </script>
 
 <Tabs.Root value={startingValue} class="w-full">
-	<Tabs.List class="tabs tabs-box w-full grid auto-cols-[1fr] grid-flow-col">
+	<Tabs.List class="h-auto w-full grid auto-cols-[1fr] grid-flow-col">
 		{#each values as value}
 			{@const config = configs[value]}
 
 			<Tabs.Trigger
 				{value}
-				class="tab data-[state=active]:tab-active"
+				class="h-auto flex-col py-2"
 				onclick={async () => await goto(config.navigate)}
 			>
 				<div class="flex flex-col items-center justify-center">

@@ -4,8 +4,6 @@
 	import SchemaForm from "#lib/components/forms/SchemaForm.svelte";
 	import type zodSchemas from "#lib/zod-schemas.js";
 	import type z from "zod";
-	import classNames from "classnames";
-
 	type QuoteCreationData = z.infer<typeof zodSchemas.quotes.create.insert>;
 
 	let { form }: { form: SuperValidated<QuoteCreationData> } = $props();
@@ -26,11 +24,11 @@
 
 <SchemaForm
 	{form}
-	class="mb-10 flex flex-col gap-3 rounded-box border border-base-300 bg-base-100 p-5"
+	class="mb-10 flex flex-col gap-3 rounded-xl border bg-card p-5"
 	action="?/createQuote"
 	submitLabel={m["group.addQuote"]()}
 	submitBusyLabel={m["group.adding"]()}
-	submitClass={classNames("btn btn-primary mt-1 self-start")}
+	submitClass="mt-1 self-start"
 	fields={{
 		text: {
 			name: "text",

@@ -1,18 +1,28 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
 	import { getLocale, setLocale } from "#lib/paraglide/runtime.js";
+	import * as Select from "#lib/components_shadcn/ui/select/index.js";
+
+	let locale = $state(getLocale());
+
+	function onLocaleChange(value: string) {
+		if (value === "en" || value === "de") {
+			locale = value;
+			setLocale(value);
+		}
+	}
 </script>
 
-<label class="flex items-center gap-2 text-sm text-base-content/70">
-	<span class="sr-only">{m.language()}</span>
-
-	<select
-		class="select select-bordered select-xs"
-		value={getLocale()}
-		onchange={(event) => setLocale(event.currentTarget.value as any)}
-		aria-label={m.language()}
-	>
-		<option value="en">{m.english()}</option>
-		<option value="de">{m.german()}</option>
-	</select>
-</label>
+<Select.Root
+	type="single"
+	bind:value={locale}
+	onValueChange={onLocaleChange}
+>
+	<Select.Trigger class="h-7" aria-label={m.language()}>
+		<Select.Value />
+	</Select.Trigger>
+	<Select.Content>
+		<Select.Item value="en" label={m.english()} />
+		<Select.Item value="de" label={m.german()} />
+	</Select.Content>
+</Select.Root>

@@ -6,15 +6,20 @@
 		shiftPaginationPage,
 	} from "#lib/client/component-utils.svelte.js";
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
-	import { Pagination } from "bits-ui";
+	import * as Button from "#lib/components_shadcn/ui/button/index.js";
 	import GeneralSelect from "../util/GeneralSelect.svelte";
 	import { untrack } from "svelte";
 
-	let props: Pagination.RootProps & {
+	type Props = {
+		count: number;
+		perPage: number;
+		page: number;
 		scrollTo?: HTMLElement;
 		perPageOptions?: number[];
 		perPageDefault?: number;
-	} = $props();
+	};
+
+	let props: Props = $props();
 
 	function parsePerPageFromParams() {
 		const parsed = parseInt(page.url.searchParams.get("perPage") ?? "");
@@ -43,96 +48,97 @@
 		setPaginationPerPage(
 			parseInt(perPage),
 			parseInt(previous),
-			page.url.searchParams,
+			new URLSearchParams(page.url.searchParams.toString()),
 		);
 	});
 
-	let shiftPage = $derived((amount: number) => {
-		shiftPaginationPage(page.url, amount);
+	const totalPages = $derived(Math.ceil(props.count / props.perPage));
+	const pageItems = $derived.by(() => {
+		if (totalPages <= 7) {
+			return Array.from({ length: totalPages }, (_, index) => index + 1);
+		}
 
-		props.scrollTo?.scrollIntoView({
-			behavior: "instant",
-		});
+		const firstPage = Math.max(2, props.page - 1);
+		const lastPage = Math.min(totalPages - 1, props.page + 1);
+		const items: (number | "ellipsis")[] = [1];
+
+		if (firstPage > 2) items.push("ellipsis");
+		for (let pageNumber = firstPage; pageNumber <= lastPage; pageNumber++) {
+			items.push(pageNumber);
+		}
+		if (lastPage < totalPages - 1) items.push("ellipsis");
+		items.push(totalPages);
+
+		return items;
 	});
 
-	let setPage = $derived((p: number) => {
-		setPaginationPage(p, page.url.searchParams);
+	function shiftPage(amount: number) {
+		shiftPaginationPage(new URL(page.url.href), amount);
+		props.scrollTo?.scrollIntoView({ behavior: "instant" });
+	}
 
-		props.scrollTo?.scrollIntoView({
-			behavior: "instant",
-		});
-	});
+	function setPage(pageNumber: number) {
+		setPaginationPage(
+			pageNumber,
+			new URLSearchParams(page.url.searchParams.toString()),
+		);
+		props.scrollTo?.scrollIntoView({ behavior: "instant" });
+	}
 </script>
 
-<Pagination.Root {...props}>
-	{#snippet children({ pages, range })}
-		<div class="my-8 grid grid-cols-[1fr_auto_1fr]">
-			<div><!-- For spacing --></div>
+<div class="my-8 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+	<div></div>
 
-			<div class="flex items-center">
-				<Pagination.PrevButton
-					class="btn btn-ghost disabled:cursor-not-allowed"
-					onclick={() => shiftPage(-1)}
-				>
-					<ChevronLeft class="size-6" />
-				</Pagination.PrevButton>
+	<nav class="flex items-center gap-1" aria-label="Pagination">
+		<Button.Root
+			variant="ghost"
+			size="icon-sm"
+			aria-label="Previous page"
+			disabled={props.page <= 1}
+			onclick={() => shiftPage(-1)}
+		>
+			<ChevronLeft class="size-4" />
+		</Button.Root>
 
-				<div class="flex items-center join">
-					{#each pages as p (p.key)}
-						<!-- {@debug page} -->
-						{#if p.type === "ellipsis"}
-							<div
-								class="join-item btn btn-disabled border-base-content"
-							>
-								...
-							</div>
-						{:else}
-							<Pagination.Page
-								page={p}
-								class={[
-									"join-item",
-									"btn",
-									p.value === props.page
-										? "btn-active border-base-content"
-										: "",
-								]}
-								onclick={() => setPage(p.value)}
-							>
-								{p.value}
-							</Pagination.Page>
-						{/if}
-					{/each}
-				</div>
-
-				<Pagination.NextButton
-					class="btn btn-ghost disabled:cursor-not-allowed"
-					onclick={() => shiftPage(1)}
-				>
-					<ChevronRight class="size-6" />
-				</Pagination.NextButton>
-			</div>
-
-			{#if props.perPageOptions}
-				<div class="flex items-center justify-end gap-2">
-					<GeneralSelect
-						bind:value={perPage}
-						type="single"
-						items={props.perPageOptions.map((v) => ({
-							value: String(v),
-							label: String(v),
-						}))}
-					/>
-					<div>per page</div>
-				</div>
+		{#each pageItems as item, index (`${item}-${index}`)}
+			{#if item === "ellipsis"}
+				<span class="px-2 text-muted-foreground" aria-hidden="true">...</span>
 			{:else}
-				<div>
-					<!-- For spacing -->
-				</div>
+				<Button.Root
+					variant={item === props.page ? "default" : "ghost"}
+					size="icon-sm"
+					aria-label={`Page ${item}`}
+					aria-current={item === props.page ? "page" : undefined}
+					onclick={() => setPage(item)}
+				>
+					{item}
+				</Button.Root>
 			{/if}
-		</div>
+		{/each}
 
-		<!-- <p class="text-muted-foreground text-center text-[13px]">
-				Showing {range.start} - {range.end}
-			</p> -->
-	{/snippet}
-</Pagination.Root>
+		<Button.Root
+			variant="ghost"
+			size="icon-sm"
+			aria-label="Next page"
+			disabled={props.page >= totalPages}
+			onclick={() => shiftPage(1)}
+		>
+			<ChevronRight class="size-4" />
+		</Button.Root>
+	</nav>
+
+	{#if props.perPageOptions}
+		<div class="flex items-center justify-end gap-2">
+			<GeneralSelect
+				bind:value={perPage}
+				items={props.perPageOptions.map((value) => ({
+					value: String(value),
+					label: String(value),
+				}))}
+			/>
+			<div class="text-sm text-muted-foreground">per page</div>
+		</div>
+	{:else}
+		<div></div>
+	{/if}
+</div>

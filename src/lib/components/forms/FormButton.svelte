@@ -2,19 +2,28 @@
 	import { enhance } from "$app/forms";
 	import { authClient } from "#lib/client/frontend-auth.js";
 	import type { MaybePromise } from "#lib/types.js";
+	import * as Button from "#lib/components_shadcn/ui/button/index.js";
+	import type {
+		ButtonSize,
+		ButtonVariant,
+	} from "#lib/components_shadcn/ui/button/index.js";
 
 	let {
 		action,
 		onSuccess,
 		text,
-		classes,
+		classes = "",
 		serverRequiresUser,
+		variant = "default",
+		size = "default",
 	}: {
 		action: string;
 		onSuccess: () => MaybePromise<void>;
 		text: string;
-		classes: string;
+		classes?: string;
 		serverRequiresUser?: boolean;
+		variant?: ButtonVariant;
+		size?: ButtonSize;
 	} = $props();
 
 	const session = authClient.useSession();
@@ -33,16 +42,18 @@
 				}
 			}}
 	>
-		<button type="submit" class={classes}>
+		<Button.Root type="submit" {variant} {size} class={classes}>
 			{text}
-		</button>
+		</Button.Root>
 	</form>
 {:else}
-	<button
+	<Button.Root
 		type="button"
+		{variant}
+		{size}
 		class={classes}
 		onclick={async () => await onSuccess()}
 	>
 		{text}
-	</button>
+	</Button.Root>
 {/if}

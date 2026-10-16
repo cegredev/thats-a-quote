@@ -5,6 +5,8 @@
 	import GroupsList from "#lib/components/groups/GroupsList.svelte";
 	import Title from "#lib/components/util/Title.svelte";
 	import { subscribeToPush } from "#lib/client/push.ts";
+	import * as Button from "#lib/components_shadcn/ui/button/index.js";
+	import * as Card from "#lib/components_shadcn/ui/card/index.js";
 
 	let { data }: PageProps = $props();
 </script>
@@ -16,7 +18,7 @@
 		{m["home.title"]()}
 	</h1>
 
-	<p class="mt-3 max-w-lg text-base-content/70">
+	<p class="mt-3 max-w-lg text-muted-foreground">
 		{m["home.intro"]()}
 	</p>
 </section>
@@ -29,15 +31,15 @@
 	<GroupsList groups={data.groups} />
 </section>
 
-<section class="rounded-box border border-base-300 bg-base-100 p-5">
+<Card.Root class="p-5">
 	<GroupCreationForm form={data.groupCreationForm} />
-</section>
+</Card.Root>
 
-<button
-	class="btn"
+<Button.Root
+	class="mt-4"
 	onclick={async () => {
 		await subscribeToPush();
 	}}
 >
 	Activate notifications
-</button>
+</Button.Root>

@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { Switch, Label, useId, type WithoutChildrenOrChild } from "bits-ui";
+	import type { ComponentProps } from "svelte";
+	import * as Switch from "#lib/components_shadcn/ui/switch/index.js";
 
 	let {
-		id = useId(),
 		checked = $bindable(false),
-		ref = $bindable(null),
 		labelText,
 		...restProps
-	}: WithoutChildrenOrChild<Switch.RootProps> & {
+	}: ComponentProps<typeof Switch.Root> & {
 		labelText: string;
 	} = $props();
 </script>
 
-<div class="flex gap-2">
-	<Label.Root for={id} class="text-sm font-medium">{labelText}</Label.Root>
-	<input type="checkbox" bind:checked class="toggle" {...restProps} />
+<div class="flex items-center gap-2">
+	<Switch.Root bind:checked aria-label={labelText} {...restProps} />
+	<span class="text-sm font-medium">{labelText}</span>
 </div>

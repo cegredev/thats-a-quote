@@ -24,7 +24,10 @@
 	} from "sveltekit-superforms";
 	import { untrack, type Snippet } from "svelte";
 	import { type Readable } from "svelte/store";
-	import { autogrow } from "#lib/client/component-utils.svelte.js";
+	import { Button } from "#lib/components_shadcn/ui/button/index.js";
+	import { Input } from "#lib/components_shadcn/ui/input/index.js";
+	import * as Label from "#lib/components_shadcn/ui/label/index.js";
+	import { Textarea } from "#lib/components_shadcn/ui/textarea/index.js";
 
 	type SuperFormOptions = NonNullable<Parameters<typeof superForm<T>>[1]>;
 	type SuperFormReturn = ReturnType<typeof superForm<T>>;
@@ -75,7 +78,7 @@
 		/** The SuperValidated form data passed down from a `+page.server.ts` load */
 		form: SuperValidated<T>;
 		/** Declarative description of the fields to render, in order */
-		fields: Record<keyof T, FieldConfig>;
+		fields: Partial<Record<Extract<keyof T, string>, FieldConfig>>;
 		/** Form `action` attribute, e.g. "?/createGroup" */
 		action: string;
 		submitLabel: string;
@@ -109,7 +112,10 @@
 	);
 
 	function typedEntries<T extends object>(obj: T) {
-		return Object.entries(obj) as [Extract<keyof T, string>, T[keyof T]][];
+		return Object.entries(obj).filter(([, value]) => value !== undefined) as [
+			Extract<keyof T, string>,
+			Exclude<T[keyof T], undefined>,
+		][];
 	}
 </script>
 
@@ -150,33 +156,32 @@
 				...cfg.other,
 			}}
 
-			<label class="fieldset-label" for={cfg.name}>
+			<Label.Root for={cfg.name}>
 				{cfg.label}
 				{#if cfg.optional}
-					<span class="text-base-content/50">
+					<span class="text-muted-foreground">
 						({cfg.optionalLabel ?? "optional"})
 					</span>
 				{/if}
-			</label>
+			</Label.Root>
 
 			{#if cfg.type === "textarea"}
-				<textarea
-					class="textarea w-full validator resize-none"
+				<Textarea
+					class="w-full"
 					rows="2"
 					bind:value={$formData[cfg.name as keyof T]}
-					use:autogrow
 					{...inputProps}
-				></textarea>
+				/>
 			{:else}
-				<input
+				<Input
 					type={cfg.type ?? "text"}
-					class="input w-full validator"
+					class="w-full"
 					bind:value={$formData[cfg.name as keyof T]}
 					{...inputProps}
 				/>
 			{/if}
 			{#if $errors[cfg.name as keyof ValidationErrors<T>]}
-				<span class="validator-hint hidden">
+				<span class="text-sm text-destructive">
 					{$errors[cfg.name as keyof ValidationErrors<T>]}
 				</span>
 			{/if}
@@ -186,11 +191,12 @@
 	{#if footer}
 		{@render footer({ submitting: $submitting })}
 	{:else}
-		<button
-			class={submitClass ?? "btn btn-primary mt-1 self-start"}
+		<Button
+			type="submit"
+			class={submitClass ?? "mt-1 self-start"}
 			disabled={$submitting}
 		>
 			{$submitting ? submitBusyLabel : submitLabel}
-		</button>
+		</Button>
 	{/if}
 </form>

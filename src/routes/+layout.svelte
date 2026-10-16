@@ -17,8 +17,8 @@
 	});
 </script>
 
-<div class="min-h-screen bg-base-100" data-theme="thats-a-quote">
-	<header class="border-b border-base-300">
+<div class="min-h-screen bg-background">
+	<header class="border-b border-border">
 		<div
 			class="mx-auto flex max-w-3xl items-center justify-between px-5 py-4"
 		>
@@ -32,7 +32,7 @@
 			<div class="flex items-center gap-4">
 				<a
 					href="/account"
-					class="link link-hover text-sm text-base-content/70"
+					class="text-sm text-muted-foreground underline-offset-4 hover:underline"
 				>
 					{m.syncDevices()}
 				</a>

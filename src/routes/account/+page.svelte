@@ -7,6 +7,7 @@
 	import UserCard from "./UserCard.svelte";
 	import Title from "#lib/components/util/Title.svelte";
 	import GeneralTabs from "#lib/components/tabs/GeneralTabs.svelte";
+	import * as Card from "#lib/components_shadcn/ui/card/index.js";
 
 	let { data }: PageProps = $props();
 
@@ -19,16 +20,14 @@
 	{m["account.title"]()}
 </h1>
 
-<p class="mt-2 max-w-lg text-base-content/70">
+<p class="mt-2 max-w-lg text-muted-foreground">
 	{m["account.intro"]()}
 </p>
 
 {#if $session.data}
 	<UserCard user={$session.data.user} />
 {:else}
-	<div
-		class="mt-8 max-w-sm rounded-box border border-base-300 bg-base-100 p-6"
-	>
+	<Card.Root class="mt-8 max-w-sm p-6">
 		<GeneralTabs
 			values={["login", "register"]}
 			configs={{
@@ -48,5 +47,5 @@
 				<RegisterForm form={data.registerForm} />
 			{/snippet}
 		</GeneralTabs>
-	</div>
+	</Card.Root>
 {/if}

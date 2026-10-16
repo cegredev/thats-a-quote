@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends string">
-	import { Tabs } from "bits-ui";
+	import * as Tabs from "#lib/components_shadcn/ui/tabs/index.js";
 	import type { Snippet } from "svelte";
 
 	type ContentTabs = Record<`content_${T}`, Snippet>;
@@ -26,9 +26,9 @@
 </script>
 
 <Tabs.Root value={defaultValue}>
-	<Tabs.List class="tabs tabs-box w-fit">
+	<Tabs.List class="w-fit">
 		{#each values as value}
-			<Tabs.Trigger {value} class="tab data-[state=active]:tab-active">
+			<Tabs.Trigger {value}>
 				{configs[value as T].label}
 			</Tabs.Trigger>
 		{/each}

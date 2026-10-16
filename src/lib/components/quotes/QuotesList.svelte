@@ -7,10 +7,11 @@
 	import { m } from "#lib/paraglide/messages.js";
 	import { getLocale } from "#lib/paraglide/runtime.js";
 	import { CircleQuestionMark } from "@lucide/svelte";
-	import GeneralPopover from "../GeneralPopover.svelte";
+	import GeneralTooltip from "../GeneralTooltip.svelte";
 	import type { Quote } from "#lib/zod-schemas.js";
 	import type { PaginatedResponse } from "#lib/server/crud/index.js";
 	import FullPagination from "#lib/components/meta/FullPagination.svelte";
+	import * as Card from "#lib/components_shadcn/ui/card/index.js";
 
 	let { pagination }: { pagination: PaginatedResponse<Quote> } = $props();
 
@@ -32,10 +33,8 @@
 </script>
 
 {#if pagination.totalItems === 0}
-	<div
-		class="rounded-box border border-dashed border-base-300 px-5 py-10 textsearchContent || searchPerson-center"
-	>
-		<p class="text-base-content/70">
+	<div class="rounded-xl border border-dashed px-5 py-10 text-center">
+		<p class="text-muted-foreground">
 			{searchQueryExists
 				? m["group.noMatchingQuotes"]()
 				: m["group.noQuotes"]()}
@@ -49,35 +48,37 @@
 	>
 		<ul class="grid gap-4 sm:grid-cols-2">
 			{#each pagination.results as quote (quote.id)}
-				<li class="quote-card rounded-box p-4 relative">
-					<p
-						class="font-display text-[1.05rem] leading-snug text-balance"
-					>
-						&ldquo;{quote.text}&rdquo;
-					</p>
+				<li>
+					<Card.Root class="quote-card relative rounded-xl p-4">
+						<p
+							class="font-display text-[1.05rem] leading-snug text-balance"
+						>
+							&ldquo;{quote.text}&rdquo;
+						</p>
 
-					<p class="mt-3 text-sm text-base-content/60">
-						— {quote.person ?? m["group.anonymousPersonDisplay"]()}
+						<p class="mt-3 text-sm text-muted-foreground">
+							— {quote.person ?? m["group.anonymousPersonDisplay"]()}
 
-						<span class="text-base-content/40">
-							· {formatDate(quote.quotedAt)}
-						</span>
-					</p>
+							<span class="text-muted-foreground/65">
+								· {formatDate(quote.quotedAt)}
+							</span>
+						</p>
 
-					{#if quote.context}
-						<div class="absolute top-2 right-2">
-							<GeneralPopover contentProps={{ side: "top" }}>
-								{#snippet trigger()}
-									<CircleQuestionMark class="size-4" />
-								{/snippet}
-								{#snippet content()}
-									<p class="text-sm">
-										{quote.context}
-									</p>
-								{/snippet}
-							</GeneralPopover>
-						</div>
-					{/if}
+						{#if quote.context}
+							<div class="absolute top-2 right-2">
+								<GeneralTooltip>
+									{#snippet trigger()}
+										<CircleQuestionMark class="size-4" />
+									{/snippet}
+									{#snippet content()}
+										<p class="max-w-64 text-sm">
+											{quote.context}
+										</p>
+									{/snippet}
+								</GeneralTooltip>
+							</div>
+						{/if}
+					</Card.Root>
 				</li>
 			{/each}
 		</ul>
@@ -85,20 +86,16 @@
 {/if}
 
 <style lang="scss">
-	.quote-card {
-		background: color-mix(
-			in oklch,
-			var(--color-base-100) 100%,
-			transparent
-		);
-		border: 1.5px solid var(--color-base-300);
+	:global(.quote-card) {
+		background: var(--card);
+		border: 1.5px solid var(--border);
 		transition:
 			transform 0.15s ease,
 			box-shadow 0.15s ease;
 	}
 
-	.quote-card:hover {
+	:global(.quote-card:hover) {
 		transform: translateY(-2px);
-		box-shadow: 0 6px 18px -8px color-mix(in oklch, var(--color-neutral) 35%, transparent);
+		box-shadow: 0 6px 18px -8px color-mix(in oklch, var(--foreground) 35%, transparent);
 	}
 </style>

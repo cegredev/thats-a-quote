@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
+	import * as Button from "#lib/components_shadcn/ui/button/index.js";
 
 	let { content, copyText }: { content: string; copyText: string } = $props();
 
@@ -12,6 +13,6 @@
 	}
 </script>
 
-<button class="btn btn-ghost btn-sm" onclick={copyToClipboard}>
+<Button.Root variant="ghost" size="sm" onclick={copyToClipboard}>
 	{copied ? m["group.copied"]() : copyText}
-</button>
+</Button.Root>
