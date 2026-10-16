@@ -16,6 +16,10 @@
 <Select.Root
 	type="single"
 	bind:value={locale}
+	items={[
+		{ value: "en", label: m.english() },
+		{ value: "de", label: m.german() },
+	]}
 	onValueChange={onLocaleChange}
 >
 	<Select.Trigger class="h-7" aria-label={m.language()}>

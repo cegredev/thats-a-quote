@@ -36,8 +36,6 @@
 				>
 					{m.syncDevices()}
 				</a>
-
-				<LocaleSwitcher />
 			</div>
 		</div>
 	</header>

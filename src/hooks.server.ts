@@ -29,6 +29,7 @@ const originalHandle: Handle = async ({ event, resolve }) => {
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
+		// @ts-ignore
 		event.request = request;
 
 		return resolve(event, {

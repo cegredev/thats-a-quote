@@ -4,8 +4,6 @@
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
 	import GroupsList from "#lib/components/groups/GroupsList.svelte";
 	import Title from "#lib/components/util/Title.svelte";
-	import { subscribeToPush } from "#lib/client/push.ts";
-	import * as Button from "#lib/components_shadcn/ui/button/index.js";
 	import * as Card from "#lib/components_shadcn/ui/card/index.js";
 
 	let { data }: PageProps = $props();
@@ -34,12 +32,3 @@
 <Card.Root class="p-5">
 	<GroupCreationForm form={data.groupCreationForm} />
 </Card.Root>
-
-<Button.Root
-	class="mt-4"
-	onclick={async () => {
-		await subscribeToPush();
-	}}
->
-	Activate notifications
-</Button.Root>
