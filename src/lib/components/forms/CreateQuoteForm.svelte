@@ -24,7 +24,7 @@
 
 <SchemaForm
 	{form}
-	class="mb-10 flex flex-col gap-3 rounded-xl border bg-card p-5"
+	class="mb-10 flex flex-col gap-3 rounded-lg border bg-card p-5"
 	action="?/createQuote"
 	submitLabel={m["group.addQuote"]()}
 	submitBusyLabel={m["group.adding"]()}

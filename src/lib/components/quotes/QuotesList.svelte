@@ -33,7 +33,7 @@
 </script>
 
 {#if pagination.totalItems === 0}
-	<div class="rounded-xl border border-dashed px-5 py-10 text-center">
+	<div class="rounded-lg border border-dashed px-5 py-10 text-center">
 		<p class="text-muted-foreground">
 			{searchQueryExists
 				? m["group.noMatchingQuotes"]()
@@ -49,7 +49,7 @@
 		<ul class="grid gap-4 sm:grid-cols-2">
 			{#each pagination.results as quote (quote.id)}
 				<li>
-					<Card.Root class="quote-card relative rounded-xl p-4">
+					<Card.Root class="quote-card relative rounded-lg p-4">
 						<p
 							class="font-display text-[1.05rem] leading-snug text-balance"
 						>

@@ -6,7 +6,7 @@
 </script>
 
 <form
-	class="mb-6 grid gap-3 rounded-xl border bg-card p-4 sm:grid-cols-[1fr_1fr_auto]"
+	class="mb-6 grid gap-3 rounded-lg border bg-card p-4 sm:grid-cols-[1fr_1fr_auto]"
 	method="GET"
 >
 	<Input

@@ -7,7 +7,7 @@
 </script>
 
 {#if groups.length === 0}
-	<div class="rounded-xl border border-dashed px-5 py-8 text-center">
+	<div class="rounded-lg border border-dashed px-5 py-8 text-center">
 		<p class="text-muted-foreground">
 			{m["home.empty"]()}
 		</p>
@@ -21,7 +21,7 @@
 				>
 					<a
 						href={`/group/${group.id}`}
-						class="flex items-center justify-between rounded-xl px-4 py-3"
+						class="flex items-center justify-between rounded-lg px-4 py-3"
 					>
 						<span class="font-medium">{group.name}</span>
 					</a>
