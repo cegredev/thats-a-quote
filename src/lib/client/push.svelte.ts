@@ -1,7 +1,16 @@
+let _publicKey: string | undefined = $state(undefined);
+
 async function getPublicKey(): Promise<string> {
-	const res = await fetch("/api/push/key");
-	if (!res.ok) throw new Error("Could not load push key");
-	return (await res.json()).publicKey;
+	let publicKey: string;
+	if (!_publicKey) {
+		const res = await fetch("/api/push/key");
+		if (!res.ok) throw new Error("Could not load push key");
+		publicKey = (await res.json()).publicKey;
+		_publicKey = publicKey;
+	} else {
+		publicKey = _publicKey;
+	}
+	return publicKey;
 }
 
 function urlBase64ToUint8Array(base64: string) {

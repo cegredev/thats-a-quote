@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { subscribeToPush, unsubscribeFromPush } from "#lib/client/push.ts";
+	import {
+		subscribeToPush,
+		unsubscribeFromPush,
+	} from "#lib/client/push.svelte.ts";
 	import type { PageProps } from "./$types";
 	import * as Item from "#lib/components_shadcn/ui/item/index.js";
 	import { Switch } from "#lib/components_shadcn/ui/switch/index.js";
