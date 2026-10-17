@@ -20,11 +20,10 @@ ENV NODE_ENV=production \
 
 WORKDIR ${BASE_DIR}
 
-COPY --from=build /build/build \
-                  /build/node_modules \
-                  /build/package.json\
-                  /build/drizzle \
-                  ./
+COPY --from=build /build/build ./build
+COPY --from=build /build/node_modules ./node_modules
+COPY --from=build /build/package.json ./package.json
+COPY --from=build /build/drizzle ./drizzle
 
 RUN mkdir -p ${BASE_DIR}/data
 VOLUME ["${BASE_DIR}/data"]
