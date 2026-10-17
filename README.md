@@ -22,6 +22,17 @@ A tiny app for keeping track of the funny things your friends say.
 
 ## Running it
 
+Create a `.env.development.local`:
+
+```
+# The secret used for authentication. In development you can use anything here, but a real secret will prevent a warning message.
+AUTH_SECRET=see https://better-auth.com/docs/installation#set-environment-variables for generation
+# The following is needed if you want push notifications. It should be a real e-mail address belonging to you or a link to a website belonging to you.
+VAPID_SUBJECT=mailto:you@example.com
+```
+
+Then run:
+
 ```bash
 pnpm install
 pnpm run dev       # http://localhost:5173, auto-reload

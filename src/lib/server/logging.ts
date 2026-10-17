@@ -1,8 +1,7 @@
-import { dev } from "$app/env";
-import { DISABLE_PRETTY_LOGS } from "$app/env/private";
+import { JSON_LOGS } from "$app/env/private";
 import pino from "pino";
 
-const prettyLogs = dev || !DISABLE_PRETTY_LOGS;
+const prettyLogs = !JSON_LOGS;
 
 export const logger = pino({
 	transport: prettyLogs

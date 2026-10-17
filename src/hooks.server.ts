@@ -6,9 +6,9 @@ import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/env";
 import { logger } from "#lib/server/logging.js";
 import { nanoid } from "nanoid";
-import { DUMMY_DATA_INTERVAL_SECONDS } from "$app/env/public";
+import { FILL_WITH_DUMMY_DATA, RESET_INTERVAL_SECONDS } from "$app/env/private";
 
-logger.info("thats-a-quote server started!");
+logger.info("thats-a-quote started!");
 
 const originalHandle: Handle = async ({ event, resolve }) => {
 	// Fetch current session from Better Auth
@@ -42,18 +42,17 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 
 export const handle = sequence(originalHandle, handleParaglide);
 
-if (
-	DUMMY_DATA_INTERVAL_SECONDS !== undefined &&
-	DUMMY_DATA_INTERVAL_SECONDS >= 0
-) {
+if (FILL_WITH_DUMMY_DATA) {
 	const { fillWithDummyData } = await import("#lib/server/db/dummy-data.js");
 
 	await fillWithDummyData();
+}
 
-	if (DUMMY_DATA_INTERVAL_SECONDS > 0) {
-		setInterval(async () => {
-			console.log("Filling database with dummy data...");
-			await fillWithDummyData();
-		}, DUMMY_DATA_INTERVAL_SECONDS * 1000);
-	}
+if (RESET_INTERVAL_SECONDS && RESET_INTERVAL_SECONDS > 0) {
+	const { resetDatabase } = await import("#lib/server/db/dummy-data.js");
+
+	setInterval(async () => {
+		logger.info("Resetting database...");
+		await resetDatabase();
+	}, RESET_INTERVAL_SECONDS * 1000);
 }

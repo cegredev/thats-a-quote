@@ -4,18 +4,17 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/libsql";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import { authRelations, relations } from "./db/relations";
+import { DATA_DIR } from "$app/env/private";
 
-const DB_PATH = process.env.DATABASE_PATH ?? "data/db.sqlite3";
-const MIGRATIONS_PATH = process.env.MIGRATIONS_PATH ?? "drizzle";
+const DB_PATH = path.join(DATA_DIR, "db.sqlite3");
 
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
-// You can specify any property from the libsql connection options
 export const db = drizzle({
-	connection: { url: "file:" + DB_PATH },
+	connection: { url: `file:${DB_PATH}` },
 	relations: { ...relations, ...authRelations },
 });
 
 await migrate(db, {
-	migrationsFolder: MIGRATIONS_PATH,
+	migrationsFolder: "drizzle",
 });

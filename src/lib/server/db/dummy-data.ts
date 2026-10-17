@@ -5,6 +5,7 @@ import { auth } from "#lib/server/auth.js";
 import { sql, is } from "drizzle-orm";
 import { SQLiteTable, getTableConfig } from "drizzle-orm/sqlite-core";
 import { addMembersToGroup } from "../groups";
+import { FILL_WITH_DUMMY_DATA } from "$app/env/private";
 
 const resetDbManually = async () => {
 	await db.run(sql`PRAGMA foreign_keys = OFF`);
@@ -18,21 +19,41 @@ const resetDbManually = async () => {
 	await db.run(sql`PRAGMA foreign_keys = ON`);
 };
 
-export const fillWithDummyData = async () => {
+export const resetDatabase = async () => {
 	await resetDbManually();
 
-	const result = await groupsCrud.bulkCreate([
+	if (FILL_WITH_DUMMY_DATA) {
+		await fillWithDummyData();
+	}
+};
+
+export const fillWithDummyData = async () => {
+	const userId = await createDemoUser();
+
+	const demoGroupsUnfiltered = [
 		{ name: "Demo Group 1", id: "demo-group-1" },
 		{ name: "A crazy group title", id: "demo-group-2" },
-	]);
+	] as const;
+
+	const demoGroups: { name: string; id: string }[] = [];
+
+	for (const group of demoGroupsUnfiltered) {
+		const g = await groupsCrud.findOne({
+			id: group.id,
+		});
+		if (g) continue;
+		demoGroups.push(group);
+	}
+
+	if (demoGroups.length === 0) return;
+
+	const result = await groupsCrud.bulkCreate(demoGroups);
 
 	if (!result.success)
 		throw new Error(
 			"Failed to fill database with dummy data: " +
 				JSON.stringify(result),
 		);
-
-	const userId = await createDemoUser();
 
 	for (const group of result.items)
 		await quotesCrud.bulkCreate(
@@ -55,6 +76,9 @@ const createDemoUser = async () => {
 
 	const email = DEMO_EMAIL;
 	const password = DEMO_PASSWORD;
+
+	const existingUser = await ctx.internalAdapter.findUserByEmail(email);
+	if (existingUser) return existingUser.user.id;
 
 	const user = await ctx.internalAdapter.createUser(
 		{

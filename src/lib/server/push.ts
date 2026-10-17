@@ -13,12 +13,6 @@ function configure(subject: string) {
 	configured = true;
 }
 
-// const toSubscription = (endpoint: string): webpush.PushSubscription => ({
-
-// 	endpoint: endpoint,
-//   keys: { p256dh: row.p256dh, auth: row.auth }
-// });
-
 async function _sendPush(
 	sub: webpush.PushSubscription,
 	payload: { title: string; message: string; url?: string },
