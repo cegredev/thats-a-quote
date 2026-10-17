@@ -108,5 +108,6 @@
 	"group_searchPerson": "Search person",
 	"group_search": "Search",
 	"group_clearSearch": "Clear",
-	"group_noMatchingQuotes": "No quotes match your search."
+	"group_noMatchingQuotes": "No quotes match your search.",
+	"settings_admin_needs_to_enable": "Your admin needs to enable this feature"
 }

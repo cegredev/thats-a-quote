@@ -30,7 +30,13 @@
 				<Item.Description>
 					{m.settings_notificationsDescription()}
 				</Item.Description>
-				{#if !data.data.isLoggedIn}
+				{#if !data.data.pushServiceEnabled}
+					<Item.Footer>
+						<Badge variant="destructive">
+							{m.settings_admin_needs_to_enable()}
+						</Badge>
+					</Item.Footer>
+				{:else if !data.data.isLoggedIn}
 					<Item.Footer>
 						<Badge variant="destructive">
 							{m.settings_logInToChange()}
@@ -43,7 +49,8 @@
 					aria-label={m.settings_notificationsAriaLabel()}
 					onCheckedChange={onChange}
 					checked={data.data.pushPermission}
-					disabled={!data.data.isLoggedIn}
+					disabled={!data.data.pushServiceEnabled ||
+						!data.data.isLoggedIn}
 				/>
 			</Item.Actions>
 		</Item.Root>
