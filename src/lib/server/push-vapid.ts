@@ -11,10 +11,14 @@ const keysFilePath = path.join(DATA_DIR, "vapid.json");
 
 type VapidKeys = { publicKey: string; privateKey: string };
 
-let keys: VapidKeys = await loadOrCreate();
+let _keys: VapidKeys | undefined = undefined;
 
-export function getVapidKeys(): VapidKeys {
-	return keys;
+export async function getVapidKeys(): Promise<VapidKeys> {
+	if (_keys !== undefined) return _keys;
+
+	_keys = await loadOrCreate();
+
+	return _keys;
 }
 
 async function loadOrCreate(): Promise<VapidKeys> {
@@ -52,8 +56,8 @@ async function insertKeysIfAbsent(keys: VapidKeys) {
 
 let configured: boolean = false;
 
-function configure(subject: string) {
-	const keys = getVapidKeys();
+async function configure(subject: string) {
+	const keys = await getVapidKeys();
 	webpush.setVapidDetails(subject, keys.publicKey, keys.privateKey);
 	configured = true;
 }
@@ -65,7 +69,7 @@ async function _sendPush(
 	if (!VAPID_SUBJECT)
 		throw new Error("No VAPID_SUBJECT configured, but needed for push.");
 
-	if (!configured) configure(VAPID_SUBJECT);
+	if (!configured) await configure(VAPID_SUBJECT);
 
 	try {
 		await webpush.sendNotification(sub, JSON.stringify(payload), {
@@ -87,7 +91,7 @@ export const sendPush = async (
 		message: string;
 	},
 ) => {
-	const subscriptions = await db
+	const subscriptions = await db()
 		.select()
 		.from(pushSubscriptions)
 		.where(inArray(pushSubscriptions.userId, userIds));

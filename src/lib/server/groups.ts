@@ -4,7 +4,7 @@ import { and, desc, eq, isNotNull, sql } from "drizzle-orm";
 
 /** Distinct people who have been quoted in this group, most recently used first. */
 export async function listPeople(groupId: string): Promise<string[]> {
-	const result = await db
+	const result = await db()
 		.select({
 			person: quotesTable.person,
 			lastUsed: sql<number>`MAX(${quotesTable.quotedAt})`,
@@ -26,13 +26,13 @@ export async function listPeople(groupId: string): Promise<string[]> {
 export async function addMembersToGroup(
 	members: { groupId: string; userId: string }[],
 ): Promise<void> {
-	await db.insert(groupMembers).values(members);
+	await db().insert(groupMembers).values(members);
 }
 
 export async function removeMembersFromGroup(
 	members: { groupId: string; userId: string }[],
 ): Promise<void> {
-	await db
+	await db()
 		.delete(groupMembers)
 		.where(
 			and(
@@ -47,7 +47,7 @@ export async function removeMembersFromGroup(
 }
 
 export async function getUserGroupMemberships(userId: string) {
-	const memberships = await db.query.groupMembers.findMany({
+	const memberships = await db().query.groupMembers.findMany({
 		columns: {
 			groupId: true,
 			role: true,

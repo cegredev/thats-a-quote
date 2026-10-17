@@ -3,12 +3,27 @@ import { zod } from "../crud/zod";
 import { db } from "../db";
 import { groupsTable, quotesTable } from "./schema";
 
-const crud = drizzleCrud(db, { validation: zod() });
+const createCrud = () => {
+	const crud = drizzleCrud(db(), { validation: zod() });
 
-export const quotesCrud = crud(quotesTable, {
-	allowedFilters: ["groupId", "text", "person"],
-});
+	return {
+		quotes: crud(quotesTable, {
+			allowedFilters: ["groupId", "text", "person"],
+		}),
+		groups: crud(groupsTable, {
+			allowedFilters: ["id"],
+		}),
+	};
+};
 
-export const groupsCrud = crud(groupsTable, {
-	allowedFilters: ["id"],
-});
+type CRUD = ReturnType<typeof createCrud>;
+
+let _crud: CRUD | undefined = undefined;
+
+export const crud: () => CRUD = () => {
+	if (_crud !== undefined) return _crud;
+
+	_crud = createCrud();
+
+	return _crud;
+};

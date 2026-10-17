@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	const userId = locals.user?.id;
 
-	await db
+	await db()
 		.insert(pushSubscriptions)
 		.values({
 			endpoint: sub.endpoint,
@@ -37,7 +37,7 @@ export const DELETE: RequestHandler = async ({ request }) => {
 
 	if (!endpoint) error(400, "missing endpoint");
 
-	await db
+	await db()
 		.delete(pushSubscriptions)
 		.where(eq(pushSubscriptions.endpoint, endpoint));
 

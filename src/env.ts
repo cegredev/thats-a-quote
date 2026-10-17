@@ -1,5 +1,9 @@
+import { building } from "$app/env";
 import { defineEnvVars } from "@sveltejs/kit/env";
 import z from "zod";
+
+const optionalInBuild = <T extends z.ZodType>(schema: T) =>
+	building ? schema.optional() : schema;
 
 export const variables = defineEnvVars({
 	DATA_DIR: {
@@ -10,12 +14,12 @@ export const variables = defineEnvVars({
 	AUTH_SECRET: {
 		description:
 			"The secret used for authentication. More information here: https://better-auth.com/docs/installation#set-environment-variables",
-		schema: z.string(),
+		schema: optionalInBuild(z.string()),
 	},
 	BASE_URL: {
 		description:
 			"The base URL of your deployment. For example http://localost:5173 or https://quotes.my-domain.com",
-		schema: z.url(),
+		schema: optionalInBuild(z.url()),
 	},
 	JSON_LOGS: {
 		description: "If true, the app will output JSON logs.",

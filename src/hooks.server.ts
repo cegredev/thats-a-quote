@@ -12,7 +12,7 @@ logger.info("thats-a-quote started!");
 
 const originalHandle: Handle = async ({ event, resolve }) => {
 	// Fetch current session from Better Auth
-	const session = await auth.api.getSession({
+	const session = await auth().api.getSession({
 		headers: event.request.headers,
 	});
 
@@ -24,7 +24,7 @@ const originalHandle: Handle = async ({ event, resolve }) => {
 
 	event.locals.logger = logger.child({ reqId: nanoid() });
 
-	return svelteKitHandler({ event, resolve, auth, building });
+	return svelteKitHandler({ event, resolve, auth: auth(), building });
 };
 
 const handleParaglide: Handle = ({ event, resolve }) =>

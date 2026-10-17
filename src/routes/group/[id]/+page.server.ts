@@ -10,7 +10,7 @@ import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { error, fail } from "@sveltejs/kit";
 import { rateLimit } from "#lib/server/rate-limiting.js";
-import { groupsCrud, quotesCrud } from "#lib/server/db/crud.js";
+import { crud } from "#lib/server/db/crud.js";
 import { parsePaginationParams, parseSearchParams } from "#lib/server/utils.js";
 import { sendPush } from "#lib/server/push-vapid.js";
 import { db } from "#lib/server/db.js";
@@ -22,7 +22,7 @@ const QUOTES_DEFAULT_PAGE_SIZE = 30;
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;
 
-	const groupDetails = await groupsCrud.findOne({
+	const groupDetails = await crud().groups.findOne({
 		id: groupId,
 	});
 	if (!groupDetails) error(404, "Group not found");
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 
 	const { page, perPage } = parsePaginationParams(url.searchParams);
 
-	const quotesPagination = await quotesCrud.list({
+	const quotesPagination = await crud().quotes.list({
 		filters: {
 			groupId,
 			person: searchOptions.person
@@ -83,7 +83,7 @@ export const actions = {
 		const groupId = params.id;
 		if (!groupId) error(400, "No group id param");
 
-		const group = await groupsCrud.findOne({
+		const group = await crud().groups.findOne({
 			id: groupId,
 		});
 		if (!group) error(400, "group does not exist");
@@ -95,7 +95,7 @@ export const actions = {
 
 		if (!form.valid) return fail(400, { form });
 
-		const quote = await quotesCrud.create(
+		const quote = await crud().quotes.create(
 			{
 				groupId,
 				text: form.data.text,
@@ -108,7 +108,7 @@ export const actions = {
 			},
 		);
 
-		const members = await db
+		const members = await db()
 			.select()
 			.from(groupMembers)
 			.where(eq(groupMembers.groupId, groupId));

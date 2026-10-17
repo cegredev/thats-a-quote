@@ -1,9 +1,9 @@
-import { groupsCrud } from "#lib/server/db/crud.js";
+import { crud } from "#lib/server/db/crud.js";
 
 export async function GET({ url }) {
 	const ids = url.searchParams.getAll("id");
 
-	const groupsPagination = await groupsCrud.list({
+	const groupsPagination = await crud().groups.list({
 		filters: {
 			id: {
 				in: ids,

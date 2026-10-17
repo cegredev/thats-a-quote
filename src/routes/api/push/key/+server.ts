@@ -1,6 +1,6 @@
 import { getVapidKeys } from "#lib/server/push-vapid.ts";
 
 export const GET = async () => {
-	const { publicKey } = getVapidKeys();
+	const { publicKey } = await getVapidKeys();
 	return Response.json({ publicKey });
 };

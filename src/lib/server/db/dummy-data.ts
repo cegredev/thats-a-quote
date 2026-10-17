@@ -1,4 +1,4 @@
-import { groupsCrud, quotesCrud } from "./crud";
+import { crud } from "./crud";
 import * as schema from "./schema";
 import { db } from "#lib/server/db.js";
 import { auth } from "#lib/server/auth.js";
@@ -8,15 +8,15 @@ import { addMembersToGroup } from "../groups";
 import { FILL_WITH_DUMMY_DATA } from "$app/env/private";
 
 const resetDbManually = async () => {
-	await db.run(sql`PRAGMA foreign_keys = OFF`);
+	await db().run(sql`PRAGMA foreign_keys = OFF`);
 
 	for (const t of Object.values(schema)) {
 		if (is(t, SQLiteTable)) {
-			await db.run(sql.raw(`DELETE FROM "${getTableConfig(t).name}"`));
+			await db().run(sql.raw(`DELETE FROM "${getTableConfig(t).name}"`));
 		}
 	}
 
-	await db.run(sql`PRAGMA foreign_keys = ON`);
+	await db().run(sql`PRAGMA foreign_keys = ON`);
 };
 
 export const resetDatabase = async () => {
@@ -38,7 +38,7 @@ export const fillWithDummyData = async () => {
 	const demoGroups: { name: string; id: string }[] = [];
 
 	for (const group of demoGroupsUnfiltered) {
-		const g = await groupsCrud.findOne({
+		const g = await crud().groups.findOne({
 			id: group.id,
 		});
 		if (g) continue;
@@ -47,7 +47,7 @@ export const fillWithDummyData = async () => {
 
 	if (demoGroups.length === 0) return;
 
-	const result = await groupsCrud.bulkCreate(demoGroups);
+	const result = await crud().groups.bulkCreate(demoGroups);
 
 	if (!result.success)
 		throw new Error(
@@ -56,7 +56,7 @@ export const fillWithDummyData = async () => {
 		);
 
 	for (const group of result.items)
-		await quotesCrud.bulkCreate(
+		await crud().quotes.bulkCreate(
 			quotes.map((quote) => ({ ...quote, groupId: group.id })),
 		);
 
@@ -72,7 +72,7 @@ export const DEMO_EMAIL = "demo@example.com";
 export const DEMO_PASSWORD = "demo";
 
 const createDemoUser = async () => {
-	const ctx = await auth.$context;
+	const ctx = await auth().$context;
 
 	const email = DEMO_EMAIL;
 	const password = DEMO_PASSWORD;

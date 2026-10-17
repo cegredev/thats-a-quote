@@ -35,7 +35,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		await auth.api.signUpEmail({
+		await auth().api.signUpEmail({
 			body: {
 				name: form.data.name,
 				email: form.data.email,
@@ -60,7 +60,7 @@ export const actions = {
 			error(429, "rate limited on username");
 
 		try {
-			await auth.api.signInEmail({
+			await auth().api.signInEmail({
 				body: {
 					email: form.data.email,
 					password: form.data.password,

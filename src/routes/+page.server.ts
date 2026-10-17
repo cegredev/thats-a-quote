@@ -1,18 +1,21 @@
-import { addMembersToGroup, getUserGroupMemberships } from "#lib/server/groups.js";
+import {
+	addMembersToGroup,
+	getUserGroupMemberships,
+} from "#lib/server/groups.js";
 import zodSchemas from "#lib/zod-schemas.js";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { rateLimit } from "#lib/server/rate-limiting.js";
-import { groupsCrud } from "#lib/server/db/crud.js";
+import { crud } from "#lib/server/db/crud.js";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	let groups: { id: string; name: string }[] | undefined = undefined;
 
 	if (locals.user) {
 		const memberships = await getUserGroupMemberships(locals.user.id);
-		const groupsPagination = await groupsCrud.list({
+		const groupsPagination = await crud().groups.list({
 			filters: {
 				id: {
 					in: memberships.map((m) => m.groupId),
@@ -42,7 +45,7 @@ export const actions = {
 
 		if (!form.valid) return fail(400, { form });
 
-		const group = await groupsCrud.create(
+		const group = await crud().groups.create(
 			{
 				name: form.data.name,
 				id: form.data.id,
