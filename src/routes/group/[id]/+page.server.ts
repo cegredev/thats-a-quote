@@ -12,7 +12,7 @@ import { error, fail } from "@sveltejs/kit";
 import { rateLimit } from "#lib/server/rate-limiting.js";
 import { groupsCrud, quotesCrud } from "#lib/server/db/crud.js";
 import { parsePaginationParams, parseSearchParams } from "#lib/server/utils.js";
-import { sendPush } from "#lib/server/push.js";
+import { sendPush } from "#lib/server/push-vapid.js";
 import { db } from "#lib/server/db.js";
 import { groupMembers } from "#lib/server/db/schema.js";
 import { eq } from "drizzle-orm";

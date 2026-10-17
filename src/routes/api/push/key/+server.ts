@@ -1,4 +1,4 @@
-import { getVapidKeys } from "#lib/server/vapid.ts";
+import { getVapidKeys } from "#lib/server/push-vapid.ts";
 
 export const GET = async () => {
 	const { publicKey } = getVapidKeys();
