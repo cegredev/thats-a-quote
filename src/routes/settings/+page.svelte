@@ -6,7 +6,7 @@
 	import type { PageProps } from "./$types";
 	import * as Item from "#lib/components_shadcn/ui/item/index.js";
 	import { Switch } from "#lib/components_shadcn/ui/switch/index.js";
-	import LocaleSwitcher from "#lib/components/meta/LocaleSwitcher.svelte";
+	import LocaleSwitcher from "#lib/components/meta/LocaleSelect.svelte";
 	import { Badge } from "#lib/components_shadcn/ui/badge/index.js";
 
 	let data: PageProps = $props();
