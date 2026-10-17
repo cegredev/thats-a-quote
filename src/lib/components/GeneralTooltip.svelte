@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from "#lib/paraglide/messages.js";
 	import * as Tooltip from "#lib/components_shadcn/ui/tooltip/index.js";
 	import type { Snippet } from "svelte";
 
@@ -7,7 +8,7 @@
 
 <Tooltip.Provider>
 	<Tooltip.Root delayDuration={200}>
-		<Tooltip.Trigger aria-label="More information">
+		<Tooltip.Trigger aria-label={m.common_moreInformation()}>
 			{@render trigger()}
 		</Tooltip.Trigger>
 

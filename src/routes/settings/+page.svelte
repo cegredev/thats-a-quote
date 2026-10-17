@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from "#lib/paraglide/messages.js";
 	import {
 		subscribeToPush,
 		unsubscribeFromPush,
@@ -25,20 +26,21 @@
 	<div class="flex w-full flex-col gap-6">
 		<Item.Root variant="outline">
 			<Item.Content>
-				<Item.Title>Notifications</Item.Title>
+				<Item.Title>{m.settings_notifications()}</Item.Title>
 				<Item.Description>
-					Whether or not you will receive notifications for new
-					quotes, comments, etc.
+					{m.settings_notificationsDescription()}
 				</Item.Description>
 				{#if !data.data.isLoggedIn}
 					<Item.Footer>
-						<Badge variant="destructive">Log-in to change</Badge>
+						<Badge variant="destructive">
+							{m.settings_logInToChange()}
+						</Badge>
 					</Item.Footer>
 				{/if}
 			</Item.Content>
 			<Item.Actions>
 				<Switch
-					aria-label={"notifications"}
+					aria-label={m.settings_notificationsAriaLabel()}
 					onCheckedChange={onChange}
 					checked={data.data.pushPermission}
 					disabled={!data.data.isLoggedIn}
@@ -50,9 +52,9 @@
 	<div class="flex w-full flex-col gap-6">
 		<Item.Root variant="outline">
 			<Item.Content>
-				<Item.Title>Language</Item.Title>
+				<Item.Title>{m.settings_language()}</Item.Title>
 				<Item.Description>
-					Choose the language you want this app to be displayed in.
+					{m.settings_languageDescription()}
 				</Item.Description>
 			</Item.Content>
 			<Item.Actions>

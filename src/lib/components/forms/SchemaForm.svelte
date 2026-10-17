@@ -16,6 +16,7 @@
 </script>
 
 <script lang="ts" generics="T extends Record<string, unknown>">
+	import { m } from "#lib/paraglide/messages.js";
 	import {
 		type InputConstraints,
 		superForm,
@@ -160,7 +161,7 @@
 				{cfg.label}
 				{#if cfg.optional}
 					<span class="text-muted-foreground">
-						({cfg.optionalLabel ?? "optional"})
+						({cfg.optionalLabel ?? m.home_optional()})
 					</span>
 				{/if}
 			</Label.Root>

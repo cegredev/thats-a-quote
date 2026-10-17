@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from "#lib/paraglide/messages.js";
 	import * as Popover from "#lib/components_shadcn/ui/popover/index.js";
 	import type { Snippet } from "svelte";
 
@@ -14,7 +15,7 @@
 <Popover.Root>
 	<Popover.Trigger
 		class="inline-flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-		aria-label="More information"
+		aria-label={m.common_moreInformation()}
 	>
 		{@render trigger()}
 	</Popover.Trigger>

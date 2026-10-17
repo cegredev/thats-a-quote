@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from "#lib/paraglide/messages.js";
 	import { Dialog as DialogPrimitive } from "bits-ui";
 	import { Button } from "#lib/components_shadcn/ui/button/index.js";
 	import { cn, type WithElementRef } from "#lib/utils_shadcn.js";
@@ -25,7 +26,9 @@
 	{#if showCloseButton}
 		<DialogPrimitive.Close>
 			{#snippet child({ props })}
-				<Button variant="outline" {...props}>Close</Button>
+				<Button variant="outline" {...props}>
+					{m.common_close()}
+				</Button>
 			{/snippet}
 		</DialogPrimitive.Close>
 	{/if}

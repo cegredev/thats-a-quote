@@ -17,8 +17,8 @@
 	{form}
 	class="flex flex-col gap-3"
 	action="?/login"
-	submitLabel={"Log in"}
-	submitBusyLabel={"Logging in..."}
+	submitLabel={m.account_login()}
+	submitBusyLabel={m.account_loggingIn()}
 	fields={{
 		email: {
 			name: "email",
@@ -28,7 +28,7 @@
 		},
 		password: {
 			name: "password",
-			label: "Password",
+			label: m.account_password(),
 			type: "password",
 		},
 	}}

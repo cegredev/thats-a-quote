@@ -5,6 +5,7 @@
 		setPaginationPerPage,
 		shiftPaginationPage,
 	} from "#lib/client/component-utils.svelte.js";
+	import { m } from "#lib/paraglide/messages.js";
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
 	import * as Button from "#lib/components_shadcn/ui/button/index.js";
 	import GeneralSelect from "../util/GeneralSelect.svelte";
@@ -81,11 +82,14 @@
 <div class="my-8 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
 	<div></div>
 
-	<nav class="flex items-center gap-1" aria-label="Pagination">
+	<nav
+		class="flex items-center gap-1"
+		aria-label={m.pagination_navigation()}
+	>
 		<Button.Root
 			variant="ghost"
 			size="icon-sm"
-			aria-label="Previous page"
+			aria-label={m.pagination_previousPage()}
 			disabled={props.page <= 1}
 			onclick={() => shiftPage(-1)}
 		>
@@ -101,7 +105,7 @@
 				<Button.Root
 					variant={item === props.page ? "default" : "ghost"}
 					size="icon-sm"
-					aria-label={`Page ${item}`}
+					aria-label={m.pagination_page({ page: item })}
 					aria-current={item === props.page ? "page" : undefined}
 					onclick={() => setPage(item)}
 				>
@@ -113,7 +117,7 @@
 		<Button.Root
 			variant="ghost"
 			size="icon-sm"
-			aria-label="Next page"
+			aria-label={m.pagination_nextPage()}
 			disabled={props.page >= totalPages}
 			onclick={() => shiftPage(1)}
 		>
@@ -130,7 +134,9 @@
 					label: String(value),
 				}))}
 			/>
-			<div class="text-sm text-muted-foreground">per page</div>
+			<div class="text-sm text-muted-foreground">
+				{m.pagination_perPage()}
+			</div>
 		</div>
 	{:else}
 		<div></div>

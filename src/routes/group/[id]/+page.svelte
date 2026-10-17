@@ -57,7 +57,7 @@
 			<GenericDialog
 				text={{
 					trigger: m.group_leave(),
-					title: "Leave group?",
+					title: m.group_leaveTitle(),
 					description: m.group_leaveConfirm({
 						name: data.group.name,
 					}),

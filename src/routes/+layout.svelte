@@ -49,12 +49,12 @@
 			configs={{
 				home: {
 					icon: HouseIcon,
-					label: "Home",
+					label: m.nav_home(),
 					navigate: "/",
 				},
 				settings: {
 					icon: SettingsIcon,
-					label: "Settings",
+					label: m.nav_settings(),
 					navigate: "/settings",
 				},
 			}}

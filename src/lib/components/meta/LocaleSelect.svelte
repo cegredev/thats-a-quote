@@ -20,7 +20,7 @@
 
 	const items = localesWithNames.map(({ locale, name }) => ({
 		value: locale,
-		label: name ?? "missing label",
+		label: name ?? locale,
 	}));
 </script>
 

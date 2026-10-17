@@ -32,10 +32,10 @@
 			values={["login", "register"]}
 			configs={{
 				login: {
-					label: "Log in",
+					label: m.account_login(),
 				},
 				register: {
-					label: "Sign up",
+					label: m.account_signUp(),
 				},
 			}}
 			default="login"

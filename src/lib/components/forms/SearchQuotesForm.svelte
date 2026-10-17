@@ -27,7 +27,7 @@
 		<Button type="submit">{m.group_search()}</Button>
 
 		<Button variant="ghost" href={page.url.pathname}>
-			Clear
+			{m.group_clearSearch()}
 		</Button>
 	</div>
 </form>

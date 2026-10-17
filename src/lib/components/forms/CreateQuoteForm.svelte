@@ -55,7 +55,7 @@
 		},
 		context: {
 			name: "context",
-			label: "Context",
+			label: m.group_context(),
 			type: "textarea",
 			optional: true,
 		},

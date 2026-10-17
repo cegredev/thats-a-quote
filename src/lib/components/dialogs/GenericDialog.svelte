@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from "#lib/paraglide/messages.js";
 	import * as Dialog from "#lib/components_shadcn/ui/dialog/index.js";
 	import { buttonVariants } from "#lib/components_shadcn/ui/button/index.js";
 	import type { Snippet } from "svelte";
@@ -39,7 +40,7 @@
 				<Dialog.Close
 					class={buttonVariants({ variant: "ghost" })}
 				>
-					{text.close ?? "Cancel"}
+					{text.close ?? m.common_cancel()}
 				</Dialog.Close>
 
 				{@render buttons()}

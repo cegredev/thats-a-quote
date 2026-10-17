@@ -17,12 +17,12 @@
 	{form}
 	class="flex flex-col gap-3"
 	action="?/register"
-	submitLabel={"Sign up"}
-	submitBusyLabel={"Signing up..."}
+	submitLabel={m.account_signUp()}
+	submitBusyLabel={m.account_signingUp()}
 	fields={{
 		name: {
 			name: "name",
-			label: "Name",
+			label: m.account_name(),
 			type: "text",
 		},
 		email: {
@@ -33,7 +33,7 @@
 		},
 		password: {
 			name: "password",
-			label: "Password",
+			label: m.account_password(),
 			type: "password",
 		},
 	}}
