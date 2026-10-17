@@ -12,7 +12,7 @@ const optionalInBuild = <T extends z.ZodType>(schema: T): T =>
 export const variables = defineEnvVars({
 	BASE_DIR: {
 		description:
-			"Base directory where all data is stored. Only meant to be modified in development, but do what you want to.",
+			"Base directory from which all other paths are derived (data directory, drizzle directory, potentially more). For dev: ./, for production (recommended): /app",
 		schema: optionalInBuild(z.string()),
 	},
 	AUTH_SECRET: {
