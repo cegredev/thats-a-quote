@@ -7,11 +7,9 @@
 		pagination: PaginatedResponse<any>;
 		children: Snippet;
 		perPageOptions: number[];
-		defaultPerPage: number;
 	};
 
-	let { pagination, children, perPageOptions, defaultPerPage }: Props =
-		$props();
+	let { pagination, children, perPageOptions }: Props = $props();
 
 	let scrollTarget: HTMLElement | undefined = $state(undefined);
 
@@ -28,7 +26,6 @@
 		perPage={pagination.perPage}
 		page={pagination.page}
 		{perPageOptions}
-		perPageDefault={defaultPerPage}
 	/>
 {/if}
 

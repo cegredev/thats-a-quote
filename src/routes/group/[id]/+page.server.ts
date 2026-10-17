@@ -12,11 +12,12 @@ import { error, fail } from "@sveltejs/kit";
 import { rateLimit } from "#lib/server/rate-limiting.js";
 import { groupsCrud, quotesCrud } from "#lib/server/db/crud.js";
 import { parsePaginationParams, parseSearchParams } from "#lib/server/utils.js";
-import { QUOTES_DEFAULT_PAGE_SIZE } from "#lib/components/quotes/QuotesList.svelte";
 import { sendPush } from "#lib/server/push.js";
 import { db } from "#lib/server/db.js";
 import { groupMembers } from "#lib/server/db/schema.js";
 import { eq } from "drizzle-orm";
+
+const QUOTES_DEFAULT_PAGE_SIZE = 30;
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;

@@ -1,7 +1,3 @@
-<script lang="ts" module>
-	export const QUOTES_DEFAULT_PAGE_SIZE = 30;
-</script>
-
 <script lang="ts">
 	import { page } from "$app/state";
 	import { m } from "#lib/paraglide/messages.js";
@@ -41,11 +37,7 @@
 		</p>
 	</div>
 {:else}
-	<FullPagination
-		{pagination}
-		perPageOptions={[10, 30, 50, 80, 100]}
-		defaultPerPage={QUOTES_DEFAULT_PAGE_SIZE}
-	>
+	<FullPagination {pagination} perPageOptions={[10, 30, 50, 80, 100]}>
 		<ul class="grid gap-4 sm:grid-cols-2">
 			{#each pagination.results as quote (quote.id)}
 				<li>
@@ -57,7 +49,8 @@
 						</p>
 
 						<p class="mt-3 text-sm text-muted-foreground">
-							— {quote.person ?? m["group.anonymousPersonDisplay"]()}
+							— {quote.person ??
+								m["group.anonymousPersonDisplay"]()}
 
 							<span class="text-muted-foreground/65">
 								· {formatDate(quote.quotedAt)}

@@ -16,19 +16,11 @@
 		page: number;
 		scrollTo?: HTMLElement;
 		perPageOptions?: number[];
-		perPageDefault?: number;
 	};
 
 	let props: Props = $props();
 
-	function parsePerPageFromParams() {
-		const parsed = parseInt(page.url.searchParams.get("perPage") ?? "");
-		return isNaN(parsed) ? undefined : String(parsed);
-	}
-
-	let perPage = $state(
-		parsePerPageFromParams() ?? String(untrack(() => props.perPageDefault)),
-	);
+	let perPage = $derived(String(props.perPage));
 
 	let previousPerPage: { previous: string | undefined; current: string } =
 		$state({
@@ -102,7 +94,9 @@
 
 		{#each pageItems as item, index (`${item}-${index}`)}
 			{#if item === "ellipsis"}
-				<span class="px-2 text-muted-foreground" aria-hidden="true">...</span>
+				<span class="px-2 text-muted-foreground" aria-hidden="true"
+					>...</span
+				>
 			{:else}
 				<Button.Root
 					variant={item === props.page ? "default" : "ghost"}
