@@ -115,7 +115,7 @@ export const actions = {
 			members.map((m) => m.userId),
 			{
 				title: `Quote added in ${group.name}`,
-				body: quote.text,
+				message: quote.text,
 			},
 		);
 

@@ -1,10 +1,10 @@
 import { self } from "$app/service-worker";
 
 self.addEventListener("push", (event) => {
-	const payload = event.data?.text() ?? "no payload";
+	const payload = event.data?.json() ?? "no payload";
 	event.waitUntil(
-		self.registration.showNotification("ServiceWorker Cookbook", {
-			body: payload,
+		self.registration.showNotification(payload.title, {
+			body: payload.message,
 			icon: "/icon-192x192.png",
 		}),
 	);

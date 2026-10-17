@@ -21,7 +21,7 @@ function configure(subject: string) {
 
 async function _sendPush(
 	sub: webpush.PushSubscription,
-	payload: { title: string; body: string; url?: string },
+	payload: { title: string; message: string; url?: string },
 ) {
 	if (!VAPID_SUBJECT)
 		throw new Error("No VAPID_SUBJECT configured, but needed for push.");
@@ -45,7 +45,7 @@ export const sendPush = async (
 	userIds: string[],
 	options: {
 		title: string;
-		body: string;
+		message: string;
 	},
 ) => {
 	const subscriptions = await db
