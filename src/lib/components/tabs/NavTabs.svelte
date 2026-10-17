@@ -41,13 +41,13 @@
 </script>
 
 <Tabs.Root value={startingValue} class="w-full">
-	<Tabs.List class="h-auto w-full grid auto-cols-[1fr] grid-flow-col">
+	<Tabs.List class="h-auto! w-full grid auto-cols-[1fr] grid-flow-col">
 		{#each values as value}
 			{@const config = configs[value]}
 
 			<Tabs.Trigger
 				{value}
-				class="h-auto flex-col py-2"
+				class="h-full flex-col py-1"
 				onclick={async () => await goto(config.navigate)}
 			>
 				<div class="flex flex-col items-center justify-center">

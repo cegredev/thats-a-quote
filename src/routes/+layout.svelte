@@ -42,7 +42,7 @@
 	<main class="mx-auto max-w-3xl px-5 py-8">{@render children()}</main>
 
 	<nav
-		class="flex mx-auto lg:max-w-xl lg:py-5 justify-center fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full"
+		class="flex mx-auto lg:max-w-xl lg:py-2 justify-center fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full"
 	>
 		<NavTabs
 			values={["home", "settings"]}
