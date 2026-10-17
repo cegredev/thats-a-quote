@@ -2,14 +2,18 @@ import { building } from "$app/env";
 import { defineEnvVars } from "@sveltejs/kit/env";
 import z from "zod";
 
-const optionalInBuild = <T extends z.ZodType>(schema: T) =>
-	building ? schema.optional() : schema;
+const optionalInBuild = <T extends z.ZodType>(schema: T): T =>
+	// We are lying to typescript here because the optional schema
+	// will only be there at build, not at runtime.
+	// This is horrifying, but arguably better than providing fake
+	// environment variables during CI/CD builds.
+	building ? (schema.optional() as unknown as T) : schema;
 
 export const variables = defineEnvVars({
-	DATA_DIR: {
+	BASE_DIR: {
 		description:
 			"Base directory where all data is stored. Only meant to be modified in development, but do what you want to.",
-		schema: z.string().default("/app/data"),
+		schema: optionalInBuild(z.string()),
 	},
 	AUTH_SECRET: {
 		description:

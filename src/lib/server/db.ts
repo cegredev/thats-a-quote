@@ -4,14 +4,14 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/libsql";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import { authRelations, relations } from "./db/relations";
-import { DATA_DIR } from "$app/env/private";
+import { BASE_DIR } from "$app/env/private";
 import { building } from "$app/env";
 
-const DB_PATH = path.join(DATA_DIR, "db.sqlite3");
+const DB_PATH = () => path.join(BASE_DIR, "data", "db.sqlite3");
 
 const createDB = () =>
 	drizzle({
-		connection: { url: `file:${DB_PATH}` },
+		connection: { url: `file:${DB_PATH()}` },
 		relations: { ...relations, ...authRelations },
 	});
 type DB = ReturnType<typeof createDB>;
@@ -27,9 +27,9 @@ export const db: () => DB = () => {
 };
 
 if (!building) {
-	fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+	fs.mkdirSync(path.dirname(DB_PATH()), { recursive: true });
 
 	await migrate(db(), {
-		migrationsFolder: "drizzle",
+		migrationsFolder: path.join(BASE_DIR, "drizzle"),
 	});
 }

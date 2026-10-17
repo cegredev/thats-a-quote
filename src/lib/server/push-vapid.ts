@@ -2,12 +2,12 @@ import webpush from "web-push";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { existsSync } from "node:fs";
-import { DATA_DIR, VAPID_SUBJECT } from "$app/env/private";
+import { BASE_DIR, VAPID_SUBJECT } from "$app/env/private";
 import { db } from "./db";
 import { pushSubscriptions } from "./db/schema";
 import { inArray } from "drizzle-orm";
 
-const keysFilePath = path.join(DATA_DIR, "vapid.json");
+const keysFilePath = () => path.join(BASE_DIR, "data", "vapid.json");
 
 type VapidKeys = { publicKey: string; privateKey: string };
 
@@ -32,9 +32,9 @@ async function loadOrCreate(): Promise<VapidKeys> {
 }
 
 async function tryReadStoredKeys() {
-	if (existsSync(keysFilePath)) {
+	if (existsSync(keysFilePath())) {
 		try {
-			return JSON.parse(await readFile(keysFilePath, "utf8"));
+			return JSON.parse(await readFile(keysFilePath(), "utf8"));
 		} catch {
 			return null;
 		}
@@ -44,12 +44,12 @@ async function tryReadStoredKeys() {
 }
 
 async function insertKeysIfAbsent(keys: VapidKeys) {
-	if (existsSync(keysFilePath)) return;
+	if (existsSync(keysFilePath())) return;
 
-	await mkdir(path.dirname(keysFilePath), { recursive: true });
+	await mkdir(path.dirname(keysFilePath()), { recursive: true });
 
 	// flag 'wx' fails if the file exists, which gives you insert-if-absent
-	await writeFile(keysFilePath, JSON.stringify(keys), {
+	await writeFile(keysFilePath(), JSON.stringify(keys), {
 		mode: 0o600, // only the file owner can read and modify it
 	});
 }
