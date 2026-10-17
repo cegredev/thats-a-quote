@@ -7,6 +7,7 @@
 	import * as Item from "#lib/components_shadcn/ui/item/index.js";
 	import { Switch } from "#lib/components_shadcn/ui/switch/index.js";
 	import LocaleSwitcher from "#lib/components/meta/LocaleSwitcher.svelte";
+	import { Badge } from "#lib/components_shadcn/ui/badge/index.js";
 
 	let data: PageProps = $props();
 
@@ -29,12 +30,18 @@
 					Whether or not you will receive notifications for new
 					quotes, comments, etc.
 				</Item.Description>
+				{#if !data.data.isLoggedIn}
+					<Item.Footer>
+						<Badge variant="destructive">Log-in to change</Badge>
+					</Item.Footer>
+				{/if}
 			</Item.Content>
 			<Item.Actions>
 				<Switch
 					aria-label={"notifications"}
 					onCheckedChange={onChange}
 					checked={data.data.pushPermission}
+					disabled={!data.data.isLoggedIn}
 				/>
 			</Item.Actions>
 		</Item.Root>

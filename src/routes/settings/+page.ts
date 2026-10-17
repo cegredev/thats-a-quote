@@ -6,5 +6,6 @@ export const load: PageLoad = async (req) => {
 
 	return {
 		pushPermission,
+		...req.data,
 	};
 };
