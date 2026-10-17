@@ -14,6 +14,8 @@
 		// We do this here to avoid a warning in the load function about fetch
 		authClient.hydrateSession(data.session);
 	});
+
+	let navHeight: number | undefined = $state(undefined);
 </script>
 
 <div class="min-h-screen bg-background">
@@ -39,9 +41,12 @@
 		</div>
 	</header>
 
-	<main class="mx-auto max-w-3xl px-5 py-8">{@render children()}</main>
+	<main class="mx-auto max-w-3xl px-5 pt-8">{@render children()}</main>
+
+	<div style={`height: ${(navHeight ?? 0) + 10}px`}></div>
 
 	<nav
+		bind:clientHeight={navHeight}
 		class="flex mx-auto lg:max-w-xl lg:py-2 justify-center fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full"
 	>
 		<NavTabs
