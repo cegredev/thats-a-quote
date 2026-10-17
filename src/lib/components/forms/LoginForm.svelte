@@ -22,7 +22,7 @@
 	fields={{
 		email: {
 			name: "email",
-			label: m.account_username(),
+			label: m.account_email(),
 			type: "email",
 			skipConstraints: true,
 		},

@@ -30,10 +30,10 @@
 
 			<div class="flex items-center gap-4">
 				<a
-					href="/account"
+					href="/user"
 					class="text-sm text-muted-foreground underline-offset-4 hover:underline"
 				>
-					{m.syncDevices()}
+					{m.login_link()}
 				</a>
 			</div>
 		</div>

@@ -14,7 +14,7 @@
 	const session = authClient.useSession();
 </script>
 
-<Title text={`${m.syncDevices()} · ${m.brand()}`} />
+<Title text={`${m.login_link()} · ${m.brand()}`} />
 
 <h1 class="font-display text-2xl font-semibold">
 	{m.account_title()}
