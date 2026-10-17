@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
 	import "../app.css";
-	import LocaleSwitcher from "#lib/components/meta/LocaleSwitcher.svelte";
 	import type { LayoutProps } from "./$types";
 	import { onMount } from "svelte";
 	import { authClient } from "#lib/client/frontend-auth.js";
