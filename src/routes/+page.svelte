@@ -9,21 +9,21 @@
 	let { data }: PageProps = $props();
 </script>
 
-<Title text={m["brand"]()} />
+<Title text={m.brand()} />
 
 <section class="mb-10">
 	<h1 class="font-display text-3xl leading-tight font-semibold text-balance">
-		{m["home.title"]()}
+		{m.home_title()}
 	</h1>
 
 	<p class="mt-3 max-w-lg text-muted-foreground">
-		{m["home.intro"]()}
+		{m.home_intro()}
 	</p>
 </section>
 
 <section class="mb-12">
 	<h2 class="mb-3 font-display text-lg font-semibold">
-		{m["home.yourGroups"]()}
+		{m.home_yourGroups()}
 	</h2>
 
 	<GroupsList groups={data.groups} />

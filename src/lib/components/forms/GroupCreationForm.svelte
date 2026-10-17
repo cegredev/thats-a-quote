@@ -15,15 +15,15 @@
 <SchemaForm
 	{form}
 	action="?/createGroup"
-	submitLabel={m["home.create"]()}
-	submitBusyLabel={m["home.createBusy"]()}
+	submitLabel={m.home_create()}
+	submitBusyLabel={m.home_createBusy()}
 	fields={{
-		name: { name: "name", label: m["home.groupName"]() },
+		name: { name: "name", label: m.home_groupName() },
 		id: {
 			name: "id",
-			label: m["home.customId"](),
+			label: m.home_customId(),
 			optional: true,
-			optionalLabel: m["home.optional"](),
+			optionalLabel: m.home_optional(),
 		},
 	}}
 	options={{

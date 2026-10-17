@@ -26,28 +26,28 @@
 	{form}
 	class="mb-10 flex flex-col gap-3 rounded-lg border bg-card p-5"
 	action="?/createQuote"
-	submitLabel={m["group.addQuote"]()}
-	submitBusyLabel={m["group.adding"]()}
+	submitLabel={m.group_addQuote()}
+	submitBusyLabel={m.group_adding()}
 	submitClass="mt-1 self-start"
 	fields={{
 		text: {
 			name: "text",
 			type: "textarea",
-			label: m["group.whatDidTheySay"](),
+			label: m.group_whatDidTheySay(),
 		},
 		person: {
 			name: "person",
-			label: m["group.personRequired"](),
-			placeholder: m["group.personPlaceholder"](),
+			label: m.group_personRequired(),
+			placeholder: m.group_personPlaceholder(),
 			optional: true,
-			optionalLabel: m["home.optional"](),
+			optionalLabel: m.home_optional(),
 			other: {
 				list: "people",
 			},
 		},
 		quotedAt: {
 			name: "quotedAt",
-			label: m["group.dateTime"](),
+			label: m.group_dateTime(),
 			type: "datetime-local",
 			other: {
 				step: 1,

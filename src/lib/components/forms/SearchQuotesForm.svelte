@@ -11,20 +11,20 @@
 >
 	<Input
 		class="w-full"
-		placeholder={m["group.searchContent"]()}
+		placeholder={m.group_searchContent()}
 		name="text"
 		value={page.url.searchParams.get("text") ?? ""}
 	/>
 
 	<Input
 		class="w-full"
-		placeholder={m["group.searchPerson"]()}
+		placeholder={m.group_searchPerson()}
 		name="person"
 		value={page.url.searchParams.get("person") ?? ""}
 	/>
 
 	<div class="flex gap-2">
-		<Button type="submit">{m["group.search"]()}</Button>
+		<Button type="submit">{m.group_search()}</Button>
 
 		<Button variant="ghost" href={page.url.pathname}>
 			Clear

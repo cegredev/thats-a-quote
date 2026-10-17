@@ -32,8 +32,8 @@
 	<div class="rounded-lg border border-dashed px-5 py-10 text-center">
 		<p class="text-muted-foreground">
 			{searchQueryExists
-				? m["group.noMatchingQuotes"]()
-				: m["group.noQuotes"]()}
+				? m.group_noMatchingQuotes()
+				: m.group_noQuotes()}
 		</p>
 	</div>
 {:else}
@@ -50,7 +50,7 @@
 
 						<p class="mt-3 text-sm text-muted-foreground">
 							— {quote.person ??
-								m["group.anonymousPersonDisplay"]()}
+								m.group_anonymousPersonDisplay()}
 
 							<span class="text-muted-foreground/65">
 								· {formatDate(quote.quotedAt)}

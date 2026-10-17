@@ -9,7 +9,7 @@
 {#if groups.length === 0}
 	<div class="rounded-lg border border-dashed px-5 py-8 text-center">
 		<p class="text-muted-foreground">
-			{m["home.empty"]()}
+			{m.home_empty()}
 		</p>
 	</div>
 {:else}

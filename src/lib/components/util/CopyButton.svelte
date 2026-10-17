@@ -14,5 +14,5 @@
 </script>
 
 <Button.Root variant="ghost" size="sm" onclick={copyToClipboard}>
-	{copied ? m["group.copied"]() : copyText}
+	{copied ? m.group_copied() : copyText}
 </Button.Root>

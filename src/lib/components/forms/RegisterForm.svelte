@@ -27,7 +27,7 @@
 		},
 		email: {
 			name: "email",
-			label: m["account.username"](),
+			label: m.account_username(),
 			type: "email",
 			skipConstraints: true,
 		},

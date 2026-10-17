@@ -13,7 +13,7 @@
 </script>
 
 <Card.Root class="mt-8 max-w-sm p-6">
-	<p class="text-sm text-muted-foreground">{m["account.signedInAs"]()}</p>
+	<p class="text-sm text-muted-foreground">{m.account_signedInAs()}</p>
 
 	<p class="font-display text-lg font-semibold">
 		{user.name}
@@ -21,7 +21,7 @@
 
 	<div class="mt-5 flex gap-2">
 		<Button.Root variant="ghost" size="sm" onclick={signOut}>
-			{m["account.forget"]()}
+			{m.account_forget()}
 		</Button.Root>
 	</div>
 </Card.Root>

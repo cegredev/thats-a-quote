@@ -27,7 +27,7 @@
 </script>
 
 <Title
-	text={data.group.name ?? `${m["group.fallbackTitle"]()} · {m["brand"]()}`}
+	text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`}
 />
 
 <div class="mb-6 flex items-start justify-between gap-4">
@@ -37,12 +37,12 @@
 		</h1>
 
 		<p class="text-sm text-muted-foreground">
-			{m["group.quoteCount"]({
+			{m.group_quoteCount({
 				count: data.quotesPagination.totalItems,
 				s:
 					data.quotesPagination.totalItems === 1
-						? m["group.quoteSuffixOne"]()
-						: m["group.quoteSuffix"](),
+						? m.group_quoteSuffixOne()
+						: m.group_quoteSuffix(),
 			})}
 		</p>
 	</div>
@@ -50,15 +50,15 @@
 	<div class="flex shrink-0 gap-2">
 		<CopyButton
 			content={window.location.href}
-			copyText={m["group.copyLink"]()}
+			copyText={m.group_copyLink()}
 		/>
 
 		{#if groupIDsStore.has(groupId) || leaveDialogOpen}
 			<GenericDialog
 				text={{
-					trigger: m["group.leave"](),
+					trigger: m.group_leave(),
 					title: "Leave group?",
-					description: m["group.leaveConfirm"]({
+					description: m.group_leaveConfirm({
 						name: data.group.name,
 					}),
 				}}
@@ -68,7 +68,7 @@
 					<FormButton
 						action="?/leaveGroup"
 						serverRequiresUser
-						text={m["group.leave"]()}
+						text={m.group_leave()}
 						variant="destructive"
 						size="sm"
 						onSuccess={async () => {
@@ -82,7 +82,7 @@
 			</GenericDialog>
 		{:else}
 			<FormButton
-				text={m["group.join"]()}
+				text={m.group_join()}
 				action="?/joinGroup"
 				serverRequiresUser
 				variant="ghost"

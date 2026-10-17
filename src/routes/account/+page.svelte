@@ -14,14 +14,14 @@
 	const session = authClient.useSession();
 </script>
 
-<Title text={`${m["syncDevices"]()} · ${m["brand"]()}`} />
+<Title text={`${m.syncDevices()} · ${m.brand()}`} />
 
 <h1 class="font-display text-2xl font-semibold">
-	{m["account.title"]()}
+	{m.account_title()}
 </h1>
 
 <p class="mt-2 max-w-lg text-muted-foreground">
-	{m["account.intro"]()}
+	{m.account_intro()}
 </p>
 
 {#if $session.data}
