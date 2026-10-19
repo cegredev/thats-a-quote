@@ -16,6 +16,8 @@
 	});
 
 	let navHeight: number | undefined = $state(undefined);
+
+	const session = authClient.useSession();
 </script>
 
 <div class="min-h-screen bg-background">
@@ -35,7 +37,11 @@
 					href="/user"
 					class="text-sm text-muted-foreground underline-offset-4 hover:underline"
 				>
-					{m.login_link()}
+					{#if $session.data?.user}
+						{m.logout_link()}
+					{:else}
+						{m.login_link()}
+					{/if}
 				</a>
 			</div>
 		</div>

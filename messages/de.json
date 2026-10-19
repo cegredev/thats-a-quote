@@ -109,5 +109,6 @@
 	"group_search": "Suchen",
 	"group_clearSearch": "Löschen",
 	"group_noMatchingQuotes": "Keine Zitate passen zu deiner Suche.",
-	"settings_admin_needs_to_enable": "Dein Admin muss dieses Feature aktivieren"
+	"settings_admin_needs_to_enable": "Dein Admin muss dieses Feature aktivieren",
+	"logout_link": "Ausloggen"
 }

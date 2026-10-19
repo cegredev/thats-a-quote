@@ -109,5 +109,6 @@
 	"group_search": "Search",
 	"group_clearSearch": "Clear",
 	"group_noMatchingQuotes": "No quotes match your search.",
-	"settings_admin_needs_to_enable": "Your admin needs to enable this feature"
+	"settings_admin_needs_to_enable": "Your admin needs to enable this feature",
+	"logout_link": "Log out"
 }
