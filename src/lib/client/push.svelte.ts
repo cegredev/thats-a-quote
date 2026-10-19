@@ -20,9 +20,9 @@ function urlBase64ToUint8Array(base64: string) {
 	return Uint8Array.from(raw, (c) => c.charCodeAt(0));
 }
 
-async function _getActivePushSubscription() {
+async function _getActivePushSubscription(publicKey?: string) {
 	const registration = await navigator.serviceWorker.ready;
-	const publicKey = await getPublicKey();
+	publicKey ??= await getPublicKey();
 	const applicationServerKey = urlBase64ToUint8Array(publicKey);
 
 	let subscription = await registration.pushManager.getSubscription();
@@ -43,8 +43,8 @@ async function _getActivePushSubscription() {
 	return { subscription, registration, applicationServerKey };
 }
 
-export async function getActivePushSubscription() {
-	return (await _getActivePushSubscription()).subscription;
+export async function getActivePushSubscription(publicKey?: string) {
+	return (await _getActivePushSubscription(publicKey)).subscription;
 }
 
 async function _makePushApiRequest(
