@@ -2,7 +2,7 @@ import zodSchemas from "#lib/zod-schemas.js";
 import type { PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { error, fail } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 import { rateLimit } from "#lib/server/rate-limiting.js";
 import { crud } from "#lib/server/db/crud.js";
 import { sendPush } from "#lib/server/push-vapid.js";
@@ -10,7 +10,7 @@ import { db } from "#lib/server/db.js";
 import { groupMembers } from "#lib/server/db/schema.js";
 import { eq } from "drizzle-orm";
 
-export const load: PageServerLoad = async ({ params, url, locals }) => {
+export const load: PageServerLoad = async ({}) => {
 	const quoteCreationForm = await superValidate(
 		zod4(zodSchemas.quotes.create.insert),
 	);
@@ -62,6 +62,6 @@ export const actions = {
 			},
 		);
 
-		return { form, id: quote.id };
+		throw redirect(303, ".");
 	}),
 };

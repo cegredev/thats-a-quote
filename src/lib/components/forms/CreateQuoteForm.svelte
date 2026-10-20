@@ -4,30 +4,31 @@
 	import SchemaForm from "#lib/components/forms/SchemaForm.svelte";
 	import type zodSchemas from "#lib/zod-schemas.js";
 	import type z from "zod";
-	type QuoteCreationData = z.infer<typeof zodSchemas.quotes.create.insert>;
+	import { toDateTimeLocal } from "#lib/utils.ts";
+	type QuoteCreationData =
+		| z.infer<typeof zodSchemas.quotes.create.insert>
+		| z.infer<typeof zodSchemas.quotes.create.update>;
 
-	let { form }: { form: SuperValidated<QuoteCreationData> } = $props();
+	let {
+		form,
+		mode,
+	}: { form: SuperValidated<QuoteCreationData>; mode: "create" | "update" } =
+		$props();
 
 	function setTime() {
 		form.data.quotedAt = "";
 		form.data.quotedAt = toDateTimeLocal(new Date());
 	}
 
-	setTime();
-
-	function toDateTimeLocal(date: Date): string {
-		const offset = date.getTimezoneOffset();
-		const localDate = new Date(date.getTime() - offset * 60_000);
-		return localDate.toISOString().slice(0, 19);
-	}
+	if (!form.data.quotedAt) setTime();
 </script>
 
 <SchemaForm
 	{form}
 	class="mb-10 flex flex-col gap-3 rounded-lg border bg-card p-5"
-	action="?/createQuote"
-	submitLabel={m.group_addQuote()}
-	submitBusyLabel={m.group_adding()}
+	action={mode === "create" ? "?/createQuote" : "?/editQuote"}
+	submitLabel={mode === "create" ? m.group_addQuote() : m.edit_quote()}
+	submitBusyLabel={mode === "create" ? m.group_adding() : m.quote_editing()}
 	submitClass="mt-1 self-start"
 	fields={{
 		text: {
@@ -63,8 +64,7 @@
 	options={{
 		onResult: async ({ result }) => {
 			if (result.type === "success") {
-				console.log("hi");
-				setTimeout(() => setTime(), 2000);
+				if (mode === "create") setTimeout(() => setTime(), 2000);
 			}
 		},
 	}}

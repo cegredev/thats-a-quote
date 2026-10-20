@@ -110,5 +110,7 @@
 	"group_clearSearch": "Clear",
 	"group_noMatchingQuotes": "No quotes match your search.",
 	"settings_admin_needs_to_enable": "Your admin needs to enable this feature",
-	"logout_link": "Log out"
+	"logout_link": "Log out",
+	"edit_quote": "Edit quote",
+	"quote_editing": "Editing..."
 }

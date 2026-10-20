@@ -110,5 +110,7 @@
 	"group_clearSearch": "Löschen",
 	"group_noMatchingQuotes": "Keine Zitate passen zu deiner Suche.",
 	"settings_admin_needs_to_enable": "Dein Admin muss dieses Feature aktivieren",
-	"logout_link": "Ausloggen"
+	"logout_link": "Ausloggen",
+	"edit_quote": "Zitat bearbeiten",
+	"quote_editing": "Bearbeiten..."
 }

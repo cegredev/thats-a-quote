@@ -47,7 +47,7 @@
 		</div>
 
 		<div class="absolute bottom-2 right-2">
-			<a href="test" class="normally-hidden">
+			<a href={`/quotes/${quote.id}/edit`} class="normally-hidden">
 				<Pencil class="size-4" />
 			</a>
 		</div>

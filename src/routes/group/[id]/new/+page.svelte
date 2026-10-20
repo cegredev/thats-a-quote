@@ -9,4 +9,4 @@
 	<h1 class="font-display text-2xl font-semibold">Add a quote</h1>
 </div>
 
-<CreateQuoteForm form={data.quoteCreationForm} />
+<CreateQuoteForm form={data.quoteCreationForm} mode="create" />
