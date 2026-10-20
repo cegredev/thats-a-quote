@@ -18,7 +18,12 @@ export const variables = defineEnvVars({
 	AUTH_SECRET: {
 		description:
 			"The secret used for authentication. More information here: https://better-auth.com/docs/installation#set-environment-variables",
-		schema: optionalInBuild(z.string()),
+		schema: z.string().optional(),
+	},
+	AUTH_SECRET_FILE: {
+		description:
+			"The secret used for authentication. More information here: https://better-auth.com/docs/installation#set-environment-variables",
+		schema: z.string().optional(),
 	},
 	BASE_URL: {
 		description:

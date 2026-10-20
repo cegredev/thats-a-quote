@@ -38,18 +38,18 @@ Then run `docker compose up --detach` and that's it! [See how to install docker 
 
 ### Configuration options
 
-**thats-a-quote** can be configured only using environment variables. Below is a list of all options, and if and for what they are required. Every variable can also be specified with a `_FILE` suffix and read its contents from the file at the specified path. Non `_FILE` entries take precedence.
+**thats-a-quote** can be configured only using environment variables. Below is a list of all options, and if and for what they are required. Certain variables can also be specified with a `_FILE` suffix and read their contents from the file at the specified path. Non `_FILE` entries take precedence.
 
-| Name                   | Required | Type    | Description                                                                                                                                                                                       |
-| ---------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| AUTH_SECRET            | 🟩       | string  | Used by Better Auth for authorization. [See this tutorial to generate one](https://better-auth.com/docs/installation#set-environment-variables)                                                   |
-| BASE_URL               | 🟩       | string  | Used by Better Auth for authorization. Should be the domain the app runs on, for example https://quotes.example.com                                                                               |
-| VAPID_SUBJECT          | 🟨       | string  | Required to send notifications to clients. Should be an e-mail address belonging to you in the shape of `mailto:you@example.com` or a URL like `https://example.com/contact`.                     |
-| JSON_LOGS              | 🟥       | boolean | If true, the server will output all logs as JSON. The default pretty logs can in theory become a performance bottleneck.                                                                          |
-| FILL_WITH_DUMMY_DATA   | 🟥       | boolean | If true, the database will be filled with some dummy (demo) data on startup                                                                                                                       |
-| RESET_INTERVAL_SECONDS | 🟥       | number  | The interval in seconds after which to reset the database. If FILL_WITH_DUMMY_DATA is true, the database will also be filled with dummy data. No value or a value <= 0 will disable this feature. |
+| Name                   | Required | Type    | `_FILE` variant | Description                                                                                                                                                                                       |
+| ---------------------- | -------- | ------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AUTH_SECRET            | 🟩       | string  | 🟩              | Used by Better Auth for authorization. [See this tutorial to generate one](https://better-auth.com/docs/installation#set-environment-variables)                                                   |
+| BASE_URL               | 🟩       | string  | 🟥              | Used by Better Auth for authorization. Should be the domain the app runs on, for example https://quotes.example.com                                                                               |
+| VAPID_SUBJECT          | 🟨       | string  | 🟥              | Required to send notifications to clients. Should be an e-mail address belonging to you in the shape of `mailto:you@example.com` or a URL like `https://example.com/contact`.                     |
+| JSON_LOGS              | 🟥       | boolean | 🟥              | If true, the server will output all logs as JSON. The default pretty logs can in theory become a performance bottleneck.                                                                          |
+| FILL_WITH_DUMMY_DATA   | 🟥       | boolean | 🟥              | If true, the database will be filled with some dummy (demo) data on startup                                                                                                                       |
+| RESET_INTERVAL_SECONDS | 🟥       | number  | 🟥              | The interval in seconds after which to reset the database. If FILL_WITH_DUMMY_DATA is true, the database will also be filled with dummy data. No value or a value <= 0 will disable this feature. |
 | **Others:**            |
-| BASE_DIR               | -        | string  | The base directory for all files. This is set in the docker image to `/app` and in development to `./` through `.env.development`, meaning you never need to set this.                            |
+| BASE_DIR               | -        | string  | 🟥              | The base directory for all files. This is set in the docker image to `/app` and in development to `./` through `.env.development`, meaning you never need to set this.                            |
 
 ### Notifications
 
