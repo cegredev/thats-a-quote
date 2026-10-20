@@ -1,13 +1,11 @@
-import fs from "node:fs";
-import path from "node:path";
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/libsql";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import { authRelations, relations } from "./db/relations";
-import { BASE_DIR } from "$app/env/private";
 import { building } from "$app/env";
+import { paths } from "./utils";
 
-const DB_PATH = () => path.join(BASE_DIR, "data", "db.sqlite3");
+const DB_PATH = () => paths().data.join("db.sqlite3");
 
 const createDB = () =>
 	drizzle({
@@ -27,9 +25,7 @@ export const db: () => DB = () => {
 };
 
 if (!building) {
-	fs.mkdirSync(path.dirname(DB_PATH()), { recursive: true });
-
 	await migrate(db(), {
-		migrationsFolder: path.join(BASE_DIR, "drizzle"),
+		migrationsFolder: paths().DRIZZLE_DIR,
 	});
 }

@@ -1,4 +1,7 @@
+import path from "node:path";
 import type z from "zod";
+import { BASE_DIR } from "$app/env/private";
+import fs from "node:fs";
 
 export function parseSearchParams(
 	searchParams: URLSearchParams,
@@ -32,3 +35,23 @@ export function parsePaginationParams(searchParams: URLSearchParams) {
 		perPage: isNaN(perPage) ? undefined : perPage,
 	};
 }
+
+let pathsInitialized: boolean = false;
+
+export const paths = () => {
+	const DATA_DIR = path.join(BASE_DIR, "data");
+	const DRIZZLE_DIR = path.join(BASE_DIR, "drizzle");
+
+	if (!pathsInitialized) {
+		fs.mkdirSync(DATA_DIR, { recursive: true });
+
+		pathsInitialized = true;
+	}
+
+	return {
+		DRIZZLE_DIR,
+		data: {
+			join: (...p: string[]) => path.join(DATA_DIR, ...p),
+		},
+	};
+};

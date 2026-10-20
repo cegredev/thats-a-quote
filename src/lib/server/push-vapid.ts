@@ -1,13 +1,13 @@
 import webpush from "web-push";
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import path from "node:path";
+import { readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { BASE_DIR, VAPID_SUBJECT } from "$app/env/private";
+import { VAPID_SUBJECT } from "$app/env/private";
 import { db } from "./db";
 import { pushSubscriptions } from "./db/schema";
 import { inArray } from "drizzle-orm";
+import { paths } from "./utils";
 
-const keysFilePath = () => path.join(BASE_DIR, "data", "vapid.json");
+const keysFilePath = () => paths().data.join("vapid.json");
 
 type VapidKeys = { publicKey: string; privateKey: string };
 
@@ -45,8 +45,6 @@ async function tryReadStoredKeys() {
 
 async function insertKeysIfAbsent(keys: VapidKeys) {
 	if (existsSync(keysFilePath())) return;
-
-	await mkdir(path.dirname(keysFilePath()), { recursive: true });
 
 	// flag 'wx' fails if the file exists, which gives you insert-if-absent
 	await writeFile(keysFilePath(), JSON.stringify(keys), {
