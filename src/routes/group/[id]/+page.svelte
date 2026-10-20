@@ -1,17 +1,14 @@
 <script lang="ts">
+	import QuotesPageHead from "./QuotesPageHead.svelte";
 	import { page } from "$app/state";
-	import { goto } from "$app/navigation";
 	import type { PageProps } from "./$types";
 	import { m } from "#lib/paraglide/messages.js";
 	import { groupIDsStore } from "#lib/client/storage.svelte.js";
-	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
-	import CopyButton from "#lib/components/util/CopyButton.svelte";
 	import Title from "#lib/components/util/Title.svelte";
 	import SearchQuotesForm from "#lib/components/forms/SearchQuotesForm.svelte";
 	import QuotesList from "#lib/components/quotes/QuotesList.svelte";
-	import FormButton from "#lib/components/forms/FormButton.svelte";
 	import { onMount } from "svelte";
-	import GenericDialog from "#lib/components/dialogs/GenericDialog.svelte";
+	import Button from "#lib/components_shadcn/ui/button/button.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -22,79 +19,25 @@
 			groupIDsStore.add(groupId);
 		}
 	});
-
-	let leaveDialogOpen: boolean = $state(false);
 </script>
 
-<Title
-	text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`}
+<Title text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`} />
+
+<QuotesPageHead
+	group={data.group}
+	totalQuotes={data.quotesPagination.totalItems}
 />
 
-<div class="mb-6 flex items-start justify-between gap-4">
-	<div>
-		<h1 class="font-display text-2xl font-semibold">
-			{data.group.name}
-		</h1>
-
-		<p class="text-sm text-muted-foreground">
-			{m.group_quoteCount({
-				count: data.quotesPagination.totalItems,
-				s:
-					data.quotesPagination.totalItems === 1
-						? m.group_quoteSuffixOne()
-						: m.group_quoteSuffix(),
-			})}
-		</p>
-	</div>
-
-	<div class="flex shrink-0 gap-2">
-		<CopyButton
-			content={window.location.href}
-			copyText={m.group_copyLink()}
-		/>
-
-		{#if groupIDsStore.has(groupId) || leaveDialogOpen}
-			<GenericDialog
-				text={{
-					trigger: m.group_leave(),
-					title: m.group_leaveTitle(),
-					description: m.group_leaveConfirm({
-						name: data.group.name,
-					}),
-				}}
-				bind:open={leaveDialogOpen}
-			>
-				{#snippet buttons()}
-					<FormButton
-						action="?/leaveGroup"
-						serverRequiresUser
-						text={m.group_leave()}
-						variant="destructive"
-						size="sm"
-						onSuccess={async () => {
-							groupIDsStore.remove(groupId);
-
-							await goto("..");
-						}}
-						classes=""
-					/>
-				{/snippet}
-			</GenericDialog>
-		{:else}
-			<FormButton
-				text={m.group_join()}
-				action="?/joinGroup"
-				serverRequiresUser
-				variant="ghost"
-				size="sm"
-				classes="text-green-700 hover:text-green-800"
-				onSuccess={() => groupIDsStore.add(groupId)}
-			/>
-		{/if}
-	</div>
+<div class="w-full flex flex-col items-center mb-4">
+	<Button
+		href={page.url.pathname + "/new"}
+		variant="default"
+		size="lg"
+		class="px-16"
+	>
+		Add quote
+	</Button>
 </div>
-
-<CreateQuoteForm form={data.quoteCreationForm} />
 
 <datalist id="people">
 	{#each data.people as person (person)}
