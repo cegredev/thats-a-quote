@@ -41,6 +41,29 @@ export const quotesTable = sqliteTable(
 	(table) => [index("idx_quotes_group").on(table.groupId)],
 );
 
+export const quoteInteractionsTable = sqliteTable(
+	"quote_interactions",
+	{
+		id: text()
+			.primaryKey()
+			.$default(() => uuidv7()),
+		quoteId: text()
+			.notNull()
+			.references(() => quotesTable.id, { onDelete: "cascade" }),
+		userId: text()
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		content: text().notNull(),
+		kind: text().notNull(),
+		createdAt: int()
+			.notNull()
+			.$default(() => Date.now()),
+	},
+	(table) => [
+		check("kind_check", sql`${table.kind} IN ('reaction', 'comment')`),
+	],
+);
+
 export const groupMembers = sqliteTable(
 	"group_members",
 	{

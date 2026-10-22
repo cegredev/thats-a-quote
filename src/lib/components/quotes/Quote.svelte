@@ -2,12 +2,14 @@
 	import * as Card from "#lib/components_shadcn/ui/card/index.js";
 	import { m } from "#lib/paraglide/messages.js";
 	import type { Quote } from "#lib/zod-schemas.ts";
-	import { CircleQuestionMark, Pencil } from "@lucide/svelte";
+	import { Info, SquareText } from "@lucide/svelte";
 	import GeneralTooltip from "../GeneralTooltip.svelte";
 	import { getLocale } from "#lib/paraglide/runtime.js";
 	import { cn } from "cn";
+	import type { Snippet } from "svelte";
 
-	let { quote }: { quote: Quote } = $props();
+	let { quote, bottomRight }: { quote: Quote; bottomRight?: Snippet } =
+		$props();
 
 	function formatDate(ts: number): string {
 		return new Date(ts).toLocaleString(
@@ -35,7 +37,7 @@
 				{#if quote.context}
 					<GeneralTooltip>
 						{#snippet trigger()}
-							<CircleQuestionMark class="size-4" />
+							<SquareText class="size-4" />
 						{/snippet}
 						{#snippet content()}
 							<p class="max-w-64 text-sm">
@@ -47,11 +49,11 @@
 			</div>
 		</div>
 
-		<div class="absolute bottom-2 right-2">
-			<a href={`/quotes/${quote.id}/edit`} class="normally-hidden">
-				<Pencil class="size-4" />
-			</a>
-		</div>
+		{#if bottomRight}
+			<div class="absolute bottom-2 right-2">
+				{@render bottomRight()}
+			</div>
+		{/if}
 	</Card.Content>
 
 	<Card.Footer class="pl-0">

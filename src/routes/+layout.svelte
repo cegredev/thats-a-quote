@@ -50,7 +50,9 @@
 		</div>
 	</header>
 
-	<main class="mx-auto max-w-3xl px-5 pt-8">{@render children()}</main>
+	<main class="mx-auto max-w-3xl px-5 pt-8">
+		{@render children()}
+	</main>
 
 	<div style={`height: ${(navHeight ?? 0) + 10}px`}></div>
 

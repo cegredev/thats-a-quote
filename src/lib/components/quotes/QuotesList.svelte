@@ -5,6 +5,7 @@
 	import FullPagination from "#lib/components/meta/FullPagination.svelte";
 	import Quote from "./Quote.svelte";
 	import type { Quote as QuoteType } from "#lib/zod-schemas.ts";
+	import { Info } from "@lucide/svelte";
 
 	let { pagination }: { pagination: PaginatedResponse<QuoteType> } = $props();
 
@@ -24,7 +25,13 @@
 		<ul class="grid gap-4 sm:grid-cols-2">
 			{#each pagination.results as quote (quote.id)}
 				<li>
-					<Quote {quote} />
+					<Quote {quote}>
+						{#snippet bottomRight()}
+							<a href={`/quotes/${quote.id}`}>
+								<Info class="size-4" />
+							</a>
+						{/snippet}
+					</Quote>
 				</li>
 			{/each}
 		</ul>
