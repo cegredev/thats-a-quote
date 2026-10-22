@@ -5,6 +5,7 @@
 	import { CircleQuestionMark, Pencil } from "@lucide/svelte";
 	import GeneralTooltip from "../GeneralTooltip.svelte";
 	import { getLocale } from "#lib/paraglide/runtime.js";
+	import { cn } from "cn";
 
 	let { quote }: { quote: Quote } = $props();
 
@@ -55,7 +56,9 @@
 
 	<Card.Footer class="pl-0">
 		<p class="mt-3 text-sm text-muted-foreground">
-			— {quote.person ?? m.group_anonymousPersonDisplay()}
+			— <span class={cn(quote.person ? "" : "italic")}>
+				{quote.person ?? m.group_anonymousPersonDisplay()}
+			</span>
 
 			<span class="text-muted-foreground/65">
 				· {formatDate(quote.quotedAt)}
