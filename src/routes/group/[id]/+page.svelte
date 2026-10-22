@@ -9,6 +9,7 @@
 	import QuotesList from "#lib/components/quotes/QuotesList.svelte";
 	import { onMount } from "svelte";
 	import Button from "#lib/components_shadcn/ui/button/button.svelte";
+	import { PlusIcon } from "@lucide/svelte";
 
 	let { data }: PageProps = $props();
 
@@ -28,17 +29,6 @@
 	totalQuotes={data.quotesPagination.totalItems}
 />
 
-<div class="w-full flex flex-col items-center mb-4">
-	<Button
-		href={page.url.pathname + "/new"}
-		variant="default"
-		size="lg"
-		class="px-16"
-	>
-		Add quote
-	</Button>
-</div>
-
 <datalist id="people">
 	{#each data.people as person (person)}
 		<option value={person}></option>
@@ -48,3 +38,19 @@
 <SearchQuotesForm />
 
 <QuotesList pagination={data.quotesPagination} />
+
+<div
+	class="pointer-events-none fixed inset-x-0 z-40 mx-auto flex max-w-3xl justify-end px-5"
+	style="bottom: calc(var(--nav-height, 0px) + 1rem)"
+>
+	<Button
+		href={page.url.pathname + "/new"}
+		variant="default"
+		size="icon-lg"
+		class="pointer-events-auto size-14 rounded-full shadow-lg [&_svg]:size-6"
+		aria-label={m.group_addQuote()}
+		title={m.group_addQuote()}
+	>
+		<PlusIcon />
+	</Button>
+</div>

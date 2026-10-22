@@ -20,7 +20,10 @@
 	const session = authClient.useSession();
 </script>
 
-<div class="min-h-screen bg-background">
+<div
+	class="min-h-screen bg-background"
+	style={`--nav-height: ${navHeight ?? 0}px`}
+>
 	<header class="border-b border-border">
 		<div
 			class="mx-auto flex max-w-3xl items-center justify-between px-5 py-4"
