@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
 	import * as Button from "#lib/components_shadcn/ui/button/index.js";
+	import type { Snippet } from "svelte";
 
-	let { content, copyText }: { content: string; copyText: string } = $props();
+	let {
+		content,
+		copyText,
+		copySnippet,
+	}: { content: string; copyText?: string; copySnippet?: Snippet } = $props();
 
 	let copied = $state(false);
 
@@ -14,5 +19,13 @@
 </script>
 
 <Button.Root variant="ghost" size="sm" onclick={copyToClipboard}>
-	{copied ? m.group_copied() : copyText}
+	{#if copied}
+		{m.group_copied()}
+	{:else if copyText}
+		{copyText}
+	{:else if copySnippet}
+		{@render copySnippet()}
+	{:else}
+		COPY TEXT MISSING
+	{/if}
 </Button.Root>
