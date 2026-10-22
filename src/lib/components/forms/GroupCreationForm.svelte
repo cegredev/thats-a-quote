@@ -8,23 +8,32 @@
 	import type z from "zod";
 
 	type GroupCreationData = z.infer<typeof zodSchemas.groups.create.insert>;
+	type GroupUpdateData = z.infer<typeof zodSchemas.groups.create.update>;
 
-	let { form }: { form: SuperValidated<GroupCreationData> } = $props();
+	let props:
+		| { form: SuperValidated<GroupCreationData>; mode: "create" }
+		| { form: SuperValidated<GroupUpdateData>; mode: "update" } = $props();
 </script>
 
 <SchemaForm
-	{form}
-	action="?/createGroup"
-	submitLabel={m.home_create()}
-	submitBusyLabel={m.home_createBusy()}
+	form={props.form}
+	action={props.mode === "create" ? "?/createGroup" : "?/editGroup"}
+	submitLabel={props.mode === "create" ? m.home_create() : "Edit group"}
+	submitBusyLabel={props.mode === "create"
+		? m.home_createBusy()
+		: "Editing..."}
 	fields={{
 		name: { name: "name", label: m.home_groupName() },
-		id: {
-			name: "id",
-			label: m.home_customId(),
-			optional: true,
-			optionalLabel: m.home_optional(),
-		},
+		...(props.mode === "create"
+			? {
+					id: {
+						name: "id",
+						label: m.home_customId(),
+						optional: true,
+						optionalLabel: m.home_optional(),
+					},
+				}
+			: {}),
 	}}
 	options={{
 		onResult: async ({ result }) => {
@@ -32,7 +41,9 @@
 				const id = result.data?.id;
 				if (!id) return;
 
-				groupIDsStore.add(id);
+				if (props.mode === "create") {
+					groupIDsStore.add(id);
+				}
 				await goto(`/group/${id}`);
 			}
 		},

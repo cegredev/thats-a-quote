@@ -36,7 +36,7 @@ export const actions = {
 
 		const form = await superValidate(
 			request,
-			zod4(zodSchemas.quotes.create.insert),
+			zod4(zodSchemas.quotes.create.update),
 		);
 
 		if (!form.valid) return fail(400, { form });

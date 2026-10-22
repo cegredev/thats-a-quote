@@ -22,8 +22,8 @@
 	"pagination_page": "Page {page}",
 	"pagination_perPage": "per page",
 	"group_join": "Join",
-	"home_title": "The funny things your friends say, kept somewhere safe.",
-	"home_intro": "Make a group, share the link, and let everyone add the quotes worth remembering. No accounts needed - everything lives in this browser unless you choose to sync it.",
+	"home_title": "All the funny things your friends say.",
+	"home_intro": "Make a group, share the link, and let everyone add the quotes worth remembering.",
 	"home_yourGroups": "Your groups",
 	"home_empty": "You haven't joined any groups on this device yet. Create one, or join an existing group with a link.",
 	"home_locked": "Locked",
@@ -112,5 +112,8 @@
 	"settings_admin_needs_to_enable": "Your admin needs to enable this feature",
 	"logout_link": "Log out",
 	"edit_quote": "Edit quote",
-	"quote_editing": "Editing..."
+	"quote_editing": "Editing...",
+	"group_edit": "Edit group",
+	"group_create_head": "Create a group",
+	"quote_create_head": "Add a quote"
 }

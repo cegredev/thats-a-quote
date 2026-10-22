@@ -1,12 +1,18 @@
 <script lang="ts">
 	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
 	import type { PageProps } from "./$types";
+	import * as Card from "#lib/components_shadcn/ui/card/index.js";
+	import { m } from "#lib/paraglide/messages.js";
 
 	let { data }: PageProps = $props();
 </script>
 
 <div class="mb-4">
-	<h1 class="font-display text-2xl font-semibold">Add a quote</h1>
+	<h1 class="font-display text-2xl font-semibold">{m.quote_create_head()}</h1>
 </div>
 
-<CreateQuoteForm form={data.quoteCreationForm} mode="create" />
+<Card.Root size="sm">
+	<Card.Content>
+		<CreateQuoteForm form={data.quoteCreationForm} mode="create" />
+	</Card.Content>
+</Card.Root>

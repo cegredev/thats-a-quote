@@ -22,8 +22,8 @@
 	"pagination_page": "Seite {page}",
 	"pagination_perPage": "pro Seite",
 	"group_join": "Gruppe beitreten",
-	"home_title": "Die lustigen Dinge, die deine Freunde sagen, sicher aufbewahrt.",
-	"home_intro": "Erstelle eine Gruppe, teile den Link und lass alle die erinnerungswürdigen Zitate hinzufügen. Kein Konto nötig - alles bleibt in diesem Browser, sofern du keine Synchronisierung einrichtest.",
+	"home_title": "Die lustigen Dinge, die deine Freunde sagen.",
+	"home_intro": "Erstelle eine Gruppe, teile den Link und lass alle die erinnerungswürdigen Zitate hinzufügen.",
 	"home_yourGroups": "Deine Gruppen",
 	"home_empty": "Du bist auf diesem Gerät noch keiner Gruppe beigetreten. Erstelle eine Gruppe oder tritt einer bestehenden über einen Link bei.",
 	"home_locked": "Geschützt",
@@ -112,5 +112,8 @@
 	"settings_admin_needs_to_enable": "Dein Admin muss dieses Feature aktivieren",
 	"logout_link": "Ausloggen",
 	"edit_quote": "Zitat bearbeiten",
-	"quote_editing": "Bearbeiten..."
+	"quote_editing": "Bearbeiten...",
+	"group_edit": "Gruppe bearbeiten",
+	"group_create_head": "Gruppe erstellen",
+	"quote_create_head": "Zitat hinzufügen"
 }

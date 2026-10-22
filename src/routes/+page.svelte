@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { PageProps } from "./$types";
 	import { m } from "#lib/paraglide/messages.js";
-	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
 	import GroupsList from "#lib/components/groups/GroupsList.svelte";
 	import Title from "#lib/components/util/Title.svelte";
-	import * as Card from "#lib/components_shadcn/ui/card/index.js";
+	import Button from "#lib/components_shadcn/ui/button/button.svelte";
+	import { page } from "$app/state";
+	import { PlusIcon } from "@lucide/svelte";
 
 	let { data }: PageProps = $props();
 </script>
@@ -29,6 +30,18 @@
 	<GroupsList groups={data.groups} />
 </section>
 
-<Card.Root class="p-5">
-	<GroupCreationForm form={data.groupCreationForm} />
-</Card.Root>
+<div
+	class="pointer-events-none fixed inset-x-0 z-40 mx-auto flex max-w-3xl justify-end px-5"
+	style="bottom: calc(var(--nav-height, 0px) + 1rem)"
+>
+	<Button
+		href={page.url.pathname + "new"}
+		variant="default"
+		size="icon-lg"
+		class="pointer-events-auto size-14 rounded-full shadow-lg [&_svg]:size-6"
+		aria-label={m.home_create()}
+		title={m.home_create()}
+	>
+		<PlusIcon />
+	</Button>
+</div>

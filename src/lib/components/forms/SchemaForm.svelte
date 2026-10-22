@@ -29,6 +29,7 @@
 	import { Input } from "#lib/components_shadcn/ui/input/index.js";
 	import * as Label from "#lib/components_shadcn/ui/label/index.js";
 	import { Textarea } from "#lib/components_shadcn/ui/textarea/index.js";
+	import { cn } from "cn";
 
 	type SuperFormOptions = NonNullable<Parameters<typeof superForm<T>>[1]>;
 	type SuperFormReturn = ReturnType<typeof superForm<T>>;
@@ -71,7 +72,7 @@
 		submitBusyLabel,
 		submitClass,
 		options,
-		class: className = "flex flex-col gap-3",
+		class: className,
 		fieldBase,
 		footer,
 		...customFields
@@ -113,14 +114,18 @@
 	);
 
 	function typedEntries<T extends object>(obj: T) {
-		return Object.entries(obj).filter(([, value]) => value !== undefined) as [
-			Extract<keyof T, string>,
-			Exclude<T[keyof T], undefined>,
-		][];
+		return Object.entries(obj).filter(
+			([, value]) => value !== undefined,
+		) as [Extract<keyof T, string>, Exclude<T[keyof T], undefined>][];
 	}
 </script>
 
-<form class={className} method="POST" {action} use:enhance>
+<form
+	class={cn("flex flex-col gap-3", className)}
+	method="POST"
+	{action}
+	use:enhance
+>
 	{#each typedEntries(fields) as [name, cfg] (cfg.name)}
 		{@const customField = customFieldsTyped[
 			`field_${name}`

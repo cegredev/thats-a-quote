@@ -7,7 +7,7 @@
 	import FormButton from "#lib/components/forms/FormButton.svelte";
 	import GenericDialog from "#lib/components/dialogs/GenericDialog.svelte";
 	import type { Group } from "#lib/zod-schemas.ts";
-	import { Link } from "@lucide/svelte";
+	import { Link, Pencil } from "@lucide/svelte";
 	import Button from "#lib/components_shadcn/ui/button/button.svelte";
 
 	let { group, totalQuotes }: { group: Group; totalQuotes: number } =
@@ -19,9 +19,21 @@
 </script>
 
 <div class="flex flex-col gap-2 w-full">
-	<h1 class="font-display text-2xl font-semibold">
-		{group.name}
-	</h1>
+	<div class="w-full grid grid-cols-[1fr_auto]">
+		<h1 class="font-display text-2xl font-semibold">
+			{group.name}
+		</h1>
+
+		<Button
+			href={`${page.url.pathname}/edit`}
+			variant="ghost"
+			size="icon-sm"
+			aria-label={m.group_edit()}
+			title={m.group_edit()}
+		>
+			<Pencil />
+		</Button>
+	</div>
 
 	<div class="mb-6 flex items-start justify-between gap-4">
 		<div>
