@@ -6,6 +6,7 @@ import {
 	sqliteTable,
 	text,
 	unique,
+	uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 import { v7 as uuidv7 } from "uuid";
@@ -41,26 +42,78 @@ export const quotesTable = sqliteTable(
 	(table) => [index("idx_quotes_group").on(table.groupId)],
 );
 
-export const quoteInteractionsTable = sqliteTable(
-	"quote_interactions",
+export const quoteComments = sqliteTable(
+	"quote_comments",
 	{
-		id: text()
+		id: text("id")
 			.primaryKey()
 			.$default(() => uuidv7()),
-		quoteId: text()
+		quoteId: text("quote_id")
 			.notNull()
 			.references(() => quotesTable.id, { onDelete: "cascade" }),
-		userId: text()
+		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		content: text().notNull(),
-		kind: text().notNull(),
-		createdAt: int()
+		content: text("content").notNull(),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
 			.notNull()
-			.$default(() => Date.now()),
+			.$defaultFn(() => new Date()),
+		updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+			.notNull()
+			.$defaultFn(() => new Date()),
 	},
-	(table) => [
-		check("kind_check", sql`${table.kind} IN ('reaction', 'comment')`),
+	(t) => [
+		index("comments_quote_id_idx").on(t.quoteId),
+		index("comments_user_id_idx").on(t.userId),
+	],
+);
+
+export const quoteReactions = sqliteTable(
+	"quote_reactions",
+	{
+		id: text("id")
+			.primaryKey()
+			.$default(() => uuidv7()),
+		quoteId: text("quote_id")
+			.notNull()
+			.references(() => quotesTable.id, { onDelete: "cascade" }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		content: text("content").notNull(),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(t) => [
+		uniqueIndex("quote_reactions_user_quote_uq").on(t.userId, t.quoteId),
+		index("quote_reactions_quote_id_idx").on(t.quoteId),
+	],
+);
+
+export const commentReactions = sqliteTable(
+	"comment_reactions",
+	{
+		id: text("id")
+			.primaryKey()
+			.$default(() => uuidv7()),
+		commentId: text("comment_id")
+			.notNull()
+			.references(() => quoteComments.id, { onDelete: "cascade" }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		content: text("content").notNull(),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
+			.notNull()
+			.$defaultFn(() => new Date()),
+	},
+	(t) => [
+		uniqueIndex("comment_reactions_user_comment_uq").on(
+			t.userId,
+			t.commentId,
+		),
+		index("comment_reactions_comment_id_idx").on(t.commentId),
 	],
 );
 

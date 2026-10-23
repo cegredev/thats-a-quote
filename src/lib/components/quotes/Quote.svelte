@@ -8,8 +8,15 @@
 	import { cn } from "cn";
 	import type { Snippet } from "svelte";
 
-	let { quote, bottomRight }: { quote: Quote; bottomRight?: Snippet } =
-		$props();
+	let {
+		quote,
+		bottomRight,
+		reactions,
+	}: {
+		quote: Quote;
+		bottomRight?: Snippet;
+		reactions?: { content: string; count: number }[];
+	} = $props();
 
 	function formatDate(ts: number): string {
 		return new Date(ts).toLocaleString(
@@ -26,7 +33,9 @@
 	}
 </script>
 
-<Card.Root class="quote-card relative p-4 [--card-spacing:--spacing(1)]">
+<Card.Root
+	class="quote-card relative overflow-visible p-4 [--card-spacing:--spacing(1)]"
+>
 	<Card.Content class="pl-0">
 		<p class="font-display text-[1.05rem] leading-snug text-balance">
 			&ldquo;{quote.text}&rdquo;
@@ -67,6 +76,20 @@
 			</span>
 		</p>
 	</Card.Footer>
+
+	{#if reactions?.length}
+		<div class="absolute -bottom-2 left-2 flex flex-wrap gap-1.5">
+			{#each reactions as reaction (reaction.content)}
+				<span
+					class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+					title={`${reaction.content}: ${reaction.count}`}
+				>
+					<span>{reaction.content}</span>
+					<span>{reaction.count}</span>
+				</span>
+			{/each}
+		</div>
+	{/if}
 </Card.Root>
 
 <style lang="scss">

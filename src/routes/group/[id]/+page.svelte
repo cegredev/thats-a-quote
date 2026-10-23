@@ -37,7 +37,7 @@
 
 <SearchQuotesForm />
 
-<QuotesList pagination={data.quotesPagination} />
+<QuotesList pagination={data.quotesPagination} reactions={data.reactionsMap} />
 
 <div
 	class="pointer-events-none fixed inset-x-0 z-40 mx-auto flex max-w-3xl justify-end px-5"

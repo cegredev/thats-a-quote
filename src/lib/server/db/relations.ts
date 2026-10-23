@@ -14,6 +14,22 @@ export const relations = defineRelations(schema, (r) => ({
 			to: r.groupsTable.id,
 		}),
 	},
+	quotesTable: {
+		reactions: r.many.quoteReactions({
+			from: r.quotesTable.id,
+			to: r.quoteReactions.quoteId,
+		}),
+		comments: r.many.quoteComments({
+			from: r.quotesTable.id,
+			to: r.quoteComments.quoteId,
+		}),
+	},
+	quoteComments: {
+		reactions: r.many.commentReactions({
+			from: r.quoteComments.id,
+			to: r.commentReactions.commentId,
+		}),
+	},
 }));
 
 export const authRelations = defineRelationsPart(schema, (r) => ({

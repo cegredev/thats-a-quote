@@ -10,6 +10,9 @@ import { error, fail } from "@sveltejs/kit";
 import { rateLimit } from "#lib/server/rate-limiting.js";
 import { crud } from "#lib/server/db/crud.js";
 import { parsePaginationParams, parseSearchParams } from "#lib/server/utils.js";
+import { db } from "#lib/server/db.js";
+import { quoteReactions } from "#lib/server/db/schema.js";
+import { count, inArray } from "drizzle-orm";
 
 const QUOTES_DEFAULT_PAGE_SIZE = 30;
 
@@ -27,6 +30,26 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 	);
 
 	const { page, perPage } = parsePaginationParams(url.searchParams);
+	const limit = perPage ?? QUOTES_DEFAULT_PAGE_SIZE;
+
+	// const quotes = await db().query.quotesTable.findMany({
+	// 	where: {
+	// 		groupId,
+	// 	},
+	// 	limit,
+	// 	offset: (page ?? 0) * limit,
+	// 	with: {
+	// 		reactions: {
+	// 			columns: {
+	// 				content: true,
+	// 			},
+	// 		},
+	// 	},
+	// 	orderBy: {
+	// 		quotedAt: "desc",
+	// 		createdAt: "desc",
+	// 	},
+	// });
 
 	const quotesPagination = await crud().quotes.list({
 		filters: {
@@ -50,6 +73,34 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		perPage: perPage ?? QUOTES_DEFAULT_PAGE_SIZE,
 	});
 
+	const reactions = await db()
+		.select({
+			quoteId: quoteReactions.quoteId,
+			content: quoteReactions.content,
+			count: count(quoteReactions.content),
+		})
+		.from(quoteReactions)
+		.groupBy(quoteReactions.quoteId, quoteReactions.content)
+		.where(
+			inArray(
+				quoteReactions.quoteId,
+				quotesPagination.results.map((q) => q.id),
+			),
+		);
+
+	const reactionsMap = reactions.reduce(
+		(previous, current) => {
+			const array = (previous[current.quoteId] ??= []);
+
+			const fields = array.filter((r) => r.content === current.content);
+			if (fields.length === 1) fields[0].count++;
+			else array.push({ content: current.content, count: 1 });
+
+			return previous;
+		},
+		{} as Record<string, { content: string; count: number }[]>,
+	);
+
 	const people = await listPeople(groupId);
 
 	let userIsMember: boolean | undefined = undefined;
@@ -62,6 +113,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 	return {
 		group: groupDetails,
 		quotesPagination,
+		reactionsMap,
 		people,
 		userIsMember,
 	};

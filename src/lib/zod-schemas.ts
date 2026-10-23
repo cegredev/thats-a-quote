@@ -4,7 +4,7 @@ import {
 	createUpdateSchema,
 } from "drizzle-zod";
 import { z } from "zod";
-import { groupsTable, quotesTable } from "./server/db/schema";
+import { groupsTable, quoteReactions, quotesTable } from "./server/db/schema";
 
 const schemas = {
 	groups: {
@@ -53,6 +53,15 @@ const schemas = {
 			email: z.email(),
 			password: z.string(),
 		}),
+	},
+	quoteReactions: {
+		select: createSelectSchema(quoteReactions),
+		create: z.object({
+			content: z.string().min(1).max(2),
+		}),
+		insert: createInsertSchema(quoteReactions, {
+			createdAt: z.iso.datetime({ local: true }),
+		}).omit({ id: true, createdAt: true }),
 	},
 };
 

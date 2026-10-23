@@ -7,9 +7,17 @@
 	import type { Quote as QuoteType } from "#lib/zod-schemas.ts";
 	import { Info } from "@lucide/svelte";
 
-	let { pagination }: { pagination: PaginatedResponse<QuoteType> } = $props();
+	let {
+		pagination,
+		reactions,
+	}: {
+		pagination: PaginatedResponse<QuoteType>;
+		reactions: Record<string, { content: string; count: number }[]>;
+	} = $props();
 
 	let searchQueryExists = $derived(page.url.searchParams.size > 0);
+
+	let reactionsMap = $derived(new Map(Object.entries(reactions)));
 </script>
 
 {#if pagination.totalItems === 0}
@@ -25,7 +33,7 @@
 		<ul class="grid gap-4 sm:grid-cols-2">
 			{#each pagination.results as quote (quote.id)}
 				<li>
-					<Quote {quote}>
+					<Quote {quote} reactions={reactionsMap.get(quote.id)}>
 						{#snippet bottomRight()}
 							<a href={`/quotes/${quote.id}`}>
 								<Info class="size-4" />

@@ -1,7 +1,7 @@
 import { drizzleCrud } from "../crud";
 import { zod } from "../crud/zod";
 import { db } from "../db";
-import { groupsTable, quotesTable } from "./schema";
+import { groupsTable, quoteReactions, quotesTable } from "./schema";
 
 const createCrud = () => {
 	const crud = drizzleCrud(db(), { validation: zod() });
@@ -13,6 +13,7 @@ const createCrud = () => {
 		groups: crud(groupsTable, {
 			allowedFilters: ["id"],
 		}),
+		quoteReactions: crud(quoteReactions, {}),
 	};
 };
 

@@ -7,6 +7,7 @@
 		ButtonSize,
 		ButtonVariant,
 	} from "#lib/components_shadcn/ui/button/index.js";
+	import type { Snippet } from "svelte";
 
 	let {
 		action,
@@ -16,14 +17,16 @@
 		serverRequiresUser,
 		variant = "default",
 		size = "default",
+		hiddenInputs,
 	}: {
 		action: string;
-		onSuccess: () => MaybePromise<void>;
-		text: string;
+		onSuccess?: () => MaybePromise<void>;
 		classes?: string;
 		serverRequiresUser?: boolean;
 		variant?: ButtonVariant;
 		size?: ButtonSize;
+		hiddenInputs?: Snippet;
+		text: string | Snippet;
 	} = $props();
 
 	const session = authClient.useSession();
@@ -37,13 +40,24 @@
 			async ({ result, update }) => {
 				await update();
 
-				if (result.type === "success" || result.type === "redirect") {
+				if (
+					onSuccess &&
+					(result.type === "success" || result.type === "redirect")
+				) {
 					await onSuccess();
 				}
 			}}
 	>
+		{#if hiddenInputs}
+			{@render hiddenInputs()}
+		{/if}
+
 		<Button.Root type="submit" {variant} {size} class={classes}>
-			{text}
+			{#if typeof text === "string"}
+				{text}
+			{:else}
+				{@render text()}
+			{/if}
 		</Button.Root>
 	</form>
 {:else}
@@ -52,8 +66,12 @@
 		{variant}
 		{size}
 		class={classes}
-		onclick={async () => await onSuccess()}
+		onclick={async () => onSuccess && (await onSuccess())}
 	>
-		{text}
+		{#if typeof text === "string"}
+			{text}
+		{:else}
+			{@render text()}
+		{/if}
 	</Button.Root>
 {/if}
