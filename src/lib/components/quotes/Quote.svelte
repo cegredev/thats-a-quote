@@ -7,6 +7,7 @@
 	import { cn } from "cn";
 	import type { Snippet } from "svelte";
 	import type { QuoteWithRest } from "#lib/server/queries/quotes.ts";
+	import EmojiPickerPopover from "../EmojiPickerPopover.svelte";
 
 	let {
 		quote,
@@ -92,16 +93,21 @@
 	</Card.Footer>
 
 	{#if reactionCounts.size > 0}
-		<div class="absolute -bottom-2 left-2 flex flex-wrap gap-1.5">
-			{#each reactionCounts.entries() as [reaction, count] (reaction)}
-				<span
-					class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
-					title={`${reaction}: ${count}`}
-				>
-					<span>{reaction}</span>
-					<span>{count}</span>
+		<div class="absolute -bottom-4 left-2">
+			<span
+				class="inline-flex items-center gap-2 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
+			>
+				{#each reactionCounts.entries() as [reaction, count] (reaction)}
+					<span title={`${reaction}: ${count}`}>
+						<span>{reaction}</span>
+						<span>{count}</span>
+					</span>
+				{/each}
+
+				<span class="ml-2">
+					<EmojiPickerPopover />
 				</span>
-			{/each}
+			</span>
 		</div>
 	{/if}
 </Card.Root>
