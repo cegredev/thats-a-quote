@@ -24,10 +24,7 @@
 
 <Title text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`} />
 
-<QuotesPageHead
-	group={data.group}
-	totalQuotes={data.quotesPagination.totalItems}
-/>
+<QuotesPageHead group={data.group} totalQuotes={data.quotes.pagination.total} />
 
 <datalist id="people">
 	{#each data.people as person (person)}
@@ -37,7 +34,7 @@
 
 <SearchQuotesForm />
 
-<QuotesList pagination={data.quotesPagination} reactions={data.reactionsMap} />
+<QuotesList quotes={data.quotes} />
 
 <div
 	class="pointer-events-none fixed inset-x-0 z-40 mx-auto flex max-w-3xl justify-end px-5"

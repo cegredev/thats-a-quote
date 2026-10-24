@@ -1,21 +1,19 @@
 <script lang="ts">
 	import * as Card from "#lib/components_shadcn/ui/card/index.js";
 	import { m } from "#lib/paraglide/messages.js";
-	import type { Quote } from "#lib/zod-schemas.ts";
-	import { Info, SquareText } from "@lucide/svelte";
+	import { SquareText } from "@lucide/svelte";
 	import GeneralTooltip from "../GeneralTooltip.svelte";
 	import { getLocale } from "#lib/paraglide/runtime.js";
 	import { cn } from "cn";
 	import type { Snippet } from "svelte";
+	import type { QuoteWithRest } from "#lib/server/queries/quotes.ts";
 
 	let {
 		quote,
 		bottomRight,
-		reactions,
 	}: {
-		quote: Quote;
+		quote: QuoteWithRest;
 		bottomRight?: Snippet;
-		reactions?: { content: string; count: number }[];
 	} = $props();
 
 	function formatDate(ts: number): string {
@@ -31,6 +29,22 @@
 			},
 		);
 	}
+
+	let reactionCounts = $derived(
+		new Map(
+			Object.entries(
+				quote.reactions.reduce(
+					(previous, current) => {
+						previous[current.content] ??= 0;
+						previous[current.content]++;
+
+						return previous;
+					},
+					{} as Record<string, number>,
+				),
+			),
+		),
+	);
 </script>
 
 <Card.Root
@@ -77,15 +91,15 @@
 		</p>
 	</Card.Footer>
 
-	{#if reactions?.length}
+	{#if reactionCounts.size > 0}
 		<div class="absolute -bottom-2 left-2 flex flex-wrap gap-1.5">
-			{#each reactions as reaction (reaction.content)}
+			{#each reactionCounts.entries() as [reaction, count] (reaction)}
 				<span
 					class="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
-					title={`${reaction.content}: ${reaction.count}`}
+					title={`${reaction}: ${count}`}
 				>
-					<span>{reaction.content}</span>
-					<span>{reaction.count}</span>
+					<span>{reaction}</span>
+					<span>{count}</span>
 				</span>
 			{/each}
 		</div>

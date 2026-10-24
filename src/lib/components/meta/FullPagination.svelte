@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { PaginatedResponse } from "#lib/server/crud/index.js";
 	import type { Snippet } from "svelte";
 	import Pagination from "./Pagination.svelte";
+	import type { BetterPagination } from "#lib/types.ts";
 
 	type Props = {
-		pagination: PaginatedResponse<any>;
+		pagination: BetterPagination;
 		children: Snippet;
 		perPageOptions: number[];
 	};
@@ -14,7 +14,7 @@
 	let scrollTarget: HTMLElement | undefined = $state(undefined);
 
 	let showPagination = $derived(
-		pagination.totalItems > Math.min(...perPageOptions),
+		pagination.total > Math.min(...perPageOptions),
 	);
 </script>
 
@@ -22,7 +22,7 @@
 
 {#if showPagination}
 	<Pagination
-		count={pagination.totalItems}
+		count={pagination.total}
 		perPage={pagination.perPage}
 		page={pagination.page}
 		{perPageOptions}
@@ -31,9 +31,9 @@
 
 {@render children()}
 
-{#if pagination.totalPages > 1}
+{#if pagination.total > 1}
 	<Pagination
-		count={pagination.totalItems}
+		count={pagination.total}
 		perPage={pagination.perPage}
 		page={pagination.page}
 		scrollTo={scrollTarget}

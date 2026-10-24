@@ -1,26 +1,21 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import { m } from "#lib/paraglide/messages.js";
-	import type { PaginatedResponse } from "#lib/server/crud/index.js";
 	import FullPagination from "#lib/components/meta/FullPagination.svelte";
 	import Quote from "./Quote.svelte";
-	import type { Quote as QuoteType } from "#lib/zod-schemas.ts";
 	import { Info } from "@lucide/svelte";
+	import type { GroupQuotesPagination } from "#lib/server/queries/quotes.ts";
 
 	let {
-		pagination,
-		reactions,
+		quotes,
 	}: {
-		pagination: PaginatedResponse<QuoteType>;
-		reactions: Record<string, { content: string; count: number }[]>;
+		quotes: GroupQuotesPagination;
 	} = $props();
 
 	let searchQueryExists = $derived(page.url.searchParams.size > 0);
-
-	let reactionsMap = $derived(new Map(Object.entries(reactions)));
 </script>
 
-{#if pagination.totalItems === 0}
+{#if quotes.pagination.total === 0}
 	<div class="rounded-lg border border-dashed px-5 py-10 text-center">
 		<p class="text-muted-foreground">
 			{searchQueryExists
@@ -29,11 +24,14 @@
 		</p>
 	</div>
 {:else}
-	<FullPagination {pagination} perPageOptions={[10, 30, 50, 80, 100]}>
+	<FullPagination
+		pagination={quotes.pagination}
+		perPageOptions={[10, 30, 50, 80, 100]}
+	>
 		<ul class="grid gap-4 sm:grid-cols-2">
-			{#each pagination.results as quote (quote.id)}
+			{#each quotes.data as quote (quote.id)}
 				<li>
-					<Quote {quote} reactions={reactionsMap.get(quote.id)}>
+					<Quote {quote}>
 						{#snippet bottomRight()}
 							<a href={`/quotes/${quote.id}`}>
 								<Info class="size-4" />
