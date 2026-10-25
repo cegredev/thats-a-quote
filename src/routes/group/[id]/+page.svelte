@@ -12,8 +12,8 @@
 	import { PlusIcon } from "@lucide/svelte";
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
-	import { goto } from "$app/navigation";
 	import { closeEditDialog } from "#lib/client/component-utils.svelte.ts";
+	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -27,11 +27,18 @@
 
 	let addQuoteDialogOpen: boolean = $state(false);
 	let editQuoteDialogOpen = $state(page.url.searchParams.has("edit"));
+	let editGroupDialogOpen = $state(page.url.searchParams.has("editGroup"));
 
 	$effect(() => {
 		const shouldBeOpen = page.url.searchParams.has("edit");
 		if (editQuoteDialogOpen !== shouldBeOpen)
 			editQuoteDialogOpen = shouldBeOpen;
+	});
+
+	$effect(() => {
+		const shouldBeOpen = page.url.searchParams.has("editGroup");
+		if (editGroupDialogOpen !== shouldBeOpen)
+			editGroupDialogOpen = shouldBeOpen;
 	});
 </script>
 
@@ -89,15 +96,36 @@
 		widthClass="w-full max-w-2xl!"
 		bind:open={editQuoteDialogOpen}
 		onOpenChange={(open) => {
-			if (!open) void closeEditDialog(page.url.href);
+			if (!open) closeEditDialog(page.url.href);
 		}}
 	>
 		<CreateQuoteForm
 			form={data.quoteEditForm}
 			mode="update"
 			quoteId={page.url.searchParams.get("edit") ?? undefined}
-			onSuccess={() => {
-				editQuoteDialogOpen = false;
+			onSuccess={async () => {
+				await closeEditDialog(page.url.href);
+			}}
+		/>
+	</ResponsiveDrawer>
+{/if}
+
+{#if data.groupEditForm}
+	<ResponsiveDrawer
+		text={{
+			title: m.group_edit(),
+		}}
+		widthClass="w-full max-w-2xl!"
+		bind:open={editGroupDialogOpen}
+		onOpenChange={(open) => {
+			if (!open) closeEditDialog(page.url.href, "editGroup");
+		}}
+	>
+		<GroupCreationForm
+			form={data.groupEditForm}
+			mode="update"
+			onSuccess={async () => {
+				await closeEditDialog(page.url.href, "editGroup");
 			}}
 		/>
 	</ResponsiveDrawer>

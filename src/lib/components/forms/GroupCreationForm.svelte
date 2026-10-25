@@ -40,14 +40,12 @@
 	options={{
 		onResult: async ({ result }) => {
 			if (result.type === "success") {
-				const id = result.data?.id;
-				if (!id) return;
-
 				if (props.mode === "create") {
-					groupIDsStore.add(id);
+					const id = result.data?.id;
+					if (id) groupIDsStore.add(id);
 				}
 
-				await props.onSuccess();
+				if (props.onSuccess) await props.onSuccess();
 			}
 		},
 	}}

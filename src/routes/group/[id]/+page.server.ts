@@ -70,6 +70,19 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		);
 	}
 
+	let groupEditForm:
+		| SuperValidated<z.infer<typeof zodSchemas.groups.create.update>>
+		| undefined;
+	const shouldEdit = url.searchParams.get("editGroup");
+	if (shouldEdit !== "" && shouldEdit !== null) {
+		groupEditForm = await superValidate(
+			{
+				...group,
+			},
+			zod4(zodSchemas.groups.create.update),
+		);
+	}
+
 	return {
 		group,
 		quotes,
@@ -77,6 +90,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		userIsMember,
 		quoteCreationForm,
 		quoteEditForm,
+		groupEditForm,
 	};
 };
 
@@ -206,6 +220,23 @@ export const actions = {
 			person: form.data.person,
 			quotedAt: new Date(form.data.quotedAt).getTime(),
 			context: form.data.context,
+		});
+
+		return { form };
+	}),
+	editGroup: rateLimit("medium", async ({ request, params }) => {
+		const groupId = params.id;
+		if (!groupId) error(400, "No group id param");
+
+		const form = await superValidate(
+			request,
+			zod4(zodSchemas.groups.create.update),
+		);
+
+		if (!form.valid) return fail(400, { form });
+
+		await crud().groups.update(groupId, {
+			...form.data,
 		});
 
 		return { form };

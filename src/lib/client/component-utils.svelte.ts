@@ -85,8 +85,8 @@ export const removeQueryParamToHref = (href: string, param: string) => {
 	return `${url.pathname}${url.search}`;
 };
 
-export const closeEditDialog = async (href: string) => {
-	const h = removeQueryParamToHref(href, "edit");
+export const closeEditDialog = async (href: string, param: string = "edit") => {
+	const h = removeQueryParamToHref(href, param);
 
 	await goto(h, {
 		replaceState: true,

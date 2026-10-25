@@ -9,6 +9,7 @@
 	import type { Group } from "#lib/zod-schemas.ts";
 	import { Link, Pencil } from "@lucide/svelte";
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
+	import { addQueryParamToHref } from "#lib/client/component-utils.svelte.ts";
 
 	let { group, totalQuotes }: { group: Group; totalQuotes: number } =
 		$props();
@@ -25,7 +26,7 @@
 		</h1>
 
 		<Button
-			href={`${page.url.pathname}/edit`}
+			href={addQueryParamToHref(page.url.href, "editGroup", "1")}
 			variant="ghost"
 			size="icon-sm"
 			aria-label={m.group_edit()}
