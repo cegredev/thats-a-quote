@@ -2,11 +2,11 @@
 	import { enhance } from "$app/forms";
 	import { authClient } from "#lib/client/frontend-auth.js";
 	import type { MaybePromise } from "#lib/types.js";
-	import * as Button from "#lib/components_shadcn/ui/button/index.js";
+	import * as Button from "#lib/shadcn/components/ui/button/index.js";
 	import type {
 		ButtonSize,
 		ButtonVariant,
-	} from "#lib/components_shadcn/ui/button/index.js";
+	} from "#lib/shadcn/components/ui/button/index.js";
 	import type { Snippet } from "svelte";
 
 	let {

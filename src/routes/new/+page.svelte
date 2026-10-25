@@ -1,7 +1,7 @@
 <script lang="ts">
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
 	import type { PageProps } from "./$types";
-	import * as Card from "#lib/components_shadcn/ui/card/index.js";
+	import * as Card from "#lib/shadcn/components/ui/card/index.js";
 	import { m } from "#lib/paraglide/messages.js";
 
 	let { data }: PageProps = $props();

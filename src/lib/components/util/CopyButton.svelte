@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
-	import * as Button from "#lib/components_shadcn/ui/button/index.js";
+	import * as Button from "#lib/shadcn/components/ui/button/index.js";
 	import type { Snippet } from "svelte";
 
 	let {

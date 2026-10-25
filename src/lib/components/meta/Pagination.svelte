@@ -7,7 +7,7 @@
 	} from "#lib/client/component-utils.svelte.js";
 	import { m } from "#lib/paraglide/messages.js";
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
-	import * as Button from "#lib/components_shadcn/ui/button/index.js";
+	import * as Button from "#lib/shadcn/components/ui/button/index.js";
 	import GeneralSelect from "../util/GeneralSelect.svelte";
 	import { untrack } from "svelte";
 
@@ -82,10 +82,7 @@
 <div class="my-8 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
 	<div></div>
 
-	<nav
-		class="flex items-center gap-1"
-		aria-label={m.pagination_navigation()}
-	>
+	<nav class="flex items-center gap-1" aria-label={m.pagination_navigation()}>
 		<Button.Root
 			variant="ghost"
 			size="icon-sm"

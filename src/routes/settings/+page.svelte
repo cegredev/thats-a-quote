@@ -5,10 +5,10 @@
 		unsubscribeFromPush,
 	} from "#lib/client/push.svelte.ts";
 	import type { PageProps } from "./$types";
-	import * as Item from "#lib/components_shadcn/ui/item/index.js";
-	import { Switch } from "#lib/components_shadcn/ui/switch/index.js";
+	import * as Item from "#lib/shadcn/components/ui/item/index.js";
+	import { Switch } from "#lib/shadcn/components/ui/switch/index.js";
 	import LocaleSwitcher from "#lib/components/meta/LocaleSelect.svelte";
-	import { Badge } from "#lib/components_shadcn/ui/badge/index.js";
+	import { Badge } from "#lib/shadcn/components/ui/badge/index.js";
 
 	let data: PageProps = $props();
 

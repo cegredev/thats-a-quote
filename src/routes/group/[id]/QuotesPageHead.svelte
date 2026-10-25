@@ -8,7 +8,7 @@
 	import GenericDialog from "#lib/components/dialogs/GenericDialog.svelte";
 	import type { Group } from "#lib/zod-schemas.ts";
 	import { Link, Pencil } from "@lucide/svelte";
-	import Button from "#lib/components_shadcn/ui/button/button.svelte";
+	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 
 	let { group, totalQuotes }: { group: Group; totalQuotes: number } =
 		$props();

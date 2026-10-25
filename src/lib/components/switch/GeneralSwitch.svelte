@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ComponentProps } from "svelte";
-	import * as Switch from "#lib/components_shadcn/ui/switch/index.js";
+	import * as Switch from "#lib/shadcn/components/ui/switch/index.js";
 
 	let {
 		checked = $bindable(false),

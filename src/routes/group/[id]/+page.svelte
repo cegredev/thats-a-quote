@@ -8,7 +8,7 @@
 	import SearchQuotesForm from "#lib/components/forms/SearchQuotesForm.svelte";
 	import QuotesList from "#lib/components/quotes/QuotesList.svelte";
 	import { onMount } from "svelte";
-	import Button from "#lib/components_shadcn/ui/button/button.svelte";
+	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 	import { PlusIcon } from "@lucide/svelte";
 
 	let { data }: PageProps = $props();

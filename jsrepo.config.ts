@@ -5,12 +5,12 @@ export default defineConfig({
 	registries: ["@ieedan/shadcn-svelte-extras"],
 	// configure where stuff goes here
 	paths: {
-		ui: 'src/lib/components_shadcn/ui',
-		component: 'src/lib/components_shadcn',
-		block: 'src/lib/components_shadcn',
-		hook: 'src/lib/hooks_shadcn',
-		action: '$src/ib/actions_shadcn',
-		util: 'src/lib/utils_shadcn',
-		lib: 'src/lib',
+		ui: "src/lib/shadcn/components/ui",
+		component: "src/lib/shadcn/components",
+		block: "src/lib/shadcn/components",
+		hook: "src/lib/shadcn/hooks",
+		action: "$src/ib/shadcn/actions",
+		util: "src/lib/shadcn/utils",
+		lib: "src/lib",
 	},
 });

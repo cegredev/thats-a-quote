@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Card from "#lib/components_shadcn/ui/card/index.js";
+	import * as Card from "#lib/shadcn/components/ui/card/index.js";
 	import { m } from "#lib/paraglide/messages.js";
 	import { SquareText } from "@lucide/svelte";
 	import GeneralTooltip from "../GeneralTooltip.svelte";

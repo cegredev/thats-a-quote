@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
 	import type { PageProps } from "./$types";
-	import * as Card from "#lib/components_shadcn/ui/card/index.js";
+	import * as Card from "#lib/shadcn/components/ui/card/index.js";
 
 	let { data }: PageProps = $props();
 </script>

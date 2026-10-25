@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from "$app/state";
 	import { m } from "#lib/paraglide/messages.js";
-	import { Button } from "#lib/components_shadcn/ui/button/index.js";
-	import { Input } from "#lib/components_shadcn/ui/input/index.js";
+	import { Button } from "#lib/shadcn/components/ui/button/index.js";
+	import { Input } from "#lib/shadcn/components/ui/input/index.js";
 </script>
 
 <form

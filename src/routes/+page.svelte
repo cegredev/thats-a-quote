@@ -3,7 +3,7 @@
 	import { m } from "#lib/paraglide/messages.js";
 	import GroupsList from "#lib/components/groups/GroupsList.svelte";
 	import Title from "#lib/components/util/Title.svelte";
-	import Button from "#lib/components_shadcn/ui/button/button.svelte";
+	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 	import { page } from "$app/state";
 	import { PlusIcon } from "@lucide/svelte";
 

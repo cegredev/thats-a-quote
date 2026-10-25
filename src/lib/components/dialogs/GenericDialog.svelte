@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
-	import * as Dialog from "#lib/components_shadcn/ui/dialog/index.js";
-	import { buttonVariants } from "#lib/components_shadcn/ui/button/index.js";
+	import * as Dialog from "#lib/shadcn/components/ui/dialog/index.js";
+	import { buttonVariants } from "#lib/shadcn/components/ui/button/index.js";
 	import type { Snippet } from "svelte";
 
 	type Props = {
@@ -28,18 +28,14 @@
 	<Dialog.Portal>
 		<Dialog.Overlay />
 
-		<Dialog.Content
-			class="max-w-lg"
-		>
+		<Dialog.Content class="max-w-lg">
 			<Dialog.Header>
 				<Dialog.Title>{text.title}</Dialog.Title>
 				<Dialog.Description>{text.description}</Dialog.Description>
 			</Dialog.Header>
 
 			<Dialog.Footer class="justify-end">
-				<Dialog.Close
-					class={buttonVariants({ variant: "ghost" })}
-				>
+				<Dialog.Close class={buttonVariants({ variant: "ghost" })}>
 					{text.close ?? m.common_cancel()}
 				</Dialog.Close>
 

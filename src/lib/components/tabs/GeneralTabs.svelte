@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends string">
-	import * as Tabs from "#lib/components_shadcn/ui/tabs/index.js";
+	import * as Tabs from "#lib/shadcn/components/ui/tabs/index.js";
 	import type { Snippet } from "svelte";
 
 	type ContentTabs = Record<`content_${T}`, Snippet>;

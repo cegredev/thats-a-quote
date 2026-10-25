@@ -4,7 +4,7 @@
 	import Quote from "#lib/components/quotes/Quote.svelte";
 	import { Pencil } from "@lucide/svelte";
 	import { page } from "$app/state";
-	import * as Card from "#lib/components_shadcn/ui/card/index.js";
+	import * as Card from "#lib/shadcn/components/ui/card/index.js";
 	import FormButton from "#lib/components/forms/FormButton.svelte";
 	import { authClient } from "#lib/client/frontend-auth.ts";
 

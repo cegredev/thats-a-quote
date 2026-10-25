@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
-	import * as Popover from "#lib/components_shadcn/ui/popover/index.js";
+	import * as Popover from "#lib/shadcn/components/ui/popover/index.js";
 	import type { Snippet } from "svelte";
 
 	let {
@@ -20,12 +20,7 @@
 		{@render trigger()}
 	</Popover.Trigger>
 
-	<Popover.Content
-		class="w-64"
-		side="top"
-		align="end"
-		sideOffset={6}
-	>
+	<Popover.Content class="w-64" side="top" align="end" sideOffset={6}>
 		{@render content()}
 	</Popover.Content>
 </Popover.Root>

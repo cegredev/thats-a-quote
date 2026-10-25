@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Select from "#lib/components_shadcn/ui/select/index.js";
+	import * as Select from "#lib/shadcn/components/ui/select/index.js";
 	import type { MaybePromise } from "#lib/types.ts";
 
 	type Props = {

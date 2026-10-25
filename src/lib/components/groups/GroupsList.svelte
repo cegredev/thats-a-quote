@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
 	import type { Group } from "#lib/types.js";
-	import * as Card from "#lib/components_shadcn/ui/card/index.js";
+	import * as Card from "#lib/shadcn/components/ui/card/index.js";
 
 	let { groups }: { groups: Group[] } = $props();
 </script>

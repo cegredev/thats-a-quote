@@ -25,10 +25,10 @@
 	} from "sveltekit-superforms";
 	import { untrack, type Snippet } from "svelte";
 	import { type Readable } from "svelte/store";
-	import { Button } from "#lib/components_shadcn/ui/button/index.js";
-	import { Input } from "#lib/components_shadcn/ui/input/index.js";
-	import * as Label from "#lib/components_shadcn/ui/label/index.js";
-	import { Textarea } from "#lib/components_shadcn/ui/textarea/index.js";
+	import { Button } from "#lib/shadcn/components/ui/button/index.js";
+	import { Input } from "#lib/shadcn/components/ui/input/index.js";
+	import * as Label from "#lib/shadcn/components/ui/label/index.js";
+	import { Textarea } from "#lib/shadcn/components/ui/textarea/index.js";
 	import { cn } from "cn";
 
 	type SuperFormOptions = NonNullable<Parameters<typeof superForm<T>>[1]>;

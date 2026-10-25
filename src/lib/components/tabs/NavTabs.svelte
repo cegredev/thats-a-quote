@@ -2,7 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
 	import type { LucideIcon } from "@lucide/svelte";
-	import * as Tabs from "#lib/components_shadcn/ui/tabs/index.js";
+	import * as Tabs from "#lib/shadcn/components/ui/tabs/index.js";
 
 	type Config = {
 		label: string;

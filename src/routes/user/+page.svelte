@@ -7,7 +7,7 @@
 	import UserCard from "./UserCard.svelte";
 	import Title from "#lib/components/util/Title.svelte";
 	import GeneralTabs from "#lib/components/tabs/GeneralTabs.svelte";
-	import * as Card from "#lib/components_shadcn/ui/card/index.js";
+	import * as Card from "#lib/shadcn/components/ui/card/index.js";
 
 	let { data }: PageProps = $props();
 
