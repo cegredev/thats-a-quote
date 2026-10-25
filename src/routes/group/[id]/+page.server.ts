@@ -2,7 +2,7 @@ import {
 	addMembersToGroup,
 	listPeople,
 	removeMembersFromGroup,
-} from "#lib/server/groups.js";
+} from "#lib/server/queries/groups.js";
 import zodSchemas from "#lib/zod-schemas.js";
 import type { PageServerLoad } from "./$types";
 import { error, fail } from "@sveltejs/kit";

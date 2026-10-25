@@ -5,7 +5,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";
 import { rateLimit } from "#lib/server/rate-limiting.js";
 import { crud } from "#lib/server/db/crud.js";
-import { addMembersToGroup } from "#lib/server/groups.ts";
+import { addMembersToGroup } from "#lib/server/queries/groups.ts";
 
 export const load: PageServerLoad = async ({}) => {
 	const groupCreationForm = await superValidate(

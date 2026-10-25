@@ -4,7 +4,7 @@ import { db } from "#lib/server/db.js";
 import { auth } from "#lib/server/auth.js";
 import { sql, is } from "drizzle-orm";
 import { SQLiteTable, getTableConfig } from "drizzle-orm/sqlite-core";
-import { addMembersToGroup } from "../groups";
+import { addMembersToGroup } from "../queries/groups";
 import { FILL_WITH_DUMMY_DATA } from "$app/env/private";
 
 const resetDbManually = async () => {

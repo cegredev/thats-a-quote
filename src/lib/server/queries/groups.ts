@@ -1,5 +1,5 @@
-import { db } from "./db";
-import { groupMembers, quotesTable } from "./db/schema";
+import { db } from "../db";
+import { groupMembers, quotesTable } from "../db/schema";
 import { and, desc, eq, isNotNull, sql } from "drizzle-orm";
 
 /** Distinct people who have been quoted in this group, most recently used first. */
