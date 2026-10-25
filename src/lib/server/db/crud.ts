@@ -1,5 +1,5 @@
-import { drizzleCrud } from "../crud";
-import { zod } from "../crud/zod";
+import { drizzleCrud } from "#lib/server/crud_generator/index.ts";
+import { zod } from "#lib/server/crud_generator/zod.ts";
 import { db } from "../db";
 import { groupsTable, quoteReactions, quotesTable } from "./schema";
 
