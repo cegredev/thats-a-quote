@@ -5,12 +5,7 @@
 	import Quote from "./Quote.svelte";
 	import { Info, Pencil } from "@lucide/svelte";
 	import type { GroupQuotesPagination } from "#lib/server/queries/quotes.ts";
-
-	function editQuoteHref(quoteId: string) {
-		const url = new URL(page.url.href);
-		url.searchParams.set("edit", quoteId);
-		return `${url.pathname}${url.search}`;
-	}
+	import { addQueryParamToHref } from "#lib/client/component-utils.svelte.ts";
 
 	let {
 		quotes,
@@ -41,7 +36,11 @@
 						{#snippet bottomRight()}
 							<div class="flex items-center gap-2">
 								<a
-									href={editQuoteHref(quote.id)}
+									href={addQueryParamToHref(
+										page.url.href,
+										"edit",
+										quote.id,
+									)}
 									aria-label={m.edit_quote()}
 									title={m.edit_quote()}
 								>

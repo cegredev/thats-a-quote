@@ -13,6 +13,7 @@
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
 	import { goto } from "$app/navigation";
+	import { closeEditDialog } from "#lib/client/component-utils.svelte.ts";
 
 	let { data }: PageProps = $props();
 
@@ -32,17 +33,6 @@
 		if (editQuoteDialogOpen !== shouldBeOpen)
 			editQuoteDialogOpen = shouldBeOpen;
 	});
-
-	async function closeEditQuoteDialog() {
-		const url = new URL(page.url.href);
-		if (!url.searchParams.has("edit")) return;
-
-		url.searchParams.delete("edit");
-		await goto(`${url.pathname}${url.search}`, {
-			replaceState: true,
-			reset: false,
-		});
-	}
 </script>
 
 <Title text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`} />
@@ -99,7 +89,7 @@
 		widthClass="w-full max-w-2xl!"
 		bind:open={editQuoteDialogOpen}
 		onOpenChange={(open) => {
-			if (!open) void closeEditQuoteDialog();
+			if (!open) void closeEditDialog(page.url.href);
 		}}
 	>
 		<CreateQuoteForm
