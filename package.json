@@ -25,6 +25,7 @@
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^26.4.1",
 		"@types/web-push": "^3.6.4",
+		"bits-ui": "^2.20.2",
 		"clsx": "^2.1.1",
 		"cn": "^0.4.0",
 		"drizzle-kit": "1.0.0-rc.4",
