@@ -5,6 +5,7 @@
 	import type zodSchemas from "#lib/zod-schemas.js";
 	import type z from "zod";
 	import { toDateTimeLocal } from "#lib/utils.ts";
+	import type { MaybePromise } from "#lib/types.ts";
 	type QuoteCreationData =
 		| z.infer<typeof zodSchemas.quotes.create.insert>
 		| z.infer<typeof zodSchemas.quotes.create.update>;
@@ -12,8 +13,11 @@
 	let {
 		form,
 		mode,
-	}: { form: SuperValidated<QuoteCreationData>; mode: "create" | "update" } =
-		$props();
+		onSuccess,
+	}: { onSuccess?: () => MaybePromise<void> } & {
+		form: SuperValidated<QuoteCreationData>;
+		mode: "create" | "update";
+	} = $props();
 
 	function setTime() {
 		form.data.quotedAt = "";
@@ -64,6 +68,8 @@
 		onResult: async ({ result }) => {
 			if (result.type === "success") {
 				if (mode === "create") setTimeout(() => setTime(), 2000);
+
+				if (onSuccess) await onSuccess();
 			}
 		},
 	}}

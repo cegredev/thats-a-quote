@@ -199,7 +199,7 @@
 	{:else}
 		<Button
 			type="submit"
-			class={submitClass ?? "mt-1 self-start"}
+			class={cn("mt-1 self-start", submitClass)}
 			disabled={$submitting}
 		>
 			{$submitting ? submitBusyLabel : submitLabel}

@@ -1,18 +1,19 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
 	import type { SuperValidated } from "sveltekit-superforms";
 	import { m } from "#lib/paraglide/messages.js";
 	import { groupIDsStore } from "#lib/client/storage.svelte.js";
 	import SchemaForm from "#lib/components/forms/SchemaForm.svelte";
 	import type zodSchemas from "#lib/zod-schemas.js";
 	import type z from "zod";
+	import type { MaybePromise } from "#lib/types.ts";
 
 	type GroupCreationData = z.infer<typeof zodSchemas.groups.create.insert>;
 	type GroupUpdateData = z.infer<typeof zodSchemas.groups.create.update>;
 
-	let props:
+	let props: { onSuccess?: () => MaybePromise<void> } & (
 		| { form: SuperValidated<GroupCreationData>; mode: "create" }
-		| { form: SuperValidated<GroupUpdateData>; mode: "update" } = $props();
+		| { form: SuperValidated<GroupUpdateData>; mode: "update" }
+	) = $props();
 </script>
 
 <SchemaForm
@@ -22,6 +23,7 @@
 	submitBusyLabel={props.mode === "create"
 		? m.home_createBusy()
 		: "Editing..."}
+	submitClass="w-full"
 	fields={{
 		name: { name: "name", label: m.home_groupName() },
 		...(props.mode === "create"
@@ -44,7 +46,8 @@
 				if (props.mode === "create") {
 					groupIDsStore.add(id);
 				}
-				await goto(`/group/${id}`);
+
+				await props.onSuccess();
 			}
 		},
 	}}

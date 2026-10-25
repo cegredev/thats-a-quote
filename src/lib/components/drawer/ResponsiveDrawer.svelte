@@ -1,0 +1,100 @@
+<script lang="ts">
+	import { MediaQuery } from "svelte/reactivity";
+	import type { Snippet } from "svelte";
+	import * as Dialog from "#lib/shadcn/components/ui/dialog/index.js";
+	import * as Drawer from "#lib/shadcn/components/ui/drawer/index.js";
+	import { cn } from "#lib/shadcn/utils.js";
+	import {
+		buttonVariants,
+		type ButtonSize,
+		type ButtonVariant,
+	} from "#lib/shadcn/components/ui/button/index.js";
+
+	type Props = {
+		text: {
+			title: string;
+			description?: string;
+			trigger?: string;
+		};
+		children: Snippet;
+		trigger?: Snippet;
+		open?: boolean;
+		triggerVariant?: ButtonVariant;
+		triggerSize?: ButtonSize;
+		triggerClass?: string;
+		contentClass?: string;
+	};
+
+	let {
+		text,
+		children,
+		trigger,
+		open = $bindable(false),
+		triggerVariant = "outline",
+		triggerSize = "default",
+		triggerClass = "",
+		contentClass = "",
+	}: Props = $props();
+
+	const isDesktop = new MediaQuery("(min-width: 768px)");
+</script>
+
+{#if isDesktop.current}
+	<Dialog.Root bind:open>
+		{#if trigger || text.trigger}
+			<Dialog.Trigger
+				class={cn(
+					buttonVariants({
+						variant: triggerVariant,
+						size: triggerSize,
+					}),
+					triggerClass,
+				)}
+			>
+				{#if trigger}
+					{@render trigger()}
+				{:else}
+					{text.trigger}
+				{/if}
+			</Dialog.Trigger>
+		{/if}
+		<Dialog.Content class={cn("sm:max-w-[425px]", "p-4", contentClass)}>
+			<Dialog.Header>
+				<Dialog.Title>{text.title}</Dialog.Title>
+				{#if text.description}
+					<Dialog.Description>{text.description}</Dialog.Description>
+				{/if}
+			</Dialog.Header>
+			{@render children()}
+		</Dialog.Content>
+	</Dialog.Root>
+{:else}
+	<Drawer.Root bind:open>
+		{#if trigger || text.trigger}
+			<Drawer.Trigger
+				class={cn(
+					buttonVariants({
+						variant: triggerVariant,
+						size: triggerSize,
+					}),
+					triggerClass,
+				)}
+			>
+				{#if trigger}
+					{@render trigger()}
+				{:else}
+					{text.trigger}
+				{/if}
+			</Drawer.Trigger>
+		{/if}
+		<Drawer.Content class={cn("px-6", contentClass)}>
+			<Drawer.Header class="text-start">
+				<Drawer.Title>{text.title}</Drawer.Title>
+				{#if text.description}
+					<Drawer.Description>{text.description}</Drawer.Description>
+				{/if}
+			</Drawer.Header>
+			{@render children()}
+		</Drawer.Content>
+	</Drawer.Root>
+{/if}

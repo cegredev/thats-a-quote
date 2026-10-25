@@ -6,8 +6,13 @@
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 	import { page } from "$app/state";
 	import { PlusIcon } from "@lucide/svelte";
+	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
+	import * as Card from "#lib/shadcn/components/ui/card/index.js";
+	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
 
 	let { data }: PageProps = $props();
+
+	let addGroupDialogOpen: boolean = $state(false);
 </script>
 
 <Title text={m.brand()} />
@@ -35,7 +40,7 @@
 	style="bottom: calc(var(--nav-height, 0px) + 1rem)"
 >
 	<Button
-		href={page.url.pathname + "new"}
+		onclick={() => (addGroupDialogOpen = true)}
 		variant="default"
 		size="icon-lg"
 		class="pointer-events-auto size-14 rounded-full shadow-lg [&_svg]:size-6"
@@ -45,3 +50,18 @@
 		<PlusIcon />
 	</Button>
 </div>
+
+<ResponsiveDrawer
+	text={{
+		title: m.group_create_head(),
+	}}
+	bind:open={addGroupDialogOpen}
+>
+	<GroupCreationForm
+		form={data.groupCreationForm}
+		mode="create"
+		onSuccess={() => {
+			addGroupDialogOpen = false;
+		}}
+	/>
+</ResponsiveDrawer>

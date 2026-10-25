@@ -10,6 +10,8 @@
 	import { onMount } from "svelte";
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 	import { PlusIcon } from "@lucide/svelte";
+	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
+	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
 
 	let { data }: PageProps = $props();
 
@@ -20,6 +22,8 @@
 			groupIDsStore.add(groupId);
 		}
 	});
+
+	let addQuoteDialogOpen: boolean = $state(false);
 </script>
 
 <Title text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`} />
@@ -41,7 +45,7 @@
 	style="bottom: calc(var(--nav-height, 0px) + 1rem)"
 >
 	<Button
-		href={page.url.pathname + "/new"}
+		onclick={() => (addQuoteDialogOpen = true)}
 		variant="default"
 		size="icon-lg"
 		class="pointer-events-auto size-14 rounded-full shadow-lg [&_svg]:size-6"
@@ -51,3 +55,18 @@
 		<PlusIcon />
 	</Button>
 </div>
+
+<ResponsiveDrawer
+	text={{
+		title: m.group_create_head(),
+	}}
+	bind:open={addQuoteDialogOpen}
+>
+	<CreateQuoteForm
+		form={data.quoteCreationForm}
+		mode="create"
+		onSuccess={() => {
+			addQuoteDialogOpen = false;
+		}}
+	/>
+</ResponsiveDrawer>
