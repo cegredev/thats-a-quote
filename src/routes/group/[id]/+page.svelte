@@ -12,6 +12,7 @@
 	import { PlusIcon } from "@lucide/svelte";
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
+	import { goto } from "$app/navigation";
 
 	let { data }: PageProps = $props();
 
@@ -24,6 +25,24 @@
 	});
 
 	let addQuoteDialogOpen: boolean = $state(false);
+	let editQuoteDialogOpen = $state(page.url.searchParams.has("edit"));
+
+	$effect(() => {
+		const shouldBeOpen = page.url.searchParams.has("edit");
+		if (editQuoteDialogOpen !== shouldBeOpen)
+			editQuoteDialogOpen = shouldBeOpen;
+	});
+
+	async function closeEditQuoteDialog() {
+		const url = new URL(page.url.href);
+		if (!url.searchParams.has("edit")) return;
+
+		url.searchParams.delete("edit");
+		await goto(`${url.pathname}${url.search}`, {
+			replaceState: true,
+			reset: false,
+		});
+	}
 </script>
 
 <Title text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`} />
@@ -71,3 +90,25 @@
 		}}
 	/>
 </ResponsiveDrawer>
+
+{#if data.quoteEditForm}
+	<ResponsiveDrawer
+		text={{
+			title: m.edit_quote(),
+		}}
+		widthClass="w-full max-w-2xl!"
+		bind:open={editQuoteDialogOpen}
+		onOpenChange={(open) => {
+			if (!open) void closeEditQuoteDialog();
+		}}
+	>
+		<CreateQuoteForm
+			form={data.quoteEditForm}
+			mode="update"
+			quoteId={page.url.searchParams.get("edit") ?? undefined}
+			onSuccess={() => {
+				editQuoteDialogOpen = false;
+			}}
+		/>
+	</ResponsiveDrawer>
+{/if}

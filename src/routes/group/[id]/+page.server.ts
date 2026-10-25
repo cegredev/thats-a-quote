@@ -17,6 +17,9 @@ import { groupMembers } from "#lib/server/db/schema.ts";
 import { eq } from "drizzle-orm";
 import { sendPush } from "#lib/server/push-vapid.js";
 import { db } from "#lib/server/db.ts";
+import { toDateTimeLocal } from "#lib/utils.js";
+import type { SuperValidated } from "sveltekit-superforms";
+import type z from "zod";
 
 const QUOTES_DEFAULT_PAGE_SIZE = 30;
 
@@ -50,12 +53,30 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		zod4(zodSchemas.quotes.create.insert),
 	);
 
+	let quoteEditForm:
+		| SuperValidated<z.infer<typeof zodSchemas.quotes.create.update>>
+		| undefined;
+	const quoteIdToEdit = url.searchParams.get("edit");
+	if (quoteIdToEdit) {
+		const quote = await crud().quotes.findOne({ id: quoteIdToEdit });
+		if (!quote || quote.groupId !== groupId) error(404, "Quote not found");
+
+		quoteEditForm = await superValidate(
+			{
+				...quote,
+				quotedAt: toDateTimeLocal(new Date(quote.quotedAt)),
+			},
+			zod4(zodSchemas.quotes.create.update),
+		);
+	}
+
 	return {
 		group,
 		quotes,
 		people,
 		userIsMember,
 		quoteCreationForm,
+		quoteEditForm,
 	};
 };
 
@@ -160,6 +181,32 @@ export const actions = {
 				message: quote.text,
 			},
 		);
+
+		return { form };
+	}),
+	editQuote: rateLimit("medium", async ({ request, params, url }) => {
+		const groupId = params.id;
+		if (!groupId) error(400, "No group id param");
+
+		const quoteId = url.searchParams.get("edit");
+		if (!quoteId) error(400, "No quote id param");
+
+		const quote = await crud().quotes.findOne({ id: quoteId });
+		if (!quote || quote.groupId !== groupId) error(404, "Quote not found");
+
+		const form = await superValidate(
+			request,
+			zod4(zodSchemas.quotes.create.update),
+		);
+
+		if (!form.valid) return fail(400, { form });
+
+		await crud().quotes.update(quoteId, {
+			text: form.data.text,
+			person: form.data.person,
+			quotedAt: new Date(form.data.quotedAt).getTime(),
+			context: form.data.context,
+		});
 
 		return { form };
 	}),

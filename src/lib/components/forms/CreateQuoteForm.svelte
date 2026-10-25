@@ -13,10 +13,12 @@
 	let {
 		form,
 		mode,
+		quoteId,
 		onSuccess,
 	}: { onSuccess?: () => MaybePromise<void> } & {
 		form: SuperValidated<QuoteCreationData>;
 		mode: "create" | "update";
+		quoteId?: string;
 	} = $props();
 
 	function setTime() {
@@ -29,7 +31,11 @@
 
 <SchemaForm
 	{form}
-	action={mode === "create" ? "?/createQuote" : "?/editQuote"}
+	action={
+		mode === "create"
+			? "?/createQuote"
+			: `?/editQuote${quoteId ? `&edit=${encodeURIComponent(quoteId)}` : ""}`
+	}
 	submitLabel={mode === "create" ? m.group_addQuote() : m.edit_quote()}
 	submitBusyLabel={mode === "create" ? m.group_adding() : m.quote_editing()}
 	submitClass="mt-1 self-start w-full"

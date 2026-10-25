@@ -3,8 +3,14 @@
 	import { m } from "#lib/paraglide/messages.js";
 	import FullPagination from "#lib/components/meta/FullPagination.svelte";
 	import Quote from "./Quote.svelte";
-	import { Info } from "@lucide/svelte";
+	import { Info, Pencil } from "@lucide/svelte";
 	import type { GroupQuotesPagination } from "#lib/server/queries/quotes.ts";
+
+	function editQuoteHref(quoteId: string) {
+		const url = new URL(page.url.href);
+		url.searchParams.set("edit", quoteId);
+		return `${url.pathname}${url.search}`;
+	}
 
 	let {
 		quotes,
@@ -33,9 +39,15 @@
 				<li>
 					<Quote {quote}>
 						{#snippet bottomRight()}
-							<a href={`/quotes/${quote.id}`}>
-								<Info class="size-4" />
-							</a>
+							<div class="flex items-center gap-2">
+								<a
+									href={editQuoteHref(quote.id)}
+									aria-label={m.edit_quote()}
+									title={m.edit_quote()}
+								>
+									<Pencil class="size-4" />
+								</a>
+							</div>
 						{/snippet}
 					</Quote>
 				</li>

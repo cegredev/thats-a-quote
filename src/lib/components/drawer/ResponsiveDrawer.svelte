@@ -24,6 +24,7 @@
 		triggerClass?: string;
 		contentClass?: string;
 		widthClass?: string;
+		onOpenChange?: (open: boolean) => void;
 	};
 
 	let {
@@ -36,9 +37,18 @@
 		triggerClass = "",
 		contentClass = "",
 		widthClass = "",
+		onOpenChange,
 	}: Props = $props();
 
 	const isDesktop = new MediaQuery("(min-width: 768px)");
+	let previousOpen = $state(open);
+
+	$effect(() => {
+		if (previousOpen !== open) {
+			previousOpen = open;
+			onOpenChange?.(open);
+		}
+	});
 </script>
 
 {#if isDesktop.current}
