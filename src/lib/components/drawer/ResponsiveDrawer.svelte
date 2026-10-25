@@ -23,6 +23,7 @@
 		triggerSize?: ButtonSize;
 		triggerClass?: string;
 		contentClass?: string;
+		widthClass?: string;
 	};
 
 	let {
@@ -34,6 +35,7 @@
 		triggerSize = "default",
 		triggerClass = "",
 		contentClass = "",
+		widthClass = "",
 	}: Props = $props();
 
 	const isDesktop = new MediaQuery("(min-width: 768px)");
@@ -58,7 +60,7 @@
 				{/if}
 			</Dialog.Trigger>
 		{/if}
-		<Dialog.Content class={cn("sm:max-w-[425px]", "p-4", contentClass)}>
+		<Dialog.Content class={cn("p-4", contentClass, widthClass)}>
 			<Dialog.Header>
 				<Dialog.Title>{text.title}</Dialog.Title>
 				{#if text.description}

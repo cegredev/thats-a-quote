@@ -32,7 +32,7 @@
 	action={mode === "create" ? "?/createQuote" : "?/editQuote"}
 	submitLabel={mode === "create" ? m.group_addQuote() : m.edit_quote()}
 	submitBusyLabel={mode === "create" ? m.group_adding() : m.quote_editing()}
-	submitClass="mt-1 self-start"
+	submitClass="mt-1 self-start w-full"
 	fields={{
 		text: {
 			name: "text",

@@ -60,6 +60,7 @@
 	text={{
 		title: m.group_create_head(),
 	}}
+	widthClass="w-full max-w-2xl!"
 	bind:open={addQuoteDialogOpen}
 >
 	<CreateQuoteForm
