@@ -25,7 +25,6 @@
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^26.4.1",
 		"@types/web-push": "^3.6.4",
-		"bits-ui": "^2.19.5",
 		"clsx": "^2.1.1",
 		"cn": "^0.4.0",
 		"drizzle-kit": "1.0.0-rc.4",
@@ -49,7 +48,6 @@
 	"dependencies": {
 		"@better-auth/drizzle-adapter": "^1.7.3",
 		"@libsql/client": "^0.18.0",
-		"bcryptjs": "^3.0.3",
 		"better-auth": "^1.7.3",
 		"better-drizzle": "^0.3.0",
 		"dotenv": "^17.4.2",
