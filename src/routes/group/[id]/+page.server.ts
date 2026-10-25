@@ -11,6 +11,8 @@ import { crud } from "#lib/server/db/crud.js";
 import { parsePaginationParams, parseSearchParams } from "#lib/server/utils.js";
 import { queryQuotesOfGroupWithPagination } from "#lib/server/queries/quotes.js";
 import { userIsMemberOfGroup } from "#lib/server/queries/users.js";
+import { superValidate } from "sveltekit-superforms";
+import { zod4 } from "sveltekit-superforms/adapters";
 
 const QUOTES_DEFAULT_PAGE_SIZE = 30;
 
@@ -70,6 +72,42 @@ export const actions = {
 		if (!userId) return fail(401, "No user logged in");
 
 		await removeMembersFromGroup([{ groupId, userId }]);
+
+		return {};
+	}),
+	reactToQuote: rateLimit("medium", async ({ request, locals, params }) => {
+		const form = await superValidate(
+			request,
+			zod4(zodSchemas.quoteReactions.create),
+		);
+
+		if (!form.valid) return fail(400, { form });
+
+		const quoteId = form.data.quoteId;
+		if (
+			!(await crud().quotes.findOne({
+				id: quoteId,
+			}))
+		)
+			error(404, "No quote found for id");
+
+		if (!locals.user) error(401, "not signed in");
+
+		const existingReaction = await crud().quoteReactions.findOne({
+			quoteId,
+			userId: locals.user.id,
+		});
+
+		if (existingReaction) {
+			await crud().quoteReactions.permanentDelete(existingReaction.id);
+		}
+
+		if (!existingReaction || existingReaction.content !== form.data.content)
+			await crud().quoteReactions.create({
+				content: form.data.content,
+				quoteId,
+				userId: locals.user.id,
+			});
 
 		return {};
 	}),

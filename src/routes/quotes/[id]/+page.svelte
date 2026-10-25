@@ -19,25 +19,17 @@
 			.filter((r) => r.userId === $session.data?.user.id)
 			.map((r) => r.content),
 	);
-
-	let quoteReactions = $derived.by(() => {
-		const counts = new Map<string, number>();
-		for (const reaction of data.quote.reactions) {
-			counts.set(reaction.content, (counts.get(reaction.content) ?? 0) + 1);
-		}
-		return Array.from(counts, ([content, count]) => ({ content, count }));
-	});
 </script>
 
 <div class="flex flex-col items-center justify-center h-full">
 	<div class="flex flex-col items-center gap-4">
-		<Quote quote={data.quote} reactions={quoteReactions}>
+		<!-- <Quote quote={data.quote}>
 			{#snippet bottomRight()}
 				<a href={`${page.url.pathname}/edit`}>
 					<Pencil class="size-4" />
 				</a>
 			{/snippet}
-		</Quote>
+		</Quote> -->
 
 		<Card.Root size="sm" class="p-1">
 			<Card.Content class="flex">

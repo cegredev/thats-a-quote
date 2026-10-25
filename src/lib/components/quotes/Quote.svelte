@@ -7,7 +7,8 @@
 	import { cn } from "cn";
 	import type { Snippet } from "svelte";
 	import type { QuoteWithRest } from "#lib/server/queries/quotes.ts";
-	import EmojiPickerPopover from "../EmojiPickerPopover.svelte";
+	import EmojiPickerPopoverForm from "../emojis/EmojiPickerPopoverForm.svelte";
+	import { authClient } from "#lib/client/frontend-auth.ts";
 
 	let {
 		quote,
@@ -46,6 +47,16 @@
 			),
 		),
 	);
+
+	const session = authClient.useSession();
+
+	let ownReaction = $derived.by(() => {
+		const filtered = quote.reactions.filter(
+			(r) => r.user?.id === $session.data?.user.id,
+		);
+
+		return filtered.length > 0 ? filtered[0].content : undefined;
+	});
 </script>
 
 <Card.Root
@@ -92,24 +103,33 @@
 		</p>
 	</Card.Footer>
 
-	{#if reactionCounts.size > 0}
-		<div class="absolute -bottom-4 left-2">
-			<span
-				class="inline-flex items-center gap-2 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
-			>
-				{#each reactionCounts.entries() as [reaction, count] (reaction)}
-					<span title={`${reaction}: ${count}`}>
-						<span>{reaction}</span>
-						<span>{count}</span>
-					</span>
-				{/each}
-
-				<span class="ml-2">
-					<EmojiPickerPopover />
+	<div class="absolute -bottom-4 left-2">
+		<span
+			class="inline-flex items-center gap-2 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
+		>
+			{#each reactionCounts.entries() as [reaction, count] (reaction)}
+				<span
+					class={cn(
+						ownReaction === reaction
+							? "rounded-full bg-primary/15 px-1.5 py-0.5 text-primary"
+							: "",
+					)}
+					title={`${reaction}: ${count}`}
+				>
+					<span>{reaction}</span>
+					<span>{count}</span>
 				</span>
+			{/each}
+
+			<span class="">
+				<EmojiPickerPopoverForm action="?/reactToQuote">
+					{#snippet hiddenFields()}
+						<input type="hidden" name="quoteId" value={quote.id} />
+					{/snippet}
+				</EmojiPickerPopoverForm>
 			</span>
-		</div>
-	{/if}
+		</span>
+	</div>
 </Card.Root>
 
 <style lang="scss">

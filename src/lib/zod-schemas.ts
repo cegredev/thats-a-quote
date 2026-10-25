@@ -57,6 +57,7 @@ const schemas = {
 	quoteReactions: {
 		select: createSelectSchema(quoteReactions),
 		create: z.object({
+			quoteId: z.string(),
 			content: z.string().min(1).max(2),
 		}),
 		insert: createInsertSchema(quoteReactions, {
