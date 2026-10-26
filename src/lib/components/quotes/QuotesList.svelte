@@ -27,7 +27,7 @@
 {:else}
 	<FullPagination
 		pagination={quotes.pagination}
-		perPageOptions={[10, 30, 50, 80, 100]}
+		// perPageOptions={[5, 10, 30, 50, 80, 100]}
 	>
 		<ul class="grid gap-4 sm:grid-cols-2">
 			{#each quotes.data as quote (quote.id)}

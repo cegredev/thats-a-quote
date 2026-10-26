@@ -10,6 +10,7 @@
 	import * as Button from "#lib/shadcn/components/ui/button/index.js";
 	import GeneralSelect from "../util/GeneralSelect.svelte";
 	import { untrack } from "svelte";
+	import * as Pagination from "#lib/shadcn/components/ui/pagination/index.js";
 
 	type Props = {
 		count: number;
@@ -46,21 +47,32 @@
 	});
 
 	const totalPages = $derived(Math.ceil(props.count / props.perPage));
-	const pageItems = $derived.by(() => {
-		if (totalPages <= 7) {
-			return Array.from({ length: totalPages }, (_, index) => index + 1);
+	const pageItems: (number | "ellipsis")[] = $derived.by(() => {
+		console.log(totalPages);
+
+		if (totalPages <= 6)
+			return Array(totalPages)
+				.fill(null)
+				.map((_, i) => i + 1);
+
+		const items: (number | "ellipsis")[] = [1, 0, 0, 0, 0, 0, totalPages];
+
+		items[1] = props.page > 4 ? "ellipsis" : 2;
+		if (props.page <= 4) {
+			items[2] = 3;
+			items[3] = 4;
+			items[4] = 5;
+		} else if (props.page >= totalPages - 3) {
+			items[2] = totalPages - 4;
+			items[3] = totalPages - 3;
+			items[4] = totalPages - 2;
+		} else {
+			items[2] = props.page - 1;
+			items[3] = props.page;
+			items[4] = props.page + 1;
 		}
 
-		const firstPage = Math.max(2, props.page - 1);
-		const lastPage = Math.min(totalPages - 1, props.page + 1);
-		const items: (number | "ellipsis")[] = [1];
-
-		if (firstPage > 2) items.push("ellipsis");
-		for (let pageNumber = firstPage; pageNumber <= lastPage; pageNumber++) {
-			items.push(pageNumber);
-		}
-		if (lastPage < totalPages - 1) items.push("ellipsis");
-		items.push(totalPages);
+		items[5] = props.page < totalPages - 3 ? "ellipsis" : totalPages - 1;
 
 		return items;
 	});
@@ -79,48 +91,58 @@
 	}
 </script>
 
-<div class="my-8 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+<div class="my-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
 	<div></div>
 
-	<nav class="flex items-center gap-1" aria-label={m.pagination_navigation()}>
-		<Button.Root
-			variant="ghost"
-			size="icon-sm"
-			aria-label={m.pagination_previousPage()}
-			disabled={props.page <= 1}
-			onclick={() => shiftPage(-1)}
-		>
-			<ChevronLeft class="size-4" />
-		</Button.Root>
-
-		{#each pageItems as item, index (`${item}-${index}`)}
-			{#if item === "ellipsis"}
-				<span class="px-2 text-muted-foreground" aria-hidden="true"
-					>...</span
-				>
-			{:else}
-				<Button.Root
-					variant={item === props.page ? "default" : "ghost"}
-					size="icon-sm"
-					aria-label={m.pagination_page({ page: item })}
-					aria-current={item === props.page ? "page" : undefined}
-					onclick={() => setPage(item)}
-				>
-					{item}
-				</Button.Root>
-			{/if}
-		{/each}
-
-		<Button.Root
-			variant="ghost"
-			size="icon-sm"
-			aria-label={m.pagination_nextPage()}
-			disabled={props.page >= totalPages}
-			onclick={() => shiftPage(1)}
-		>
-			<ChevronRight class="size-4" />
-		</Button.Root>
-	</nav>
+	<Pagination.Root count={props.count}>
+		{#snippet children()}
+			<Pagination.Content>
+				<Pagination.Item>
+					<Button.Root
+						variant="ghost"
+						class="p-0"
+						onclick={() => shiftPage(-1)}
+						disabled={props.page <= 1}
+					>
+						<ChevronLeft />
+					</Button.Root>
+				</Pagination.Item>
+				{#each pageItems as page}
+					{#if page === "ellipsis"}
+						<Pagination.Item>
+							<Pagination.Ellipsis />
+						</Pagination.Item>
+					{:else}
+						<Pagination.Item>
+							<Button.Root
+								variant={page === props.page
+									? "default"
+									: "ghost"}
+								size="icon-sm"
+								aria-label={m.pagination_page({ page: page })}
+								aria-current={page === props.page
+									? "page"
+									: undefined}
+								onclick={() => setPage(page)}
+							>
+								{page}
+							</Button.Root>
+						</Pagination.Item>
+					{/if}
+				{/each}
+				<Pagination.Item>
+					<Button.Root
+						variant="ghost"
+						class="p-0"
+						onclick={() => shiftPage(1)}
+						disabled={props.page >= totalPages}
+					>
+						<ChevronRight />
+					</Button.Root>
+				</Pagination.Item>
+			</Pagination.Content>
+		{/snippet}
+	</Pagination.Root>
 
 	{#if props.perPageOptions}
 		<div class="flex items-center justify-end gap-2">

@@ -6,7 +6,7 @@
 	type Props = {
 		pagination: BetterPagination;
 		children: Snippet;
-		perPageOptions: number[];
+		perPageOptions?: number[];
 	};
 
 	let { pagination, children, perPageOptions }: Props = $props();
@@ -14,7 +14,9 @@
 	let scrollTarget: HTMLElement | undefined = $state(undefined);
 
 	let showPagination = $derived(
-		pagination.total > Math.min(...perPageOptions),
+		perPageOptions
+			? pagination.total > Math.min(...perPageOptions)
+			: pagination.pageCount > 1,
 	);
 </script>
 

@@ -21,7 +21,7 @@ import { toDateTimeLocal } from "#lib/utils.js";
 import type { SuperValidated } from "sveltekit-superforms";
 import type z from "zod";
 
-const QUOTES_DEFAULT_PAGE_SIZE = 30;
+const QUOTES_DEFAULT_PAGE_SIZE = 50;
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const groupId = params.id;
