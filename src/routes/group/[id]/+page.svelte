@@ -26,20 +26,8 @@
 	});
 
 	let addQuoteDialogOpen: boolean = $state(false);
-	let editQuoteDialogOpen = $state(page.url.searchParams.has("edit"));
-	let editGroupDialogOpen = $state(page.url.searchParams.has("editGroup"));
-
-	$effect(() => {
-		const shouldBeOpen = page.url.searchParams.has("edit");
-		if (editQuoteDialogOpen !== shouldBeOpen)
-			editQuoteDialogOpen = shouldBeOpen;
-	});
-
-	$effect(() => {
-		const shouldBeOpen = page.url.searchParams.has("editGroup");
-		if (editGroupDialogOpen !== shouldBeOpen)
-			editGroupDialogOpen = shouldBeOpen;
-	});
+	let editQuoteDialogOpen = $derived(page.url.searchParams.has("edit"));
+	let editGroupDialogOpen = $derived(page.url.searchParams.has("editGroup"));
 </script>
 
 <Title text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`} />
@@ -74,7 +62,7 @@
 
 <ResponsiveDrawer
 	text={{
-		title: m.group_create_head(),
+		title: m.quote_create_head(),
 	}}
 	widthClass="w-full max-w-2xl!"
 	bind:open={addQuoteDialogOpen}
@@ -88,17 +76,17 @@
 	/>
 </ResponsiveDrawer>
 
-{#if data.quoteEditForm}
-	<ResponsiveDrawer
-		text={{
-			title: m.edit_quote(),
-		}}
-		widthClass="w-full max-w-2xl!"
-		bind:open={editQuoteDialogOpen}
-		onOpenChange={(open) => {
-			if (!open) closeEditDialog(page.url.href);
-		}}
-	>
+<ResponsiveDrawer
+	text={{
+		title: m.edit_quote(),
+	}}
+	widthClass="w-full max-w-2xl!"
+	bind:open={editQuoteDialogOpen}
+	onOpenChange={(open) => {
+		if (!open) closeEditDialog(page.url.href);
+	}}
+>
+	{#if data.quoteEditForm}
 		<CreateQuoteForm
 			form={data.quoteEditForm}
 			mode="update"
@@ -107,20 +95,20 @@
 				await closeEditDialog(page.url.href);
 			}}
 		/>
-	</ResponsiveDrawer>
-{/if}
+	{/if}
+</ResponsiveDrawer>
 
-{#if data.groupEditForm}
-	<ResponsiveDrawer
-		text={{
-			title: m.group_edit(),
-		}}
-		widthClass="w-full max-w-2xl!"
-		bind:open={editGroupDialogOpen}
-		onOpenChange={(open) => {
-			if (!open) closeEditDialog(page.url.href, "editGroup");
-		}}
-	>
+<ResponsiveDrawer
+	text={{
+		title: m.group_edit(),
+	}}
+	widthClass="w-full max-w-2xl!"
+	bind:open={editGroupDialogOpen}
+	onOpenChange={(open) => {
+		if (!open) closeEditDialog(page.url.href, "editGroup");
+	}}
+>
+	{#if data.groupEditForm}
 		<GroupCreationForm
 			form={data.groupEditForm}
 			mode="update"
@@ -128,5 +116,5 @@
 				await closeEditDialog(page.url.href, "editGroup");
 			}}
 		/>
-	</ResponsiveDrawer>
-{/if}
+	{/if}
+</ResponsiveDrawer>
