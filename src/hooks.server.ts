@@ -1,4 +1,8 @@
-import { sequence, type Handle } from "@sveltejs/kit/hooks";
+import {
+	sequence,
+	type Handle,
+	type HandleServerError,
+} from "@sveltejs/kit/hooks";
 import { getTextDirection } from "#lib/paraglide/runtime.js";
 import { paraglideMiddleware } from "#lib/paraglide/server.js";
 import { auth } from "#lib/server/auth.js";
@@ -42,6 +46,11 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 
 export const handle = sequence(originalHandle, handleParaglide);
 
+export const handleError: HandleServerError = async ({ kind, error }) => {
+	logger.error(error, `An unexpected error of kind ${kind} happened.`);
+
+	return error;
+};
 if (FILL_WITH_DUMMY_DATA) {
 	const { fillWithDummyData } = await import("#lib/server/db/dummy-data.js");
 
