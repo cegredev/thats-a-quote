@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const [quotes, people, userIsMember] = await Promise.all([
 		queryQuotesOfGroupWithPagination(
 			groupId,
-			page ?? 0,
+			page ?? 1,
 			perPage ?? QUOTES_DEFAULT_PAGE_SIZE,
 			searchOptions,
 		),

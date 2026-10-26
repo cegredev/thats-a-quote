@@ -20,7 +20,7 @@ export const queryQuotesOfGroupWithPagination = async (
 			},
 		},
 		limit: perPage,
-		skip: (page ?? 0) * perPage,
+		skip: (page - 1) * perPage,
 		include: {
 			reactions: {
 				select: {
