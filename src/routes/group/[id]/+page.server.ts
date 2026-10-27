@@ -17,7 +17,6 @@ import { groupMembers } from "#lib/server/db/schema.ts";
 import { eq } from "drizzle-orm";
 import { sendPush } from "#lib/server/push-vapid.js";
 import { db } from "#lib/server/db.ts";
-import { toDateTimeLocal } from "#lib/utils.js";
 import type { SuperValidated } from "sveltekit-superforms";
 import type z from "zod";
 import { DRAWER_QUERY_PARAM, type DrawerKey } from "#lib/drawers-shared.js";
@@ -74,7 +73,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		quoteEditForm = await superValidate(
 			{
 				...quote,
-				quotedAt: toDateTimeLocal(new Date(quote.quotedAt)),
+				quotedAt: new Date(quote.quotedAt).toISOString(),
 			},
 			zod4(zodSchemas.quotes.create.update),
 		);

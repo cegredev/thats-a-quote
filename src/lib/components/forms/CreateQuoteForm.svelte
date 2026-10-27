@@ -4,7 +4,7 @@
 	import SchemaForm from "#lib/components/forms/SchemaForm.svelte";
 	import type zodSchemas from "#lib/zod-schemas.js";
 	import type z from "zod";
-	import { toDateTimeLocal } from "#lib/utils.ts";
+	import { toDateTimeLocal } from "#lib/client/component-utils.svelte.ts";
 	import type { MaybePromise } from "#lib/types.ts";
 	type QuoteCreationData =
 		| z.infer<typeof zodSchemas.quotes.create.insert>
@@ -22,12 +22,12 @@
 	} = $props();
 
 	function setTime() {
-		form.data.quotedAt = "";
-		form.data.quotedAt = toDateTimeLocal(new Date());
-		// form.data.quotedAt = new Date().toISOString();
+		form.data.quotedAt = toDateTimeLocal(
+			mode === "create" ? new Date() : new Date(form.data.quotedAt),
+		);
 	}
 
-	if (!form.data.quotedAt) setTime();
+	setTime();
 </script>
 
 <SchemaForm

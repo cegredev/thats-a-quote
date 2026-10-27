@@ -15,9 +15,3 @@ export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & {
 	ref?: U | null;
 };
-
-export function toDateTimeLocal(date: Date): string {
-	const offset = date.getTimezoneOffset();
-	const localDate = new Date(date.getTime() - offset * 60_000);
-	return localDate.toISOString().slice(0, 19);
-}
