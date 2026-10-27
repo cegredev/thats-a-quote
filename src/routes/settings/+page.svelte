@@ -27,7 +27,7 @@
 		<Item.Root variant="outline">
 			<Item.Content>
 				<Item.Title>{m.settings_notifications()}</Item.Title>
-				<Item.Description>
+				<Item.Description class="line-clamp-none">
 					{m.settings_notificationsDescription()}
 				</Item.Description>
 				{#if !data.data.pushServiceEnabled}
@@ -68,7 +68,7 @@
 		<Item.Root variant="outline">
 			<Item.Content>
 				<Item.Title>{m.settings_language()}</Item.Title>
-				<Item.Description>
+				<Item.Description class="line-clamp-none">
 					{m.settings_languageDescription()}
 				</Item.Description>
 			</Item.Content>
