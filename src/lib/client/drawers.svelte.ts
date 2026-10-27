@@ -3,24 +3,29 @@ import {
 	type DrawerKey,
 	type DrawerParams,
 } from "#lib/drawers-shared.ts";
+import { goto } from "$app/navigation";
 import { page } from "$app/state";
 
 export const drawerIsActive = (drawer: DrawerKey): boolean =>
 	page.url.searchParams.get(DRAWER_QUERY_PARAM) === drawer;
 
-export const drawerHref = (
+export const gotoDrawer = async (
 	drawer: DrawerKey,
 	drawerArgs: DrawerParams[DrawerKey] = {},
-): string => {
+): Promise<void> => {
 	const additionalArgs: [string, string][] = [];
 	if (drawerArgs !== undefined) {
 		Object.entries(drawerArgs).forEach((arr) => additionalArgs.push(arr));
 	}
 
-	return addQueryParamsToHref([
+	const href = addQueryParamsToHref([
 		[DRAWER_QUERY_PARAM, drawer],
 		...additionalArgs,
 	]);
+
+	await goto(href, {
+		reset: false,
+	});
 };
 
 export const removeDrawerNavigationHistory = (drawer: DrawerKey): void => {

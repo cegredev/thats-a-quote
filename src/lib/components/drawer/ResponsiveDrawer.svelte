@@ -14,6 +14,7 @@
 		removeDrawerNavigationHistory,
 	} from "#lib/client/drawers.svelte.ts";
 	import type { DrawerKey } from "#lib/drawers-shared.ts";
+	import { page } from "$app/state";
 
 	type Props = {
 		text: {
@@ -61,6 +62,7 @@
 	});
 
 	$effect(() => {
+		console.log(page.url.searchParams.get("drawer"));
 		if (navigationControl) open = drawerIsActive(navigationControl);
 	});
 </script>

@@ -13,7 +13,7 @@
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
 	import {
-		drawerHref,
+		gotoDrawer,
 		removeDrawerNavigationHistory,
 	} from "#lib/client/drawers.svelte.ts";
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
@@ -48,7 +48,7 @@
 	style="bottom: calc(var(--nav-height, 0px) + 1rem)"
 >
 	<Button
-		href={drawerHref("create-quote")}
+		onclick={() => gotoDrawer("create-quote")}
 		variant="default"
 		size="icon-lg"
 		class="pointer-events-auto size-14 rounded-full shadow-lg [&_svg]:size-6"

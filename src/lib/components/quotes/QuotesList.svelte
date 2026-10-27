@@ -5,7 +5,8 @@
 	import Quote from "./Quote.svelte";
 	import { Pencil } from "@lucide/svelte";
 	import type { GroupQuotesPagination } from "#lib/server/queries/quotes.ts";
-	import { drawerHref } from "#lib/client/drawers.svelte.ts";
+	import { gotoDrawer } from "#lib/client/drawers.svelte.ts";
+	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 
 	let {
 		quotes,
@@ -34,17 +35,18 @@
 				<li>
 					<Quote {quote}>
 						{#snippet bottomRight()}
-							<div class="flex items-center gap-2">
-								<a
-									href={drawerHref("edit-quote", {
+							<Button
+								onclick={() =>
+									gotoDrawer("edit-quote", {
 										id: quote.id,
 									})}
-									aria-label={m.edit_quote()}
-									title={m.edit_quote()}
-								>
-									<Pencil class="size-4" />
-								</a>
-							</div>
+								variant="ghost"
+								size="icon-sm"
+								aria-label={m.edit_quote()}
+								title={m.edit_quote()}
+							>
+								<Pencil class="size-4" />
+							</Button>
 						{/snippet}
 					</Quote>
 				</li>
