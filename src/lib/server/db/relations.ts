@@ -38,27 +38,35 @@ export const relations = defineRelations(schema, (r) => ({
 	},
 }));
 
-export const authRelations = defineRelationsPart(schema, (r) => ({
-	user: {
-		sessions: r.many.session({
-			from: r.user.id,
-			to: r.session.userId,
-		}),
-		accounts: r.many.account({
-			from: r.user.id,
-			to: r.account.userId,
-		}),
+export const authRelations = defineRelationsPart(
+	{
+		user: schema.user,
+		session: schema.session,
+		account: schema.account,
+		verification: schema.verification,
 	},
-	session: {
-		user: r.one.user({
-			from: r.session.userId,
-			to: r.user.id,
-		}),
-	},
-	account: {
-		user: r.one.user({
-			from: r.account.userId,
-			to: r.user.id,
-		}),
-	},
-}));
+	(r) => ({
+		user: {
+			sessions: r.many.session({
+				from: r.user.id,
+				to: r.session.userId,
+			}),
+			accounts: r.many.account({
+				from: r.user.id,
+				to: r.account.userId,
+			}),
+		},
+		session: {
+			user: r.one.user({
+				from: r.session.userId,
+				to: r.user.id,
+			}),
+		},
+		account: {
+			user: r.one.user({
+				from: r.account.userId,
+				to: r.user.id,
+			}),
+		},
+	}),
+);

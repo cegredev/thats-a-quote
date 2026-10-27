@@ -38,7 +38,8 @@ export const actions = {
 		await auth().api.signUpEmail({
 			body: {
 				name: form.data.name,
-				email: form.data.email,
+				email: `${form.data.username}@users.invalid`,
+				username: form.data.username,
 				password: form.data.password,
 			},
 		});
@@ -56,13 +57,13 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		if (await loginLimiter.isLimited(event, { keys: [form.data.email] }))
+		if (await loginLimiter.isLimited(event, { keys: [form.data.username] }))
 			error(429, "rate limited on username");
 
 		try {
-			await auth().api.signInEmail({
+			await auth().api.signInUsername({
 				body: {
-					email: form.data.email,
+					username: form.data.username,
 					password: form.data.password,
 				},
 			});

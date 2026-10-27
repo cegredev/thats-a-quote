@@ -20,10 +20,10 @@
 	submitLabel={m.account_login()}
 	submitBusyLabel={m.account_loggingIn()}
 	fields={{
-		email: {
-			name: "email",
-			label: m.account_email(),
-			type: "email",
+		username: {
+			name: "username",
+			label: m.account_username(),
+			type: "text",
 			skipConstraints: true,
 		},
 		password: {

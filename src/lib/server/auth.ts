@@ -6,6 +6,7 @@ import { sveltekitCookies } from "better-auth/svelte-kit";
 import { getRequestEvent } from "$app/server";
 import { BASE_URL, AUTH_SECRET, AUTH_SECRET_FILE } from "$app/env/private";
 import { readFileSync, existsSync } from "node:fs";
+import { username } from "better-auth/plugins";
 
 const createAuth = () => {
 	let secret: string | undefined = AUTH_SECRET;
@@ -29,6 +30,7 @@ const createAuth = () => {
 			enabled: true,
 		},
 		plugins: [
+			username(),
 			// make sure this is the last plugin in the array
 			sveltekitCookies(getRequestEvent),
 		],

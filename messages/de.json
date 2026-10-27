@@ -65,7 +65,7 @@
 	"account_signUp": "Registrieren",
 	"account_signingUp": "Registrierung läuft...",
 	"account_loggingIn": "Anmeldung läuft...",
-	"account_name": "Name",
+	"account_name": "Anzeigename",
 	"account_email": "E-Mail",
 	"account_password": "Passwort",
 	"account_remember": "Auf diesem Gerät angemeldet bleiben",
@@ -118,5 +118,6 @@
 	"group_edit": "Gruppe bearbeiten",
 	"group_create_head": "Gruppe erstellen",
 	"quote_create_head": "Zitat hinzufügen",
-	"push_install_as_pwa_first": "Erst als PWA installieren"
+	"push_install_as_pwa_first": "Erst als PWA installieren",
+	"account_username": "Nutzername"
 }

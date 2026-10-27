@@ -46,11 +46,11 @@ const schemas = {
 	users: {
 		register: z.object({
 			name: z.string().min(1).max(128),
-			email: z.email(),
+			username: z.string(),
 			password: z.string().min(8).max(128),
 		}),
 		login: z.object({
-			email: z.email(),
+			username: z.string(),
 			password: z.string(),
 		}),
 	},

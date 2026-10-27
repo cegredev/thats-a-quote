@@ -25,10 +25,10 @@
 			label: m.account_name(),
 			type: "text",
 		},
-		email: {
-			name: "email",
-			label: m.account_email(),
-			type: "email",
+		username: {
+			name: "username",
+			label: m.account_username(),
+			type: "string",
 			skipConstraints: true,
 		},
 		password: {

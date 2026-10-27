@@ -65,7 +65,7 @@
 	"account_signUp": "Sign up",
 	"account_signingUp": "Signing up...",
 	"account_loggingIn": "Logging in...",
-	"account_name": "Name",
+	"account_name": "Display Name",
 	"account_email": "E-Mail",
 	"account_password": "Password",
 	"account_remember": "Remember me on this device",
@@ -118,5 +118,6 @@
 	"group_edit": "Edit group",
 	"group_create_head": "Create a group",
 	"quote_create_head": "Add a quote",
-	"push_install_as_pwa_first": "Install as PWA first"
+	"push_install_as_pwa_first": "Install as PWA first",
+	"account_username": "Username"
 }
