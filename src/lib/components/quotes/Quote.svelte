@@ -9,6 +9,7 @@
 	import type { QuoteWithRest } from "#lib/server/queries/quotes.ts";
 	import EmojiPickerPopoverForm from "../emojis/EmojiPickerPopoverForm.svelte";
 	import { authClient } from "#lib/client/frontend-auth.ts";
+	import RequireLoginShield from "../meta/RequireLoginShield.svelte";
 
 	let {
 		quote,
@@ -18,18 +19,15 @@
 		bottomRight?: Snippet;
 	} = $props();
 
-	function formatDate(ts: number): string {
-		return new Date(ts).toLocaleString(
-			getLocale() === "de" ? "de-DE" : "en-US",
-			{
-				month: "short",
-				day: "numeric",
-				year: "numeric",
-				hour: "2-digit",
-				minute: "2-digit",
-				second: "2-digit",
-			},
-		);
+	function formatDate(ts: Date): string {
+		return ts.toLocaleString(getLocale() === "de" ? "de-DE" : "en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+		});
 	}
 
 	let reactionCounts = $derived(
@@ -122,11 +120,17 @@
 			{/each}
 
 			<span class="">
-				<EmojiPickerPopoverForm action="?/reactToQuote">
-					{#snippet hiddenFields()}
-						<input type="hidden" name="quoteId" value={quote.id} />
-					{/snippet}
-				</EmojiPickerPopoverForm>
+				<RequireLoginShield>
+					<EmojiPickerPopoverForm action="?/reactToQuote">
+						{#snippet hiddenFields()}
+							<input
+								type="hidden"
+								name="quoteId"
+								value={quote.id}
+							/>
+						{/snippet}
+					</EmojiPickerPopoverForm>
+				</RequireLoginShield>
 			</span>
 		</span>
 	</div>

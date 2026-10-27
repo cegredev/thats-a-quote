@@ -5,6 +5,8 @@
 	"english": "English",
 	"german": "German",
 	"login_link": "Log in",
+	"login_required_title": "Log in to continue",
+	"login_required_description": "You need to be logged in to perform this action.",
 	"common_cancel": "Cancel",
 	"common_close": "Close",
 	"common_moreInformation": "More information",

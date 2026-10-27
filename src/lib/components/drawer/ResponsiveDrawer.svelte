@@ -62,7 +62,6 @@
 	});
 
 	$effect(() => {
-		console.log(page.url.searchParams.get("drawer"));
 		if (navigationControl) open = drawerIsActive(navigationControl);
 	});
 </script>

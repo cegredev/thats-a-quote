@@ -3,6 +3,7 @@ export const DRAWERS = {
 	EDIT_GROUP: "edit-group",
 	CREATE_QUOTE: "create-quote",
 	EDIT_QUOTE: "edit-quote",
+	REQUIRE_LOGIN: "require-login",
 } as const;
 
 export type DrawerParams = {
@@ -14,6 +15,7 @@ export type DrawerParams = {
 	"edit-quote": {
 		id: string;
 	};
+	"require-login": {};
 };
 
 export type DrawerKey = (typeof DRAWERS)[keyof typeof DRAWERS];

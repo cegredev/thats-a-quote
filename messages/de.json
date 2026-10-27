@@ -5,6 +5,8 @@
 	"english": "Englisch",
 	"german": "Deutsch",
 	"login_link": "Login",
+	"login_required_title": "Zum Fortfahren anmelden",
+	"login_required_description": "Du musst angemeldet sein, um diese Aktion auszuführen.",
 	"common_cancel": "Abbrechen",
 	"common_close": "Schließen",
 	"common_moreInformation": "Weitere Informationen",

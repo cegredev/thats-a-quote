@@ -6,6 +6,9 @@
 	import { authClient } from "#lib/client/frontend-auth.js";
 	import NavTabs from "#lib/components/tabs/NavTabs.svelte";
 	import { HouseIcon, SettingsIcon } from "@lucide/svelte";
+	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
+	import { removeDrawerNavigationHistory } from "#lib/client/drawers.svelte.ts";
+	import * as Button from "#lib/shadcn/components/ui/button/index.js";
 
 	let { data, children }: LayoutProps = $props();
 
@@ -77,3 +80,21 @@
 		/>
 	</nav>
 </div>
+
+<ResponsiveDrawer
+	navigationControl="require-login"
+	text={{
+		title: m.login_required_title(),
+		description: m.login_required_description(),
+	}}
+>
+	<div class="grid grid-cols-2 gap-1">
+		<Button.Root
+			variant="outline"
+			onclick={() => removeDrawerNavigationHistory("require-login")}
+		>
+			Cancel
+		</Button.Root>
+		<Button.Root href="/user">{m.login_link()}</Button.Root>
+	</div>
+</ResponsiveDrawer>

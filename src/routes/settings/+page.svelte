@@ -9,6 +9,7 @@
 	import { Switch } from "#lib/shadcn/components/ui/switch/index.js";
 	import LocaleSwitcher from "#lib/components/meta/LocaleSelect.svelte";
 	import { Badge } from "#lib/shadcn/components/ui/badge/index.js";
+	import RequireLoginShield from "#lib/components/meta/RequireLoginShield.svelte";
 
 	let data: PageProps = $props();
 
@@ -42,24 +43,21 @@
 							{m.push_install_as_pwa_first()}
 						</Badge>
 					</Item.Footer>
-				{:else if !data.data.isLoggedIn}
-					<Item.Footer>
-						<Badge variant="destructive">
-							{m.settings_logInToChange()}
-						</Badge>
-					</Item.Footer>
 				{/if}
 			</Item.Content>
 			<Item.Actions>
-				<Switch
-					aria-label={m.settings_notificationsAriaLabel()}
-					onCheckedChange={onChange}
-					checked={data.data.pushPermission === "install-pwa-first"
-						? false
-						: data.data.pushPermission}
-					disabled={!data.data.pushServiceEnabled ||
-						!data.data.isLoggedIn}
-				/>
+				<RequireLoginShield>
+					<Switch
+						aria-label={m.settings_notificationsAriaLabel()}
+						onCheckedChange={onChange}
+						checked={data.data.pushPermission ===
+						"install-pwa-first"
+							? false
+							: data.data.pushPermission}
+						disabled={!data.data.pushServiceEnabled ||
+							data.data.pushPermission === "install-pwa-first"}
+					/>
+				</RequireLoginShield>
 			</Item.Actions>
 		</Item.Root>
 	</div>

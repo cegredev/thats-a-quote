@@ -48,8 +48,6 @@
 
 	const totalPages = $derived(Math.ceil(props.count / props.perPage));
 	const pageItems: (number | "ellipsis")[] = $derived.by(() => {
-		console.log(totalPages);
-
 		if (totalPages <= 6)
 			return Array(totalPages)
 				.fill(null)
