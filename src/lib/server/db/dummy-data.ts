@@ -3,7 +3,7 @@ import * as schema from "./schema";
 import { db } from "#lib/server/db.js";
 import { auth } from "#lib/server/auth.js";
 import { generateBlankEmail } from "#lib/utils.ts";
-import { sql, is } from "drizzle-orm";
+import { eq, sql, is } from "drizzle-orm";
 import { SQLiteTable, getTableConfig } from "drizzle-orm/sqlite-core";
 import { addMembersToGroup } from "../queries/groups";
 import { FILL_WITH_DUMMY_DATA } from "$app/env/private";
@@ -79,8 +79,12 @@ const createDemoUser = async () => {
 	const password = DEMO_PASSWORD;
 	const email = generateBlankEmail(username);
 
-	const existingUser = await ctx.internalAdapter.findUserByEmail(email);
-	if (existingUser) return existingUser.user.id;
+	const [existingUser] = await db()
+		.select({ id: schema.user.id })
+		.from(schema.user)
+		.where(eq(schema.user.username, username))
+		.limit(1);
+	if (existingUser) return existingUser.id;
 
 	const user = await ctx.internalAdapter.createUser(
 		{
