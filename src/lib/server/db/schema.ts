@@ -17,9 +17,9 @@ export const groupsTable = sqliteTable("groups", {
 		.primaryKey()
 		.$default(() => nanoid()),
 	name: text().notNull(),
-	createdAt: int()
+	createdAt: int({ mode: "timestamp_ms" })
 		.notNull()
-		.$default(() => Date.now()),
+		.$default(() => new Date()),
 });
 
 export const quotesTable = sqliteTable(
@@ -34,10 +34,10 @@ export const quotesTable = sqliteTable(
 		text: text().notNull(),
 		person: text(),
 		context: text(),
-		createdAt: int()
+		createdAt: int({ mode: "timestamp_ms" })
 			.notNull()
-			.$default(() => Date.now()),
-		quotedAt: int().notNull(),
+			.$default(() => new Date()),
+		quotedAt: int({ mode: "timestamp_ms" }).notNull(),
 	},
 	(table) => [index("idx_quotes_group").on(table.groupId)],
 );

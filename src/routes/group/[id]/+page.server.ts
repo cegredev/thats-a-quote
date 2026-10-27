@@ -185,7 +185,7 @@ export const actions = {
 				groupId,
 				text: form.data.text,
 				person: form.data.person,
-				quotedAt: new Date(form.data.quotedAt).getTime(),
+				quotedAt: new Date(form.data.quotedAt),
 				context: form.data.context,
 			},
 			{
@@ -227,7 +227,7 @@ export const actions = {
 		await crud().quotes.update(quoteId, {
 			text: form.data.text,
 			person: form.data.person,
-			quotedAt: new Date(form.data.quotedAt).getTime(),
+			quotedAt: new Date(form.data.quotedAt),
 			context: form.data.context,
 		});
 
