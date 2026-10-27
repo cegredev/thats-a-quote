@@ -3,6 +3,7 @@ export const DRAWERS = {
 	EDIT_GROUP: "edit-group",
 	CREATE_QUOTE: "create-quote",
 	EDIT_QUOTE: "edit-quote",
+	EDIT_EMAIL: "edit-email",
 	REQUIRE_LOGIN: "require-login",
 } as const;
 
@@ -15,6 +16,7 @@ export type DrawerParams = {
 	"edit-quote": {
 		id: string;
 	};
+	"edit-email": {};
 	"require-login": {};
 };
 

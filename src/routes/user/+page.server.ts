@@ -4,16 +4,30 @@ import { setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { error, fail } from "@sveltejs/kit";
 import { auth } from "#lib/server/auth.js";
+import { generateBlankEmail } from "#lib/utils.ts";
+import { isBlankEmail } from "#lib/utils.ts";
 import { isAPIError } from "better-auth/api";
 import { limiterOnData, rateLimit } from "#lib/server/rate-limiting.js";
+import { db } from "#lib/server/db.js";
+import { user } from "#lib/server/db/schema.js";
+import { eq, sql } from "drizzle-orm";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const loginForm = await superValidate(zod4(zodSchemas.users.login));
 	const registerForm = await superValidate(zod4(zodSchemas.users.register));
 
+	const email = locals.user?.email ?? "";
+	const emailForm = await superValidate(
+		{
+			email: isBlankEmail(email) ? "" : email,
+		},
+		zod4(zodSchemas.users.updateEmail),
+	);
+
 	return {
 		loginForm,
 		registerForm,
+		emailForm,
 	};
 };
 
@@ -24,6 +38,35 @@ const loginLimiter = limiterOnData([
 ]);
 
 export const actions = {
+	updateEmail: async ({ request, locals }) => {
+		const form = await superValidate(
+			request,
+			zod4(zodSchemas.users.updateEmail),
+		);
+
+		if (!form.valid) return fail(400, { form });
+
+		if (!locals.user) error(401, "not signed in");
+
+		const email = form.data.email;
+
+		const [existingUser] = await db()
+			.select({ id: user.id })
+			.from(user)
+			.where(eq(user.email, email))
+			.limit(1);
+
+		if (existingUser && existingUser.id !== locals.user.id) {
+			return setError(form, "email", "emailInUse");
+		}
+
+		await db()
+			.update(user)
+			.set({ email, emailVerified: false })
+			.where(eq(user.id, locals.user.id));
+
+		return { form };
+	},
 	register: rateLimit("strict", async (event) => {
 		const form = await superValidate(
 			event.request,
@@ -38,7 +81,7 @@ export const actions = {
 		await auth().api.signUpEmail({
 			body: {
 				name: form.data.name,
-				email: `${form.data.username}@users.invalid`,
+				email: generateBlankEmail(form.data.username),
 				username: form.data.username,
 				password: form.data.password,
 			},

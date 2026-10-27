@@ -53,6 +53,12 @@ const schemas = {
 			username: z.string(),
 			password: z.string(),
 		}),
+		updateEmail: z.object({
+			email: z
+				.email()
+				.max(254)
+				.transform((e) => e.trim().toLowerCase()),
+		}),
 	},
 	quoteReactions: {
 		select: createSelectSchema(quoteReactions),

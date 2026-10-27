@@ -2,6 +2,7 @@ import { crud } from "./crud";
 import * as schema from "./schema";
 import { db } from "#lib/server/db.js";
 import { auth } from "#lib/server/auth.js";
+import { generateBlankEmail } from "#lib/utils.ts";
 import { sql, is } from "drizzle-orm";
 import { SQLiteTable, getTableConfig } from "drizzle-orm/sqlite-core";
 import { addMembersToGroup } from "../queries/groups";
@@ -76,15 +77,16 @@ const createDemoUser = async () => {
 
 	const username = DEMO_USERNAME;
 	const password = DEMO_PASSWORD;
+	const email = generateBlankEmail(username);
 
-	const existingUser = await ctx.internalAdapter.findUserByEmail(username);
+	const existingUser = await ctx.internalAdapter.findUserByEmail(email);
 	if (existingUser) return existingUser.user.id;
 
 	const user = await ctx.internalAdapter.createUser(
 		{
-			name: username,
+			name: "Demo",
 			username,
-			email: `${username}@users.invalid`,
+			email,
 			emailVerified: true,
 		},
 		{

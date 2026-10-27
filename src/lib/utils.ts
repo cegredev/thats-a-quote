@@ -15,3 +15,9 @@ export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & {
 	ref?: U | null;
 };
+
+export const isBlankEmail = (email: string): boolean =>
+	email.endsWith("users.invalid");
+
+export const generateBlankEmail = (username: string): string =>
+	`${username}@users.invalid`;
