@@ -4,7 +4,12 @@ import {
 	createUpdateSchema,
 } from "drizzle-zod";
 import { z } from "zod";
-import { groupsTable, quoteReactions, quotesTable } from "./server/db/schema";
+import {
+	groupsTable,
+	quoteReactions,
+	quotesTable,
+	user,
+} from "./server/db/schema";
 
 const schemas = {
 	groups: {
@@ -53,12 +58,20 @@ const schemas = {
 			username: z.string(),
 			password: z.string(),
 		}),
-		updateEmail: z.object({
+		updateUser: createUpdateSchema(user, {
 			email: z
 				.email()
 				.max(254)
 				.transform((e) => e.trim().toLowerCase()),
-		}),
+		})
+			.omit({
+				id: true,
+				emailVerified: true,
+				createdAt: true,
+				updatedAt: true,
+				username: true,
+			})
+			.refine((data) => Object.keys(data).length > 0),
 	},
 	quoteReactions: {
 		select: createSelectSchema(quoteReactions),

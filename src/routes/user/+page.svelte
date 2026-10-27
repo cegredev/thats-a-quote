@@ -24,7 +24,10 @@
 		<p class="mt-2 max-w-xl text-muted-foreground">
 			{m.account_intro()}
 		</p>
-		<UserCard user={$session.data.user} emailForm={data.emailForm} />
+		<UserCard
+			user={$session.data.user}
+			updateUserForm={data.updateUserForm}
+		/>
 	</div>
 {:else}
 	<div class="mb-8">

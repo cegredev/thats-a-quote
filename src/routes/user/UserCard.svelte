@@ -20,10 +20,10 @@
 
 	let {
 		user,
-		emailForm,
+		updateUserForm,
 	}: {
 		user: User & { username?: string | null };
-		emailForm: SuperValidated<z.infer<typeof zodSchemas.users.updateEmail>>;
+		updateUserForm: SuperValidated<z.infer<typeof zodSchemas.users.updateUser>>;
 	} = $props();
 
 	async function signOut() {
@@ -131,9 +131,9 @@
 	navigationControl="edit-email"
 >
 	<SchemaForm
-		form={emailForm}
+		form={updateUserForm}
 		class="px-1 pb-2"
-		action="?/updateEmail"
+		action="?/updateUser"
 		submitLabel={m.account_emailSave()}
 		submitBusyLabel={m.account_pleaseWait()}
 		options={emailFormOptions}

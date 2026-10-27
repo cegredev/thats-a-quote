@@ -17,17 +17,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const registerForm = await superValidate(zod4(zodSchemas.users.register));
 
 	const email = locals.user?.email ?? "";
-	const emailForm = await superValidate(
+	const updateUserForm = await superValidate(
 		{
 			email: isBlankEmail(email) ? "" : email,
 		},
-		zod4(zodSchemas.users.updateEmail),
+		zod4(zodSchemas.users.updateUser),
 	);
 
 	return {
 		loginForm,
 		registerForm,
-		emailForm,
+		updateUserForm,
 	};
 };
 
@@ -38,31 +38,38 @@ const loginLimiter = limiterOnData([
 ]);
 
 export const actions = {
-	updateEmail: async ({ request, locals }) => {
+	updateUser: async ({ request, locals }) => {
 		const form = await superValidate(
 			request,
-			zod4(zodSchemas.users.updateEmail),
+			zod4(zodSchemas.users.updateUser),
 		);
 
 		if (!form.valid) return fail(400, { form });
 
 		if (!locals.user) error(401, "not signed in");
 
-		const email = form.data.email;
+		const { email } = form.data;
 
-		const [existingUser] = await db()
-			.select({ id: user.id })
-			.from(user)
-			.where(eq(user.email, email))
-			.limit(1);
+		if (email) {
+			const [existingUser] = await db()
+				.select({ id: user.id })
+				.from(user)
+				.where(eq(user.email, email))
+				.limit(1);
 
-		if (existingUser && existingUser.id !== locals.user.id) {
-			return setError(form, "email", "emailInUse");
+			if (existingUser && existingUser.id !== locals.user.id) {
+				return setError(form, "email", "emailInUse");
+			}
 		}
+
+		const update = {
+			...form.data,
+			...(email ? { emailVerified: false } : {}),
+		};
 
 		await db()
 			.update(user)
-			.set({ email, emailVerified: false })
+			.set(update)
 			.where(eq(user.id, locals.user.id));
 
 		return { form };
