@@ -32,10 +32,10 @@ const schemas = {
 		create: {
 			select: createSelectSchema(quotesTable),
 			insert: createInsertSchema(quotesTable, {
-				quotedAt: z.iso.datetime({ local: true }),
+				quotedAt: z.iso.datetime(),
 			}).omit({ id: true, createdAt: true }),
 			update: createUpdateSchema(quotesTable, {
-				quotedAt: z.iso.datetime({ local: true }),
+				quotedAt: z.iso.datetime(),
 			}).omit({ id: true, createdAt: true }),
 		},
 		search: z.object({
@@ -61,7 +61,7 @@ const schemas = {
 			content: z.string().min(1).max(2),
 		}),
 		insert: createInsertSchema(quoteReactions, {
-			createdAt: z.iso.datetime({ local: true }),
+			createdAt: z.iso.datetime({}),
 		}).omit({ id: true, createdAt: true }),
 	},
 };

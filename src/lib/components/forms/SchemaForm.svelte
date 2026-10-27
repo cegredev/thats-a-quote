@@ -11,6 +11,7 @@
 		placeholder?: string;
 		autocomplete?: string;
 		skipConstraints?: boolean;
+		onSubmitTransform?: (value: FormDataEntryValue) => FormDataEntryValue;
 		other?: any;
 	};
 </script>
@@ -109,6 +110,15 @@
 		untrack(() => form),
 		{
 			delayMs: 300,
+			onSubmit: ({ formData }) => {
+				for (const [k, v] of formData) {
+					const transform = fields[k]?.onSubmitTransform;
+
+					if (v && transform) {
+						formData.set(k, transform(v));
+					}
+				}
+			},
 			...untrack(() => options),
 		},
 	);

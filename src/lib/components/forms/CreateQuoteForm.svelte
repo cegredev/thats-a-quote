@@ -24,6 +24,7 @@
 	function setTime() {
 		form.data.quotedAt = "";
 		form.data.quotedAt = toDateTimeLocal(new Date());
+		// form.data.quotedAt = new Date().toISOString();
 	}
 
 	if (!form.data.quotedAt) setTime();
@@ -31,11 +32,9 @@
 
 <SchemaForm
 	{form}
-	action={
-		mode === "create"
-			? "?/createQuote"
-			: `?/editQuote${quoteId ? `&edit=${encodeURIComponent(quoteId)}` : ""}`
-	}
+	action={mode === "create"
+		? "?/createQuote"
+		: `?/editQuote${quoteId ? `&edit=${encodeURIComponent(quoteId)}` : ""}`}
 	submitLabel={mode === "create" ? m.group_addQuote() : m.edit_quote()}
 	submitBusyLabel={mode === "create" ? m.group_adding() : m.quote_editing()}
 	submitClass="mt-1 self-start w-full"
@@ -59,6 +58,8 @@
 			name: "quotedAt",
 			label: m.group_dateTime(),
 			type: "datetime-local",
+			onSubmitTransform: (date) =>
+				new Date(date.toString()).toISOString(),
 			other: {
 				step: 1,
 			},
@@ -73,8 +74,6 @@
 	options={{
 		onResult: async ({ result }) => {
 			if (result.type === "success") {
-				if (mode === "create") setTimeout(() => setTime(), 2000);
-
 				if (onSuccess) await onSuccess();
 			}
 		},
