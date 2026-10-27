@@ -115,5 +115,6 @@
 	"quote_editing": "Editing...",
 	"group_edit": "Edit group",
 	"group_create_head": "Create a group",
-	"quote_create_head": "Add a quote"
+	"quote_create_head": "Add a quote",
+	"push_install_as_pwa_first": "Install as PWA first"
 }

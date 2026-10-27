@@ -36,6 +36,12 @@
 							{m.settings_admin_needs_to_enable()}
 						</Badge>
 					</Item.Footer>
+				{:else if data.data.pushPermission === "install-pwa-first"}
+					<Item.Footer>
+						<Badge variant="destructive">
+							{m.push_install_as_pwa_first()}
+						</Badge>
+					</Item.Footer>
 				{:else if !data.data.isLoggedIn}
 					<Item.Footer>
 						<Badge variant="destructive">
@@ -48,7 +54,9 @@
 				<Switch
 					aria-label={m.settings_notificationsAriaLabel()}
 					onCheckedChange={onChange}
-					checked={data.data.pushPermission}
+					checked={data.data.pushPermission === "install-pwa-first"
+						? false
+						: data.data.pushPermission}
 					disabled={!data.data.pushServiceEnabled ||
 						!data.data.isLoggedIn}
 				/>

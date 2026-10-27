@@ -20,7 +20,28 @@ function urlBase64ToUint8Array(base64: string) {
 	return Uint8Array.from(raw, (c) => c.charCodeAt(0));
 }
 
+function isIOSDevice() {
+	return (
+		/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+		(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+	);
+}
+
+function isStandaloneApp() {
+	const navigatorWithStandalone = navigator as Navigator & {
+		standalone?: boolean;
+	};
+	return (
+		window.matchMedia("(display-mode: standalone)").matches ||
+		navigatorWithStandalone.standalone === true
+	);
+}
+
 async function _getActivePushSubscription(publicKey?: string) {
+	if (isIOSDevice() && !isStandaloneApp()) {
+		return "install-pwa-first" as const;
+	}
+
 	const registration = await navigator.serviceWorker.ready;
 	publicKey ??= await getPublicKey();
 	const applicationServerKey = urlBase64ToUint8Array(publicKey);
@@ -44,7 +65,10 @@ async function _getActivePushSubscription(publicKey?: string) {
 }
 
 export async function getActivePushSubscription(publicKey?: string) {
-	return (await _getActivePushSubscription(publicKey)).subscription;
+	const result = await _getActivePushSubscription(publicKey);
+	if (result === "install-pwa-first") return result;
+
+	return result.subscription;
 }
 
 async function _makePushApiRequest(
@@ -59,8 +83,10 @@ async function _makePushApiRequest(
 }
 
 export async function subscribeToPush() {
-	let { subscription, registration, applicationServerKey } =
-		await _getActivePushSubscription();
+	const result = await _getActivePushSubscription();
+	if (result === "install-pwa-first") throw new Error("install as PWA first");
+
+	let { subscription, registration, applicationServerKey } = result;
 
 	if (!subscription) {
 		subscription = await registration.pushManager.subscribe({
@@ -75,8 +101,10 @@ export async function subscribeToPush() {
 }
 
 export async function unsubscribeFromPush() {
-	const { subscription } = await _getActivePushSubscription();
+	const result = await _getActivePushSubscription();
+	if (result === "install-pwa-first") throw new Error("install as PWA first");
 
+	const { subscription } = result;
 	if (!subscription) return;
 
 	await subscription.unsubscribe();
