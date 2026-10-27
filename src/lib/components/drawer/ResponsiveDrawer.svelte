@@ -14,7 +14,6 @@
 		removeDrawerNavigationHistory,
 	} from "#lib/client/drawers.svelte.ts";
 	import type { DrawerKey } from "#lib/drawers-shared.ts";
-	import { page } from "$app/state";
 
 	type Props = {
 		text: {
@@ -121,7 +120,9 @@
 					<Drawer.Description>{text.description}</Drawer.Description>
 				{/if}
 			</Drawer.Header>
-			{@render children()}
+			<div class="overflow-y-scroll">
+				{@render children()}
+			</div>
 		</Drawer.Content>
 	</Drawer.Root>
 {/if}
