@@ -12,8 +12,12 @@
 	import { PlusIcon } from "@lucide/svelte";
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import CreateQuoteForm from "#lib/components/forms/CreateQuoteForm.svelte";
-	import { closeEditDialog } from "#lib/client/component-utils.svelte.ts";
+	import {
+		addQueryParamToHref,
+		closeEditDialog,
+	} from "#lib/client/component-utils.svelte.ts";
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
+	import { goto } from "$app/navigation";
 
 	let { data }: PageProps = $props();
 
@@ -25,9 +29,13 @@
 		}
 	});
 
-	let addQuoteDialogOpen: boolean = $state(false);
+	let addQuoteDialogOpen = $derived(
+		page.url.searchParams.get("create") === "quote",
+	);
 	let editQuoteDialogOpen = $derived(page.url.searchParams.has("edit"));
 	let editGroupDialogOpen = $derived(page.url.searchParams.has("editGroup"));
+
+	$inspect("quote dialog open", addQuoteDialogOpen);
 </script>
 
 <Title text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`} />
@@ -49,7 +57,7 @@
 	style="bottom: calc(var(--nav-height, 0px) + 1rem)"
 >
 	<Button
-		onclick={() => (addQuoteDialogOpen = true)}
+		href={addQueryParamToHref(page.url.href, "create", "quote")}
 		variant="default"
 		size="icon-lg"
 		class="pointer-events-auto size-14 rounded-full shadow-lg [&_svg]:size-6"
@@ -66,6 +74,11 @@
 	}}
 	widthClass="w-full max-w-2xl!"
 	bind:open={addQuoteDialogOpen}
+	onOpenChange={(open) => {
+		if (!open && page.url.searchParams.has("create")) {
+			window.history.back();
+		}
+	}}
 >
 	<CreateQuoteForm
 		form={data.quoteCreationForm}
@@ -83,7 +96,9 @@
 	widthClass="w-full max-w-2xl!"
 	bind:open={editQuoteDialogOpen}
 	onOpenChange={(open) => {
-		if (!open) closeEditDialog(page.url.href);
+		if (!open && page.url.searchParams.has("edit")) {
+			window.history.back();
+		}
 	}}
 >
 	{#if data.quoteEditForm}
@@ -105,7 +120,9 @@
 	widthClass="w-full max-w-2xl!"
 	bind:open={editGroupDialogOpen}
 	onOpenChange={(open) => {
-		if (!open) closeEditDialog(page.url.href, "editGroup");
+		if (!open && page.url.searchParams.has("editGroup")) {
+			window.history.back();
+		}
 	}}
 >
 	{#if data.groupEditForm}
