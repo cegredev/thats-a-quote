@@ -5,7 +5,7 @@ import {
 } from "#lib/server/queries/groups.js";
 import zodSchemas from "#lib/zod-schemas.js";
 import type { PageServerLoad } from "./$types";
-import { error, fail, redirect } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import { rateLimit } from "#lib/server/rate-limiting.js";
 import { crud } from "#lib/server/db/crud.js";
 import { parsePaginationParams, parseSearchParams } from "#lib/server/utils.js";
@@ -20,6 +20,7 @@ import { db } from "#lib/server/db.ts";
 import { toDateTimeLocal } from "#lib/utils.js";
 import type { SuperValidated } from "sveltekit-superforms";
 import type z from "zod";
+import { DRAWER_QUERY_PARAM, type DrawerKey } from "#lib/drawers-shared.js";
 
 const QUOTES_DEFAULT_PAGE_SIZE = 50;
 
@@ -49,16 +50,25 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		locals.user ? userIsMemberOfGroup(locals.user?.id, groupId) : undefined,
 	]);
 
-	const quoteCreationForm = await superValidate(
-		zod4(zodSchemas.quotes.create.insert),
-	);
+	const drawer = url.searchParams.get(DRAWER_QUERY_PARAM) as
+		| DrawerKey
+		| undefined;
+	const idToEdit = url.searchParams.get("id");
+
+	let quoteCreationForm:
+		| SuperValidated<z.infer<typeof zodSchemas.quotes.create.insert>>
+		| undefined;
+	if (drawer === "create-quote") {
+		quoteCreationForm = await superValidate(
+			zod4(zodSchemas.quotes.create.insert),
+		);
+	}
 
 	let quoteEditForm:
 		| SuperValidated<z.infer<typeof zodSchemas.quotes.create.update>>
 		| undefined;
-	const quoteIdToEdit = url.searchParams.get("edit");
-	if (quoteIdToEdit) {
-		const quote = await crud().quotes.findOne({ id: quoteIdToEdit });
+	if (drawer === "edit-quote" && idToEdit) {
+		const quote = await crud().quotes.findOne({ id: idToEdit });
 		if (!quote || quote.groupId !== groupId) error(404, "Quote not found");
 
 		quoteEditForm = await superValidate(
@@ -73,8 +83,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 	let groupEditForm:
 		| SuperValidated<z.infer<typeof zodSchemas.groups.create.update>>
 		| undefined;
-	const shouldEdit = url.searchParams.get("editGroup");
-	if (shouldEdit !== "" && shouldEdit !== null) {
+	if (drawer === "edit-group") {
 		groupEditForm = await superValidate(
 			{
 				...group,

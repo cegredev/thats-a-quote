@@ -4,20 +4,15 @@
 	import GroupsList from "#lib/components/groups/GroupsList.svelte";
 	import Title from "#lib/components/util/Title.svelte";
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
-	import { page } from "$app/state";
 	import { PlusIcon } from "@lucide/svelte";
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
-	import { addQueryParamToHref } from "#lib/client/component-utils.svelte.ts";
+	import {
+		drawerHref,
+		removeDrawerNavigationHistory,
+	} from "#lib/client/drawers.svelte.ts";
 
 	let { data }: PageProps = $props();
-
-	const DRAWER_QUERY_PARAM = "drawer";
-	const CREATE_GROUP_DRAWER = "create-group";
-
-	let addGroupDialogOpen: boolean = $derived(
-		page.url.searchParams.get("drawer") === CREATE_GROUP_DRAWER,
-	);
 </script>
 
 <Title text={m.brand()} />
@@ -45,11 +40,7 @@
 	style="bottom: calc(var(--nav-height, 0px) + 1rem)"
 >
 	<Button
-		href={addQueryParamToHref(
-			page.url.href,
-			DRAWER_QUERY_PARAM,
-			CREATE_GROUP_DRAWER,
-		)}
+		href={drawerHref("create-group")}
 		variant="default"
 		size="icon-lg"
 		class="pointer-events-auto size-14 rounded-full shadow-lg [&_svg]:size-6"
@@ -64,22 +55,11 @@
 	text={{
 		title: m.group_create_head(),
 	}}
-	bind:open={addGroupDialogOpen}
-	onOpenChange={(open) => {
-		if (
-			!open &&
-			page.url.searchParams.get(DRAWER_QUERY_PARAM) ===
-				CREATE_GROUP_DRAWER
-		) {
-			window.history.back();
-		}
-	}}
+	navigationControl={"create-group"}
 >
 	<GroupCreationForm
 		form={data.groupCreationForm}
 		mode="create"
-		onSuccess={() => {
-			addGroupDialogOpen = false;
-		}}
+		onSuccess={() => removeDrawerNavigationHistory("create-group")}
 	/>
 </ResponsiveDrawer>

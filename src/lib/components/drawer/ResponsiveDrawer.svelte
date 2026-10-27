@@ -9,6 +9,11 @@
 		type ButtonSize,
 		type ButtonVariant,
 	} from "#lib/shadcn/components/ui/button/index.js";
+	import {
+		drawerIsActive,
+		removeDrawerNavigationHistory,
+	} from "#lib/client/drawers.svelte.ts";
+	import type { DrawerKey } from "#lib/drawers-shared.ts";
 
 	type Props = {
 		text: {
@@ -25,6 +30,7 @@
 		contentClass?: string;
 		widthClass?: string;
 		onOpenChange?: (open: boolean) => void;
+		navigationControl?: DrawerKey;
 	};
 
 	let {
@@ -38,6 +44,7 @@
 		contentClass = "",
 		widthClass = "",
 		onOpenChange,
+		navigationControl,
 	}: Props = $props();
 
 	const isDesktop = new MediaQuery("(min-width: 768px)");
@@ -47,7 +54,14 @@
 		if (previousOpen !== open) {
 			previousOpen = open;
 			onOpenChange?.(open);
+
+			if (navigationControl && !open)
+				removeDrawerNavigationHistory(navigationControl);
 		}
+	});
+
+	$effect(() => {
+		if (navigationControl) open = drawerIsActive(navigationControl);
 	});
 </script>
 

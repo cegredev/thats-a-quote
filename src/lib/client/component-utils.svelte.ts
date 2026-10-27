@@ -68,28 +68,3 @@ export const shiftPaginationPage = async (
 
 	await setPaginationPage(targetPage, url.searchParams);
 };
-
-export const addQueryParamToHref = (
-	href: string,
-	param: string,
-	value: string,
-) => {
-	const url = new URL(href);
-	url.searchParams.set(param, value);
-	return `${url.pathname}${url.search}`;
-};
-
-export const removeQueryParamFromHref = (href: string, param: string) => {
-	const url = new URL(href);
-	url.searchParams.delete(param);
-	return `${url.pathname}${url.search}`;
-};
-
-export const closeEditDialog = async (href: string, param: string = "edit") => {
-	const h = removeQueryParamFromHref(href, param);
-
-	await goto(h, {
-		replaceState: true,
-		reset: false,
-	});
-};

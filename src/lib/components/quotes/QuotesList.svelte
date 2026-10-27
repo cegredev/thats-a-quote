@@ -3,9 +3,9 @@
 	import { m } from "#lib/paraglide/messages.js";
 	import FullPagination from "#lib/components/meta/FullPagination.svelte";
 	import Quote from "./Quote.svelte";
-	import { Info, Pencil } from "@lucide/svelte";
+	import { Pencil } from "@lucide/svelte";
 	import type { GroupQuotesPagination } from "#lib/server/queries/quotes.ts";
-	import { addQueryParamToHref } from "#lib/client/component-utils.svelte.ts";
+	import { drawerHref } from "#lib/client/drawers.svelte.ts";
 
 	let {
 		quotes,
@@ -36,11 +36,9 @@
 						{#snippet bottomRight()}
 							<div class="flex items-center gap-2">
 								<a
-									href={addQueryParamToHref(
-										page.url.href,
-										"edit",
-										quote.id,
-									)}
+									href={drawerHref("edit-quote", {
+										id: quote.id,
+									})}
 									aria-label={m.edit_quote()}
 									title={m.edit_quote()}
 								>
