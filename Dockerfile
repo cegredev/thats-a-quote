@@ -2,7 +2,7 @@ FROM node:lts-alpine3.24 AS build
 
 WORKDIR /build
 
-RUN corepack enable
+RUN npm install --global pnpm
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN pnpm install --frozen-lockfile
