@@ -14,6 +14,7 @@
 </script>
 
 <EmojiPicker.Root
+	class="grid place-items-center"
 	disableInitialScroll
 	bind:value={emoji}
 	onSelect={(selected) => {
@@ -27,7 +28,7 @@
 				buttonVariants({
 					variant: "ghost",
 					size: "sm",
-					class: "rounded-full  h-min p-0",
+					class: "rounded-full h-min p-0",
 				}),
 			)}
 		>
