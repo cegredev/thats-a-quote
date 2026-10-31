@@ -5,7 +5,7 @@
 	import { onMount } from "svelte";
 	import { authClient } from "#lib/client/frontend-auth.js";
 	import NavTabs from "#lib/components/tabs/NavTabs.svelte";
-	import { HouseIcon, SettingsIcon } from "@lucide/svelte";
+	import { HouseIcon, SettingsIcon, UserRound } from "@lucide/svelte";
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import { removeDrawerNavigationHistory } from "#lib/client/drawers.svelte.ts";
 	import * as Button from "#lib/shadcn/components/ui/button/index.js";
@@ -29,31 +29,45 @@
 >
 	<header class="border-b border-border">
 		<div
-			class="mx-auto flex max-w-3xl items-center justify-between px-5 py-4"
+			class="mx-auto flex max-w-3xl items-center justify-between px-2 py-2"
 		>
 			<a
 				href="/"
-				class="font-display text-xl font-semibold tracking-tight"
+				class="font-display text-xl font-semibold tracking-tight flex gap-1 items-center"
 			>
-				{m.brand()}
+				<img src="/icon-512x512.png" class="h-[44px]" alt={m.brand()} />
+				<span>{m.brand()}</span>
 			</a>
 
 			<div class="flex items-center gap-4">
-				<a
-					href="/user"
-					class="text-sm text-muted-foreground underline-offset-4 hover:underline"
-				>
-					{#if $session.data?.user}
-						{m.logout_link()}
-					{:else}
+				{#if $session.data?.user}
+					<a
+						href="/user"
+						aria-label={m.login_link()}
+						class="text-sm text-muted-foreground underline-offset-4 hover:underline"
+					>
+						<div
+							class="grid place-items-center p-[6px] rounded-full bg-gray-300/30"
+							aria-hidden="true"
+						>
+							<UserRound class="size-6" />
+						</div>
+					</a>
+				{:else}
+					<Button.Root
+						variant="outline"
+						size="sm"
+						class="shrink-0"
+						href="/user"
+					>
 						{m.login_link()}
-					{/if}
-				</a>
+					</Button.Root>
+				{/if}
 			</div>
 		</div>
 	</header>
 
-	<main class="mx-auto max-w-3xl px-5 pt-8">
+	<main class="mx-auto max-w-3xl px-5 pt-4">
 		{@render children()}
 	</main>
 
