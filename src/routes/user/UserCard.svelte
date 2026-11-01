@@ -15,6 +15,7 @@
 	import type zodSchemas from "#lib/zod-schemas.js";
 	import { isBlankEmail } from "#lib/utils.ts";
 	import UserForm from "#lib/components/forms/UserForm.svelte";
+	import { refreshAll } from "$app/navigation";
 
 	let {
 		user,
@@ -28,6 +29,8 @@
 
 	async function signOut() {
 		await authClient.signOut();
+
+		await refreshAll();
 	}
 
 	const hasEmail = $derived(!isBlankEmail(user.email));

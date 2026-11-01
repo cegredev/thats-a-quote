@@ -7,6 +7,7 @@ import { eq, sql, is } from "drizzle-orm";
 import { SQLiteTable, getTableConfig } from "drizzle-orm/sqlite-core";
 import { addMembersToGroup } from "../queries/groups";
 import { FILL_WITH_DUMMY_DATA } from "$app/env/private";
+import { DEMO_PASSWORD, DEMO_USERNAME } from "#lib/constants.ts";
 
 const resetDbManually = async () => {
 	await db().run(sql`PRAGMA foreign_keys = OFF`);
@@ -68,9 +69,6 @@ export const fillWithDummyData = async () => {
 		})),
 	);
 };
-
-export const DEMO_USERNAME = "demo";
-export const DEMO_PASSWORD = "demo";
 
 const createDemoUser = async () => {
 	const ctx = await auth().$context;
