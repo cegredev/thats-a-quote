@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 			searchOptions,
 		),
 		listPeople(groupId),
-		locals.user ? userIsMemberOfGroup(locals.user?.id, groupId) : undefined,
+		locals.user ? userIsMemberOfGroup(locals.user?.id, groupId) : false,
 	]);
 
 	const drawer = url.searchParams.get(DRAWER_QUERY_PARAM) as

@@ -3,11 +3,9 @@
 	import { page } from "$app/state";
 	import type { PageProps } from "./$types";
 	import { m } from "#lib/paraglide/messages.js";
-	import { groupIDsStore } from "#lib/client/storage.svelte.js";
 	import Title from "#lib/components/util/Title.svelte";
 	import SearchQuotesForm from "#lib/components/forms/SearchQuotesForm.svelte";
 	import QuotesList from "#lib/components/quotes/QuotesList.svelte";
-	import { onMount } from "svelte";
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 	import { PlusIcon } from "@lucide/svelte";
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
@@ -19,19 +17,15 @@
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
 
 	let { data }: PageProps = $props();
-
-	const groupId = page.params.id ?? "";
-
-	onMount(() => {
-		if (data.userIsMember) {
-			groupIDsStore.add(groupId);
-		}
-	});
 </script>
 
 <Title text={data.group.name ?? `${m.group_fallbackTitle()} · ${m.brand()}`} />
 
-<QuotesPageHead group={data.group} totalQuotes={data.quotes.pagination.total} />
+<QuotesPageHead
+	group={data.group}
+	totalQuotes={data.quotes.pagination.total}
+	userIsMember={data.userIsMember}
+/>
 
 <datalist id="people">
 	{#each data.people as person (person)}

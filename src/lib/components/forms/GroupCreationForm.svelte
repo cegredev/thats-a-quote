@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { SuperValidated } from "sveltekit-superforms";
 	import { m } from "#lib/paraglide/messages.js";
-	import { groupIDsStore } from "#lib/client/storage.svelte.js";
 	import SchemaForm from "#lib/components/forms/SchemaForm.svelte";
 	import type zodSchemas from "#lib/zod-schemas.js";
 	import type z from "zod";
@@ -40,11 +39,6 @@
 	options={{
 		onResult: async ({ result }) => {
 			if (result.type === "success") {
-				if (props.mode === "create") {
-					const id = result.data?.id;
-					if (id) groupIDsStore.add(id);
-				}
-
 				if (props.onSuccess) await props.onSuccess();
 			}
 		},

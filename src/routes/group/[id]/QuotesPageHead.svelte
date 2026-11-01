@@ -2,7 +2,6 @@
 	import { page } from "$app/state";
 	import { goto } from "$app/navigation";
 	import { m } from "#lib/paraglide/messages.js";
-	import { groupIDsStore } from "#lib/client/storage.svelte.js";
 	import CopyButton from "#lib/components/util/CopyButton.svelte";
 	import FormButton from "#lib/components/forms/FormButton.svelte";
 	import GenericDialog from "#lib/components/dialogs/GenericDialog.svelte";
@@ -11,8 +10,11 @@
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 	import { gotoDrawer } from "#lib/client/drawers.svelte.ts";
 
-	let { group, totalQuotes }: { group: Group; totalQuotes: number } =
-		$props();
+	let {
+		group,
+		totalQuotes,
+		userIsMember,
+	}: { group: Group; totalQuotes: number; userIsMember: boolean } = $props();
 
 	const groupId = page.params.id ?? "";
 
@@ -59,7 +61,7 @@
 				{/snippet}
 			</CopyButton>
 
-			{#if groupIDsStore.has(groupId) || leaveDialogOpen}
+			{#if userIsMember || leaveDialogOpen}
 				<GenericDialog
 					text={{
 						trigger: m.group_leave(),
@@ -78,8 +80,6 @@
 							variant="destructive"
 							size="sm"
 							onSuccess={async () => {
-								groupIDsStore.remove(groupId);
-
 								await goto("..");
 							}}
 							classes=""
@@ -94,7 +94,6 @@
 					variant="ghost"
 					size="sm"
 					classes="text-green-700 hover:text-green-800"
-					onSuccess={() => groupIDsStore.add(groupId)}
 				/>
 			{/if}
 		</div>
