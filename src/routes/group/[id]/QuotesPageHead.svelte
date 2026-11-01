@@ -9,6 +9,7 @@
 	import { Link, Pencil } from "@lucide/svelte";
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 	import { gotoDrawer } from "#lib/client/drawers.svelte.ts";
+	import RequireLoginShield from "#lib/components/meta/RequireLoginShield.svelte";
 
 	let {
 		group,
@@ -87,14 +88,16 @@
 					{/snippet}
 				</GenericDialog>
 			{:else}
-				<FormButton
-					text={m.group_join()}
-					action="?/joinGroup"
-					serverRequiresUser
-					variant="ghost"
-					size="sm"
-					classes="text-green-700 hover:text-green-800"
-				/>
+				<RequireLoginShield>
+					<FormButton
+						text={m.group_join()}
+						action="?/joinGroup"
+						serverRequiresUser
+						variant="ghost"
+						size="sm"
+						classes="text-green-700 hover:text-green-800"
+					/>
+				</RequireLoginShield>
 			{/if}
 		</div>
 	</div>

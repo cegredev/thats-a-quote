@@ -11,7 +11,7 @@ import { rateLimit } from "#lib/server/rate-limiting.js";
 import { crud } from "#lib/server/db/crud.js";
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const groups: { id: string; name: string }[] = [];
+	let groups: { id: string; name: string }[] = [];
 
 	if (locals.user) {
 		const memberships = await getUserGroupMemberships(locals.user.id);
