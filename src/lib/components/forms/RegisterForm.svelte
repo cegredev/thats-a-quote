@@ -19,6 +19,7 @@
 	action="?/register"
 	submitLabel={m.account_signUp()}
 	submitBusyLabel={m.account_signingUp()}
+	submitClass="w-full"
 	fields={{
 		name: {
 			name: "name",

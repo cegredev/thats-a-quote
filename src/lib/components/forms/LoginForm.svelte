@@ -19,6 +19,7 @@
 	action="?/login"
 	submitLabel={m.account_login()}
 	submitBusyLabel={m.account_loggingIn()}
+	submitClass="w-full"
 	fields={{
 		username: {
 			name: "username",
