@@ -56,7 +56,7 @@
 		</div>
 
 		<div class="flex shrink-0 gap-2">
-			<CopyButton content={window.location.href}>
+			<CopyButton content={page.url.href}>
 				{#snippet copySnippet()}
 					<Link />
 				{/snippet}

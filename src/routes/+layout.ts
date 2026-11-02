@@ -1,11 +1,6 @@
-import { migrateStorage } from "#lib/client/storage.svelte.js";
 import type { LayoutLoad } from "./$types";
 
-export const ssr = false;
-
 export const load: LayoutLoad = async ({ data }) => {
-	migrateStorage();
-
 	const session =
 		data.session && data.user
 			? {
