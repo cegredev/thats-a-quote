@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from "$app/state";
 	import type { PageProps } from "./$types";
 
 	let { data }: PageProps = $props();
@@ -9,7 +10,7 @@
 	<meta name="description" content="Collect quotes" />
 
 	<meta property="og:site_name" content="that's a quote!" />
-	<!-- <meta property="og:url" content={url} /> -->
+	<meta property="og:url" content={page.url.origin + page.url.pathname} />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content={"A title"} />
 	<meta property="og:description" content={"A description"} />
