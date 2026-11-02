@@ -1,6 +1,7 @@
 import { ImageResponse } from "@ethercorps/sveltekit-og";
 import { error, type RequestHandler } from "@sveltejs/kit";
 import OGQuote from "#lib/components/open-graph-preview/OGQuote.svelte";
+import { getQuoteImageDimensions } from "#lib/open-graph.ts";
 import { crud } from "#lib/server/db/crud.ts";
 
 export const GET: RequestHandler = async ({ params }) => {
@@ -11,11 +12,11 @@ export const GET: RequestHandler = async ({ params }) => {
 	});
 	if (!quote) error(404, "Quote not found");
 
+	const dimensions = getQuoteImageDimensions(quote.text);
 	const response = new ImageResponse(
 		OGQuote,
 		{
-			width: 1200,
-			height: 630,
+			...dimensions,
 			format: "png",
 		},
 		{ quote },
