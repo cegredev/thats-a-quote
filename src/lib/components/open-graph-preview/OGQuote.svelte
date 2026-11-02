@@ -7,7 +7,10 @@
 
 	import { OPEN_GRAPH_IMAGE_LAYOUT } from "#lib/open-graph.ts";
 
-	let { quote }: { quote: Quote } = $props();
+	let {
+		quote,
+		quoteFontSize,
+	}: { quote: Quote; quoteFontSize: number } = $props();
 
 	function formatDate(ts: Date): string {
 		return ts.toLocaleString(getLocale() === "de" ? "de-DE" : "en-US", {
@@ -25,7 +28,7 @@
 	style={`display: flex; flex-direction: column; justify-content: center; width: 100%; height: 100%; padding: ${OPEN_GRAPH_IMAGE_LAYOUT.paddingTop}px ${OPEN_GRAPH_IMAGE_LAYOUT.horizontalPadding}px ${OPEN_GRAPH_IMAGE_LAYOUT.paddingBottom}px; background-color: #f5f5f5; color: #101011; text-shadow: none; -webkit-text-stroke: 0 transparent;`}
 >
 	<p
-		style={`margin: 0; font-size: ${OPEN_GRAPH_IMAGE_LAYOUT.quoteFontSize}px; line-height: ${OPEN_GRAPH_IMAGE_LAYOUT.quoteLineHeight}; text-align: center;`}
+		style={`margin: 0; font-size: ${quoteFontSize}px; line-height: ${OPEN_GRAPH_IMAGE_LAYOUT.quoteLineHeight}; text-align: center;`}
 	>
 		&ldquo;{quote.text}&rdquo;
 	</p>
