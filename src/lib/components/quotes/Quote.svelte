@@ -10,8 +10,8 @@
 	import EmojiPickerPopoverForm from "#lib/components/emojis/EmojiPickerPopoverForm.svelte";
 	import { authClient } from "#lib/client/frontend-auth.ts";
 	import RequireLoginShield from "#lib/components/meta/RequireLoginShield.svelte";
-	import CopyButton from "#lib/components/util/CopyButton.svelte";
 	import { page } from "$app/state";
+	import ShareButton from "../util/ShareButton.svelte";
 
 	let {
 		quote,
@@ -86,11 +86,10 @@
 
 		{#if bottomRight}
 			<div class="absolute bottom-2 right-2">
-				<CopyButton content={page.url.origin + `/quotes/${quote.id}`}>
-					{#snippet copySnippet()}
-						<Link />
-					{/snippet}
-				</CopyButton>
+				<ShareButton
+					content={{ url: page.url.origin + `/quotes/${quote.id}` }}
+				/>
+
 				{@render bottomRight()}
 			</div>
 		{/if}
