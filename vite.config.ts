@@ -3,6 +3,7 @@ import adapter from "@sveltejs/adapter-node";
 import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
+import { sveltekitOG } from "@ethercorps/sveltekit-og/plugin";
 
 export default defineConfig({
 	plugins: [
@@ -18,6 +19,7 @@ export default defineConfig({
 			adapter: adapter(),
 			experimental: {},
 		}),
+		sveltekitOG(),
 		paraglideVitePlugin({
 			project: "./project.inlang",
 			outdir: "./src/lib/paraglide",

@@ -49,6 +49,7 @@
 	},
 	"dependencies": {
 		"@better-auth/drizzle-adapter": "^1.7.3",
+		"@ethercorps/sveltekit-og": "^4.4.0",
 		"@libsql/client": "^0.18.0",
 		"better-auth": "^1.7.3",
 		"better-drizzle": "^0.3.0",

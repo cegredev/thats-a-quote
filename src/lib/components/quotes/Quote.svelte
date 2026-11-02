@@ -79,6 +79,7 @@
 						{/snippet}
 					</GeneralTooltip>
 				{/if}
+				<a href={`/quotes/${quote.id}.png`}>png</a>
 			</div>
 		</div>
 
