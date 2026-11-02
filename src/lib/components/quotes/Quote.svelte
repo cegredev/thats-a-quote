@@ -1,15 +1,17 @@
 <script lang="ts">
 	import * as Card from "#lib/shadcn/components/ui/card/index.js";
 	import { m } from "#lib/paraglide/messages.js";
-	import { SquareText } from "@lucide/svelte";
-	import GeneralTooltip from "../GeneralTooltip.svelte";
+	import { Link, SquareText } from "@lucide/svelte";
+	import GeneralTooltip from "#lib/components/GeneralTooltip.svelte";
 	import { getLocale } from "#lib/paraglide/runtime.js";
 	import { cn } from "cn";
 	import type { Snippet } from "svelte";
 	import type { QuoteWithRest } from "#lib/server/queries/quotes.ts";
-	import EmojiPickerPopoverForm from "../emojis/EmojiPickerPopoverForm.svelte";
+	import EmojiPickerPopoverForm from "#lib/components/emojis/EmojiPickerPopoverForm.svelte";
 	import { authClient } from "#lib/client/frontend-auth.ts";
-	import RequireLoginShield from "../meta/RequireLoginShield.svelte";
+	import RequireLoginShield from "#lib/components/meta/RequireLoginShield.svelte";
+	import CopyButton from "#lib/components/util/CopyButton.svelte";
+	import { page } from "$app/state";
 
 	let {
 		quote,
@@ -79,12 +81,16 @@
 						{/snippet}
 					</GeneralTooltip>
 				{/if}
-				<a href={`/quotes/${quote.id}.png`}>png</a>
 			</div>
 		</div>
 
 		{#if bottomRight}
 			<div class="absolute bottom-2 right-2">
+				<CopyButton content={page.url.origin + `/quotes/${quote.id}`}>
+					{#snippet copySnippet()}
+						<Link />
+					{/snippet}
+				</CopyButton>
 				{@render bottomRight()}
 			</div>
 		{/if}

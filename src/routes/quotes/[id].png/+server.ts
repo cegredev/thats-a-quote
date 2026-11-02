@@ -3,9 +3,6 @@ import { error, type RequestHandler } from "@sveltejs/kit";
 import OGQuote from "#lib/components/open-graph-preview/OGQuote.svelte";
 import { crud } from "#lib/server/db/crud.ts";
 
-// This is optional, use it if you want to generate OG image at build time.
-export const prerender = false;
-
 export const GET: RequestHandler = async ({ params }) => {
 	const id = params.id ?? error(400, "Missing id parameter");
 
@@ -14,7 +11,7 @@ export const GET: RequestHandler = async ({ params }) => {
 	});
 	if (!quote) error(404, "Quote not found");
 
-	return new ImageResponse(
+	const response = new ImageResponse(
 		OGQuote,
 		{
 			width: 1200,
@@ -23,4 +20,19 @@ export const GET: RequestHandler = async ({ params }) => {
 		},
 		{ quote },
 	);
+
+	try {
+		const body = await response.arrayBuffer();
+		return new Response(body, {
+			status: response.status,
+			statusText: response.statusText,
+			headers: response.headers,
+		});
+	} catch (cause) {
+		console.error("PNG response failed:", cause);
+		if (cause instanceof Error && "originalError" in cause) {
+			console.error("Underlying ReSVG error:", cause.originalError);
+		}
+		throw cause;
+	}
 };
