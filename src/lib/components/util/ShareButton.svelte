@@ -4,20 +4,35 @@
 	import CopyButton from "./CopyButton.svelte";
 
 	let { content }: { content: ShareData } = $props();
+	let showCopyFallback = $state(false);
 
-	// share is not always defined, but the default types don't reflect that
-	const share = navigator.share as undefined | typeof navigator.share;
+	async function doShare() {
+		if (!navigator.share) return;
 
-	const doShare = async () => {
-		if (share) {
-			await share(content);
-		} else {
-			console.warn("Web Share API is not supported in this browser.");
+		showCopyFallback = false;
+		const fallbackTimer = /Firefox/i.test(navigator.userAgent)
+			? setTimeout(() => {
+					showCopyFallback = true;
+				}, 5_000)
+			: undefined;
+
+		try {
+			await navigator.share({ ...content });
+		} catch (error) {
+			if (
+				!(error instanceof DOMException && error.name === "AbortError")
+			) {
+				console.error("Error sharing:", error);
+			}
+		} finally {
+			clearTimeout(fallbackTimer);
+			showCopyFallback = false;
 		}
-	};
+	}
 </script>
 
-{#if share}
+<!-- navigator.share can be undefined, but the types don't reflect that -->
+{#if (navigator.share as any) && !showCopyFallback}
 	<Button.Root variant="ghost" size="sm" onclick={doShare}>
 		<Share />
 	</Button.Root>
