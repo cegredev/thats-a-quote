@@ -44,7 +44,15 @@ export function getQuoteImageLayout(quoteText: string) {
 	}
 
 	let minFontSize: number = OPEN_GRAPH_IMAGE_LAYOUT.minQuoteFontSize;
-	let maxFontSize: number = OPEN_GRAPH_IMAGE_LAYOUT.maxQuoteFontSize;
+	let maxFontSize = Math.min(
+		Math.max(
+			OPEN_GRAPH_IMAGE_LAYOUT.maxQuoteFontSize,
+			Math.floor(contentWidth / (quoteLength * 0.6)),
+		),
+		Math.floor(
+			availableQuoteHeight / OPEN_GRAPH_IMAGE_LAYOUT.quoteLineHeight,
+		),
+	);
 	while (minFontSize < maxFontSize) {
 		const candidate = Math.ceil((minFontSize + maxFontSize) / 2);
 		if (fits(candidate)) {
