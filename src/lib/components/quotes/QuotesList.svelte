@@ -32,7 +32,7 @@
 	>
 		<ul class="grid gap-4 sm:grid-cols-2">
 			{#each quotes.data as quote (quote.id)}
-				<li>
+				<li id={quote.id}>
 					<Quote {quote}>
 						{#snippet bottomRight()}
 							<Button

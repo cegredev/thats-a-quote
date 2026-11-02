@@ -18,5 +18,9 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
 		preview,
+		quote: {
+			id: quote.id,
+			groupId: quote.groupId,
+		},
 	};
 };

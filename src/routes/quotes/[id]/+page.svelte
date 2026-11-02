@@ -1,8 +1,15 @@
 <script lang="ts">
 	import { page } from "$app/state";
+	import { onMount } from "svelte";
 	import type { PageProps } from "./$types";
+	import { goto } from "$app/navigation";
 
 	let { data }: PageProps = $props();
+
+	// go back to group
+	onMount(async () => {
+		await goto(`/group/${data.quote.groupId}#${data.quote.id}`);
+	});
 </script>
 
 <svelte:head>
