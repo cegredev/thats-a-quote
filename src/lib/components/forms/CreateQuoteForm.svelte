@@ -15,7 +15,11 @@
 		mode,
 		quoteId,
 		onSuccess,
-	}: { onSuccess?: () => MaybePromise<void> } & {
+	}: {
+		onSuccess?: (
+			data: Record<string, any> | undefined,
+		) => MaybePromise<void>;
+	} & {
 		form: SuperValidated<QuoteCreationData>;
 		mode: "create" | "update";
 		quoteId?: string;
@@ -74,7 +78,7 @@
 	options={{
 		onResult: async ({ result }) => {
 			if (result.type === "success") {
-				if (onSuccess) await onSuccess();
+				await onSuccess?.(result.data);
 			}
 		},
 	}}

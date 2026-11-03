@@ -7,18 +7,31 @@
 		content,
 		copyText,
 		copySnippet,
-	}: { content: string; copyText?: string; copySnippet?: Snippet } = $props();
+		variant,
+		onComplete,
+		timeout,
+	}: {
+		content: string;
+		copyText?: string;
+		copySnippet?: Snippet;
+		variant?: Button.ButtonVariant;
+		onComplete?: (success: boolean) => void;
+		timeout?: number;
+	} = $props();
 
 	let copied = $state(false);
 
 	async function copyToClipboard() {
 		await navigator.clipboard.writeText(content);
 		copied = true;
-		setTimeout(() => (copied = false), 1500);
+		setTimeout(() => {
+			copied = false;
+			onComplete?.(true);
+		}, timeout ?? 1500);
 	}
 </script>
 
-<Button.Root variant="ghost" size="sm" onclick={copyToClipboard}>
+<Button.Root variant={variant ?? "ghost"} size="sm" onclick={copyToClipboard}>
 	{#if copied}
 		{m.group_copied()}
 	{:else if copyText}

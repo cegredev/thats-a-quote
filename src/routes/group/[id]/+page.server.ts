@@ -204,7 +204,7 @@ export const actions = {
 			},
 		);
 
-		return { form };
+		return { form, id: quote.id };
 	}),
 	editQuote: rateLimit("medium", async ({ request, params, url }) => {
 		const groupId = params.id;

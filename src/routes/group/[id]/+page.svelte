@@ -15,6 +15,7 @@
 		removeDrawerNavigationHistory,
 	} from "#lib/client/drawers.svelte.ts";
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
+	import ShareButton from "#lib/components/util/ShareButton.svelte";
 
 	let { data }: PageProps = $props();
 </script>
@@ -64,7 +65,16 @@
 		<CreateQuoteForm
 			form={data.quoteCreationForm}
 			mode="create"
-			onSuccess={() => removeDrawerNavigationHistory("create-quote")}
+			onSuccess={async (data) => {
+				removeDrawerNavigationHistory("create-quote");
+
+				if (data?.id)
+					setTimeout(() => {
+						gotoDrawer("share-quote", {
+							id: data.id,
+						});
+					}, 500);
+			}}
 		/>
 	{/if}
 </ResponsiveDrawer>
@@ -100,4 +110,30 @@
 			onSuccess={() => removeDrawerNavigationHistory("edit-group")}
 		/>
 	{/if}
+</ResponsiveDrawer>
+
+<ResponsiveDrawer
+	text={{
+		title: "Share quote?",
+	}}
+	widthClass="w-full max-w-2xl!"
+	navigationControl="share-quote"
+>
+	{#snippet buttons({ close })}
+		{@render close()}
+
+		<ShareButton
+			text={{ share: "Share", copy: "Copy link" }}
+			variants={{ action: "default" }}
+			content={{
+				url:
+					page.url.origin +
+					`/quotes/${page.url.searchParams.get("id")}`,
+			}}
+			onComplete={(success) => {
+				if (success) removeDrawerNavigationHistory("share-quote");
+			}}
+			disableCopyButtonTimeout
+		/>
+	{/snippet}
 </ResponsiveDrawer>
