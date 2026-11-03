@@ -42,16 +42,20 @@ async function _getActivePushSubscription(publicKey?: string) {
 		return "install-pwa-first" as const;
 	}
 
+	// When debugging with adb, the service worker is not registered at first
+	if (!navigator.serviceWorker) return "install-pwa-first" as const;
+
 	const registration = await navigator.serviceWorker.ready;
 	publicKey ??= await getPublicKey();
-	const applicationServerKey = urlBase64ToUint8Array(publicKey);
+	const applicationServerKey = urlBase64ToUint8Array(publicKey).buffer;
 
 	let subscription = await registration.pushManager.getSubscription();
 
-	// If the server's key ever changed (reset DB, new install), the old
-	// subscription is useless. Detect that and resubscribe.
+	// Some browsers (including Firefox for Android) don't expose this key on
+	// existing subscriptions, so only replace one when a reported key differs.
 	if (
 		subscription &&
+		subscription.options.applicationServerKey &&
 		!keysMatch(
 			subscription.options.applicationServerKey,
 			applicationServerKey,
@@ -112,8 +116,9 @@ export async function unsubscribeFromPush() {
 	_makePushApiRequest(false, subscription);
 }
 
-function keysMatch(a: ArrayBuffer | null, b: Uint8Array) {
+function keysMatch(a: ArrayBuffer | null, b: ArrayBuffer) {
 	if (!a) return false;
 	const x = new Uint8Array(a);
-	return x.length === b.length && x.every((v, i) => v === b[i]);
+	const y = new Uint8Array(b);
+	return x.length === y.length && x.every((v, i) => v === y[i]);
 }
