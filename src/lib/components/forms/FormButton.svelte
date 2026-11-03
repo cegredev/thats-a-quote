@@ -8,6 +8,7 @@
 		ButtonVariant,
 	} from "#lib/shadcn/components/ui/button/index.js";
 	import type { Snippet } from "svelte";
+	import { cn } from "cn";
 
 	let {
 		action,
@@ -35,6 +36,7 @@
 {#if !serverRequiresUser || $session.data?.user}
 	<form
 		method="POST"
+		class="h-min flex items-center"
 		{action}
 		use:enhance={() =>
 			async ({ result, update }) => {
@@ -52,7 +54,12 @@
 			{@render hiddenInputs()}
 		{/if}
 
-		<Button.Root type="submit" {variant} {size} class={classes}>
+		<Button.Root
+			type="submit"
+			{variant}
+			{size}
+			class={cn("w-full", classes)}
+		>
 			{#if typeof text === "string"}
 				{text}
 			{:else}

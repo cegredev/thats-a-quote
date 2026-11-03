@@ -4,12 +4,12 @@
 	import { m } from "#lib/paraglide/messages.js";
 	import CopyButton from "#lib/components/util/CopyButton.svelte";
 	import FormButton from "#lib/components/forms/FormButton.svelte";
-	import GenericDialog from "#lib/components/dialogs/GenericDialog.svelte";
 	import type { Group } from "#lib/zod-schemas.ts";
 	import { Link, Pencil } from "@lucide/svelte";
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
 	import { gotoDrawer } from "#lib/client/drawers.svelte.ts";
 	import RequireLoginShield from "#lib/components/meta/RequireLoginShield.svelte";
+	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 
 	let {
 		group,
@@ -55,7 +55,7 @@
 			</p>
 		</div>
 
-		<div class="flex shrink-0 gap-2">
+		<div class="flex shrink-0 gap-2 items-center">
 			<CopyButton content={page.url.href}>
 				{#snippet copySnippet()}
 					<Link />
@@ -63,7 +63,7 @@
 			</CopyButton>
 
 			{#if userIsMember || leaveDialogOpen}
-				<GenericDialog
+				<ResponsiveDrawer
 					text={{
 						trigger: m.group_leave(),
 						title: m.group_leaveTitle(),
@@ -71,9 +71,14 @@
 							name: group.name,
 						}),
 					}}
-					bind:open={leaveDialogOpen}
+					triggerVariant="ghost"
+					triggerClass="text-destructive"
+					navigationControl="leave-group"
 				>
-					{#snippet buttons()}
+					{#snippet children()}{/snippet}
+					{#snippet buttons({ close })}
+						{@render close()}
+
 						<FormButton
 							action="?/leaveGroup"
 							serverRequiresUser
@@ -86,7 +91,7 @@
 							classes=""
 						/>
 					{/snippet}
-				</GenericDialog>
+				</ResponsiveDrawer>
 			{:else}
 				<RequireLoginShield>
 					<FormButton

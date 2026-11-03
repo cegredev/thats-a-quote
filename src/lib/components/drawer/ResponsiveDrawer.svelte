@@ -14,14 +14,17 @@
 		removeDrawerNavigationHistory,
 	} from "#lib/client/drawers.svelte.ts";
 	import type { DrawerKey } from "#lib/drawers-shared.ts";
+	import { m } from "#lib/paraglide/messages.js";
 
 	type Props = {
 		text: {
 			title: string;
 			description?: string;
 			trigger?: string;
+			close?: string;
 		};
-		children: Snippet;
+		children?: Snippet;
+		buttons?: Snippet<[{ close: Snippet }]>;
 		trigger?: Snippet;
 		open?: boolean;
 		triggerVariant?: ButtonVariant;
@@ -36,6 +39,7 @@
 	let {
 		text,
 		children,
+		buttons,
 		trigger,
 		open = $bindable(false),
 		triggerVariant = "outline",
@@ -65,6 +69,18 @@
 	});
 </script>
 
+{#snippet dialogClose()}
+	<Dialog.Close class={buttonVariants({ variant: "ghost" })}>
+		{text.close ?? m.common_cancel()}
+	</Dialog.Close>
+{/snippet}
+
+{#snippet drawerClose()}
+	<Drawer.Close class={buttonVariants({ variant: "ghost" })}>
+		{text.close ?? m.common_cancel()}
+	</Drawer.Close>
+{/snippet}
+
 {#if isDesktop.current}
 	<Dialog.Root bind:open>
 		{#if trigger || text.trigger}
@@ -91,7 +107,12 @@
 					<Dialog.Description>{text.description}</Dialog.Description>
 				{/if}
 			</Dialog.Header>
-			{@render children()}
+
+			{@render children?.()}
+
+			<div class="flex items-center justify-end">
+				{@render buttons?.({ close: dialogClose })}
+			</div>
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
@@ -120,8 +141,15 @@
 					<Drawer.Description>{text.description}</Drawer.Description>
 				{/if}
 			</Drawer.Header>
+
 			<div class="overflow-y-scroll">
-				{@render children()}
+				{@render children?.()}
+
+				<div
+					class="w-full grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
+				>
+					{@render buttons?.({ close: drawerClose })}
+				</div>
 			</div>
 		</Drawer.Content>
 	</Drawer.Root>
