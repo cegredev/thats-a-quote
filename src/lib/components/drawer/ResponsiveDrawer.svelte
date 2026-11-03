@@ -104,7 +104,7 @@
 					}
 				}}
 			/>
-			<Label for="dont-show-again">Don't show again</Label>
+			<Label for="dont-show-again">{m.dont_show_again_text()}</Label>
 		</Field.Field>
 	{/if}
 {/snippet}

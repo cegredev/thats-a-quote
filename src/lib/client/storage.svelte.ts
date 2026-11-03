@@ -180,6 +180,10 @@ class DontShowAgainStore {
 	set(groupIDs: DrawerKey[]): void {
 		this.drawers = groupIDs;
 	}
+
+	clear(): void {
+		this.drawers = [];
+	}
 }
 
 export const dontShowAgainStore = new DontShowAgainStore();

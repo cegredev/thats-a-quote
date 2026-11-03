@@ -18,6 +18,9 @@
 	"settings_notificationsAriaLabel": "Benachrichtigungen",
 	"settings_language": "Sprache",
 	"settings_languageDescription": "Wähle die Sprache aus, in der diese App angezeigt werden soll.",
+	"settings_resetDontShowAgain": "„Nicht mehr anzeigen“ zurücksetzen",
+	"settings_resetDontShowAgainDescription": "Setzt alle Einstellungen für „Nicht mehr anzeigen“ bei Popups und Schubladen zurück.",
+	"common_reset": "Zurücksetzen",
 	"pagination_navigation": "Seitennavigation",
 	"pagination_previousPage": "Vorherige Seite",
 	"pagination_nextPage": "Nächste Seite",
@@ -137,5 +140,6 @@
 	"group_create_head": "Gruppe erstellen",
 	"quote_create_head": "Zitat hinzufügen",
 	"push_install_as_pwa_first": "Erst als PWA installieren",
-	"account_username": "Nutzername"
+	"account_username": "Nutzername",
+	"dont_show_again_text": "Nicht mehr anzeigen"
 }

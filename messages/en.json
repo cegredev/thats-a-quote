@@ -18,6 +18,9 @@
 	"settings_notificationsAriaLabel": "Notifications",
 	"settings_language": "Language",
 	"settings_languageDescription": "Choose the language you want this app to be displayed in.",
+	"settings_resetDontShowAgain": "Reset don't show again",
+	"settings_resetDontShowAgainDescription": "Resets all 'don't show again' settings for popups and drawers.",
+	"common_reset": "Reset",
 	"pagination_navigation": "Pagination",
 	"pagination_previousPage": "Previous page",
 	"pagination_nextPage": "Next page",
@@ -137,5 +140,6 @@
 	"group_create_head": "Create a group",
 	"quote_create_head": "Add a quote",
 	"push_install_as_pwa_first": "Install as PWA first",
-	"account_username": "Username"
+	"account_username": "Username",
+	"dont_show_again_text": "Don't show again"
 }

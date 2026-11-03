@@ -10,6 +10,8 @@
 	import LocaleSwitcher from "#lib/components/meta/LocaleSelect.svelte";
 	import { Badge } from "#lib/shadcn/components/ui/badge/index.js";
 	import RequireLoginShield from "#lib/components/meta/RequireLoginShield.svelte";
+	import Button from "#lib/shadcn/components/ui/button/button.svelte";
+	import { dontShowAgainStore } from "#lib/client/storage.svelte.ts";
 
 	let data: PageProps = $props();
 
@@ -72,6 +74,27 @@
 			</Item.Content>
 			<Item.Actions>
 				<LocaleSwitcher />
+			</Item.Actions>
+		</Item.Root>
+	</div>
+
+	<div class="flex w-full flex-col gap-6">
+		<Item.Root variant="outline">
+			<Item.Content>
+				<Item.Title>{m.settings_resetDontShowAgain()}</Item.Title>
+				<Item.Description class="line-clamp-none">
+					{m.settings_resetDontShowAgainDescription()}
+				</Item.Description>
+			</Item.Content>
+			<Item.Actions>
+				<Button
+					variant="destructive"
+					onclick={() => {
+						dontShowAgainStore.clear();
+					}}
+				>
+					{m.common_reset()}
+				</Button>
 			</Item.Actions>
 		</Item.Root>
 	</div>
