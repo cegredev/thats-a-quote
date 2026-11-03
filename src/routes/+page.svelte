@@ -4,7 +4,7 @@
 	import GroupsList from "#lib/components/groups/GroupsList.svelte";
 	import Title from "#lib/components/util/Title.svelte";
 	import Button from "#lib/shadcn/components/ui/button/button.svelte";
-	import { PlusIcon } from "@lucide/svelte";
+	import PlusIcon from "@lucide/svelte/icons/plus";
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import GroupCreationForm from "#lib/components/forms/GroupCreationForm.svelte";
 	import {

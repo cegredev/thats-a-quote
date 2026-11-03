@@ -5,7 +5,9 @@
 	import { onMount } from "svelte";
 	import { authClient } from "#lib/client/frontend-auth.js";
 	import NavTabs from "#lib/components/tabs/NavTabs.svelte";
-	import { HouseIcon, SettingsIcon, UserRound } from "@lucide/svelte";
+	import HouseIcon from "@lucide/svelte/icons/house";
+	import SettingsIcon from "@lucide/svelte/icons/settings";
+	import UserRound from "@lucide/svelte/icons/user";
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import { removeDrawerNavigationHistory } from "#lib/client/drawers.svelte.ts";
 	import * as Button from "#lib/shadcn/components/ui/button/index.js";
@@ -14,20 +16,16 @@
 	let { data, children }: LayoutProps = $props();
 
 	onMount(() => {
-		// Removes flickering of the login state on page load
-		// We do this here to avoid a warning in the load function about fetch
 		authClient.hydrateSession(data.session);
 	});
 
-	let navHeight: number | undefined = $state(undefined);
-
 	const session = authClient.useSession();
+	const currentSession = $derived(
+		$session.isPending ? data.session : $session.data,
+	);
 </script>
 
-<div
-	class="min-h-screen bg-background"
-	style={`--nav-height: ${navHeight ?? 0}px`}
->
+<div class="min-h-screen bg-background">
 	<header class="border-b border-border">
 		<div
 			class="mx-auto flex max-w-3xl items-center justify-between px-2 py-2"
@@ -41,7 +39,7 @@
 			</a>
 
 			<div class="flex items-center gap-4">
-				{#if $session.data?.user}
+				{#if currentSession?.user}
 					<a
 						href="/user"
 						aria-label={m.login_link()}
@@ -72,11 +70,11 @@
 		{@render children()}
 	</main>
 
-	<div style={`height: ${(navHeight ?? 0) + 10}px`}></div>
+	<div style="height: calc(var(--nav-height) + 10px)"></div>
 
 	<nav
-		bind:clientHeight={navHeight}
 		class="flex mx-auto lg:max-w-xl lg:py-2 justify-center fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full"
+		style="height: var(--nav-height)"
 	>
 		<NavTabs
 			values={["home", "settings"]}

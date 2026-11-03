@@ -11,6 +11,7 @@
 }
 
 :root {
+	--nav-height: 52px;
 	--font-display: "Fraunces", "Georgia", serif;
 	--font-body: "Inter", "system-ui", sans-serif;
 	--background: oklch(97% 0.025 85);
@@ -45,6 +46,12 @@
 	--sidebar-accent-foreground: oklch(0.212 0.019 322.12);
 	--sidebar-border: oklch(0.922 0.005 325.62);
 	--sidebar-ring: oklch(0.711 0.019 323.02);
+}
+
+@media (min-width: 64rem) {
+	:root {
+		--nav-height: 68px;
+	}
 }
 
 body {
