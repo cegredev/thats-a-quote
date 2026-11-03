@@ -5,6 +5,7 @@ import {
 } from "#lib/drawers-shared.ts";
 import { goto } from "$app/navigation";
 import { page } from "$app/state";
+import { dontShowAgainStore } from "./storage.svelte";
 
 export const drawerIsActive = (drawer: DrawerKey): boolean =>
 	page.url.searchParams.get(DRAWER_QUERY_PARAM) === drawer;
@@ -13,6 +14,8 @@ export const gotoDrawer = async (
 	drawer: DrawerKey,
 	drawerArgs: DrawerParams[DrawerKey] = {},
 ): Promise<void> => {
+	if (dontShowAgainStore.has(drawer)) return;
+
 	const additionalArgs: [string, string][] = [];
 	if (drawerArgs !== undefined) {
 		Object.entries(drawerArgs).forEach((arr) => additionalArgs.push(arr));

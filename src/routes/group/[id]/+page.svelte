@@ -118,6 +118,7 @@
 	}}
 	widthClass="w-full max-w-2xl!"
 	navigationControl="share-quote"
+	allowDontShowAgain
 >
 	{#snippet buttons({ close })}
 		{@render close()}

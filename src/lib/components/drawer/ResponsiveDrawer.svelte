@@ -15,7 +15,10 @@
 	} from "#lib/client/drawers.svelte.ts";
 	import type { DrawerKey } from "#lib/drawers-shared.ts";
 	import { m } from "#lib/paraglide/messages.js";
-
+	import { dontShowAgainStore } from "#lib/client/storage.svelte.ts";
+	import * as Field from "#lib/shadcn/components/ui/field/index.js";
+	import { Checkbox } from "#lib/shadcn/components/ui/checkbox/index.js";
+	import { Label } from "#lib/shadcn/components/ui/label/index.js";
 	type Props = {
 		text: {
 			title: string;
@@ -34,6 +37,7 @@
 		widthClass?: string;
 		onOpenChange?: (open: boolean) => void;
 		navigationControl?: DrawerKey;
+		allowDontShowAgain?: boolean;
 	};
 
 	let {
@@ -49,6 +53,7 @@
 		widthClass = "",
 		onOpenChange,
 		navigationControl,
+		allowDontShowAgain,
 	}: Props = $props();
 
 	const isDesktop = new MediaQuery("(min-width: 768px)");
@@ -79,6 +84,29 @@
 	<Drawer.Close class={buttonVariants({ variant: "ghost" })}>
 		{text.close ?? m.common_cancel()}
 	</Drawer.Close>
+{/snippet}
+
+{#snippet dontShowAgain()}
+	{#if allowDontShowAgain}
+		<Field.Field orientation="horizontal">
+			<Checkbox
+				id="dont-show-again"
+				checked={navigationControl
+					? dontShowAgainStore.has(navigationControl)
+					: undefined}
+				onCheckedChange={(checked) => {
+					if (!navigationControl) return;
+
+					if (checked) {
+						dontShowAgainStore.add(navigationControl);
+					} else {
+						dontShowAgainStore.remove(navigationControl);
+					}
+				}}
+			/>
+			<Label for="dont-show-again">Don't show again</Label>
+		</Field.Field>
+	{/if}
 {/snippet}
 
 {#if isDesktop.current}
@@ -145,10 +173,14 @@
 			<div class="overflow-y-scroll">
 				{@render children?.()}
 
-				<div
-					class="w-full grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
-				>
-					{@render buttons?.({ close: drawerClose })}
+				<div class="flex flex-col w-full gap-4">
+					{@render dontShowAgain()}
+
+					<div
+						class="w-full grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
+					>
+						{@render buttons?.({ close: drawerClose })}
+					</div>
 				</div>
 			</div>
 		</Drawer.Content>

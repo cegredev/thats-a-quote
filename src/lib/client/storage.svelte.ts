@@ -1,8 +1,10 @@
+import type { DrawerKey } from "#lib/drawers-shared.ts";
 import type { GroupID } from "#lib/types.js";
 
 const genKey = (key: string) => `thats-a-quote:${key}`;
 const VERSION_KEY = genKey("local-storage-version");
 const GROUPS_KEY = genKey("groups");
+const DONT_SHOW_AGAIN_KEY = genKey("dont-show-again");
 
 type Version = {
 	next?: string;
@@ -128,6 +130,59 @@ class GroupIDsStore {
 }
 
 export const groupIDsStore = new GroupIDsStore();
+
+function loadInitialDontShowAgainDrawers(): DrawerKey[] {
+	if (!hasStorage()) return [];
+	migrateStorage();
+	return safeParse<DrawerKey[]>(
+		window.localStorage.getItem(DONT_SHOW_AGAIN_KEY),
+		[],
+	);
+}
+
+class DontShowAgainStore {
+	drawers = $state<DrawerKey[]>(loadInitialDontShowAgainDrawers());
+
+	constructor() {
+		// $effect.root gives us a standalone reactive scope, since this
+		// store lives outside any component. It's never torn down here
+		// because the store is meant to live for the lifetime of the app;
+		// the cleanup function is returned in case you ever need it.
+		$effect.root(() => {
+			$effect(() => {
+				// Reading this.ids here is what makes the effect re-run
+				// whenever the array changes.
+				const drawers = this.drawers;
+
+				if (!hasStorage()) return;
+				window.localStorage.setItem(
+					DONT_SHOW_AGAIN_KEY,
+					JSON.stringify(drawers),
+				);
+			});
+		});
+	}
+
+	add(groupID: DrawerKey): void {
+		if (!this.drawers.includes(groupID)) {
+			this.drawers.push(groupID);
+		}
+	}
+
+	remove(id: DrawerKey): void {
+		this.drawers = this.drawers.filter((g) => g !== id);
+	}
+
+	has(groupID: DrawerKey): boolean {
+		return this.drawers.includes(groupID);
+	}
+
+	set(groupIDs: DrawerKey[]): void {
+		this.drawers = groupIDs;
+	}
+}
+
+export const dontShowAgainStore = new DontShowAgainStore();
 
 export function maybePersistedState<T>(props: {
 	overrideValue?: T;
