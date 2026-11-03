@@ -9,6 +9,7 @@
 	import ResponsiveDrawer from "#lib/components/drawer/ResponsiveDrawer.svelte";
 	import { removeDrawerNavigationHistory } from "#lib/client/drawers.svelte.ts";
 	import * as Button from "#lib/shadcn/components/ui/button/index.js";
+	import { Toaster } from "#lib/shadcn/components/ui/sonner/index.ts";
 
 	let { data, children }: LayoutProps = $props();
 
@@ -112,3 +113,5 @@
 		<Button.Root href="/user">{m.login_link()}</Button.Root>
 	</div>
 </ResponsiveDrawer>
+
+<Toaster richColors position="top-center" />
