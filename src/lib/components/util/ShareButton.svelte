@@ -1,18 +1,21 @@
+<script module lang="ts">
+	let shareDisabled = $state(false);
+</script>
+
 <script lang="ts">
 	import { Link, Share } from "@lucide/svelte";
 	import * as Button from "#lib/shadcn/components/ui/button/index.js";
 	import CopyButton from "./CopyButton.svelte";
 
 	let { content }: { content: ShareData } = $props();
-	let showCopyFallback = $state(false);
 
 	async function doShare() {
 		if (!navigator.share) return;
 
-		showCopyFallback = false;
+		shareDisabled = false;
 		const fallbackTimer = /Firefox/i.test(navigator.userAgent)
 			? setTimeout(() => {
-					showCopyFallback = true;
+					shareDisabled = true;
 				}, 5_000)
 			: undefined;
 
@@ -26,13 +29,13 @@
 			}
 		} finally {
 			clearTimeout(fallbackTimer);
-			showCopyFallback = false;
+			shareDisabled = false;
 		}
 	}
 </script>
 
 <!-- navigator.share can be undefined, but the types don't reflect that -->
-{#if (navigator.share as any) && !showCopyFallback}
+{#if (navigator.share as any) && !shareDisabled}
 	<Button.Root variant="ghost" size="sm" onclick={doShare}>
 		<Share />
 	</Button.Root>
