@@ -138,8 +138,12 @@
 
 			{@render children?.()}
 
-			<div class="flex items-center justify-end">
-				{@render buttons?.({ close: dialogClose })}
+			<div class="flex flex-col w-full gap-4">
+				{@render dontShowAgain()}
+
+				<div class="flex items-center justify-end">
+					{@render buttons?.({ close: dialogClose })}
+				</div>
 			</div>
 		</Dialog.Content>
 	</Dialog.Root>

@@ -73,7 +73,7 @@
 						gotoDrawer("share-quote", {
 							id: data.id,
 						});
-					}, 500);
+					}, 100);
 			}}
 		/>
 	{/if}
@@ -116,7 +116,6 @@
 	text={{
 		title: "Share quote?",
 	}}
-	widthClass="w-full max-w-2xl!"
 	navigationControl="share-quote"
 	allowDontShowAgain
 >
