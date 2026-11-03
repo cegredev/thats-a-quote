@@ -13,21 +13,24 @@
 </script>
 
 <svelte:head>
-	<title>That's a quote!</title>
-	<meta name="description" content="Collect quotes" />
+	<title>Check out this quote!</title>
+	<!-- <meta name="description" content="Collect quotes" /> -->
 
 	<meta property="og:site_name" content="that's a quote!" />
 	<meta property="og:url" content={page.url.origin + page.url.pathname} />
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content={"A title"} />
-	<meta property="og:description" content={"A description"} />
+	<meta property="og:title" content={"Check out this quote!"} />
+	<!-- <meta property="og:description" content={""} /> -->
 	<meta property="og:image" content={data.preview.url} />
-	<meta property="og:image:alt" content={"image_alt"} />
+	<meta
+		property="og:image:alt"
+		content={`"${data.quote.text}" by ${data.quote.person}`}
+	/>
 	<meta property="og:image:width" content={String(data.preview.width)} />
 	<meta property="og:image:height" content={String(data.preview.height)} />
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="that's a quote!" />
-	<meta name="twitter:description" content="Collect quotes" />
+	<!-- <meta name="twitter:description" content="Collect quotes" /> -->
 	<meta name="twitter:image" content={data.preview.url} />
 </svelte:head>
