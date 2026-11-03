@@ -4,10 +4,10 @@ export const OPEN_GRAPH_IMAGE_LAYOUT = {
 	horizontalPadding: 64,
 	paddingTop: 64,
 	paddingBottom: 64,
-	maxQuoteFontSize: 48,
-	minQuoteFontSize: 12,
+	maxQuoteFontSize: 64,
+	minQuoteFontSize: 32,
 	quoteLineHeight: 1.2,
-	attributionFontSize: 22,
+	attributionFontSize: 40,
 	attributionLineHeight: 1.2,
 	attributionMarginTop: 32,
 } as const;
