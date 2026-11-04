@@ -30,14 +30,6 @@
 
 		return matching[0][0];
 	});
-
-	// let startingValue = $derived(
-	// 	([...Object.values(configs)]
-	// 		.filter((c: any) => page.url.pathname.startsWith(c.navigation))
-	// 		.toSorted(
-	// 			(a: any, b: any) => a.navigation.length - b.navigation.length,
-	// 		)[0]) as string,
-	// );
 </script>
 
 <Tabs.Root value={startingValue} class="w-full">

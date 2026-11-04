@@ -73,7 +73,7 @@
 	<div style="height: calc(var(--nav-height) + 10px)"></div>
 
 	<nav
-		class="flex mx-auto lg:max-w-xl lg:py-2 justify-center fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full"
+		class="flex mx-auto lg:max-w-xl lg:py-2 justify-center fixed left-1/2 -translate-x-1/2 z-50 w-full bottom-nav"
 		style="height: var(--nav-height)"
 	>
 		<NavTabs
@@ -113,3 +113,9 @@
 </ResponsiveDrawer>
 
 <Toaster richColors position="top-center" />
+
+<style>
+	.bottom-nav {
+		bottom: calc(env(safe-area-inset-bottom, 0px) * -1);
+	}
+</style>
