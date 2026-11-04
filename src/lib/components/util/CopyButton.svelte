@@ -10,6 +10,7 @@
 		variant,
 		onComplete,
 		timeout,
+		size,
 	}: {
 		content: string;
 		copyText?: string;
@@ -17,6 +18,7 @@
 		variant?: Button.ButtonVariant;
 		onComplete?: (success: boolean) => void;
 		timeout?: number;
+		size?: Button.ButtonSize;
 	} = $props();
 
 	let copied = $state(false);
@@ -31,7 +33,11 @@
 	}
 </script>
 
-<Button.Root variant={variant ?? "ghost"} size="sm" onclick={copyToClipboard}>
+<Button.Root
+	variant={variant ?? "ghost"}
+	size={size ?? "sm"}
+	onclick={copyToClipboard}
+>
 	{#if copied}
 		{m.group_copied()}
 	{:else if copyText}

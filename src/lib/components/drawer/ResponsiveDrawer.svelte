@@ -75,13 +75,13 @@
 </script>
 
 {#snippet dialogClose()}
-	<Dialog.Close class={buttonVariants({ variant: "ghost" })}>
+	<Dialog.Close class={buttonVariants({ variant: "outline" })}>
 		{text.close ?? m.common_cancel()}
 	</Dialog.Close>
 {/snippet}
 
 {#snippet drawerClose()}
-	<Drawer.Close class={buttonVariants({ variant: "ghost" })}>
+	<Drawer.Close class={buttonVariants({ variant: "outline" })}>
 		{text.close ?? m.common_cancel()}
 	</Drawer.Close>
 {/snippet}
@@ -104,7 +104,12 @@
 					}
 				}}
 			/>
-			<Label for="dont-show-again">{m.dont_show_again_text()}</Label>
+			<Label
+				for="dont-show-again"
+				class={cn(!isDesktop.current ? "w-full" : "")}
+			>
+				{m.dont_show_again_text()}
+			</Label>
 		</Field.Field>
 	{/if}
 {/snippet}
@@ -138,13 +143,17 @@
 
 			{@render children?.()}
 
-			<div class="flex flex-col w-full gap-4">
-				{@render dontShowAgain()}
+			{#if buttons && allowDontShowAgain}
+				<Dialog.Footer>
+					<div class="flex flex-col w-full gap-4">
+						{@render dontShowAgain()}
 
-				<div class="flex items-center justify-end">
-					{@render buttons?.({ close: dialogClose })}
-				</div>
-			</div>
+						<div class="flex items-center justify-end gap-1">
+							{@render buttons?.({ close: dialogClose })}
+						</div>
+					</div>
+				</Dialog.Footer>
+			{/if}
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
@@ -176,17 +185,21 @@
 
 			<div class="overflow-y-scroll">
 				{@render children?.()}
-
-				<div class="flex flex-col w-full gap-4">
-					{@render dontShowAgain()}
-
-					<div
-						class="w-full grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
-					>
-						{@render buttons?.({ close: drawerClose })}
-					</div>
-				</div>
 			</div>
+
+			{#if buttons && allowDontShowAgain}
+				<Drawer.Footer>
+					<div class="flex flex-col w-full gap-4">
+						{@render dontShowAgain()}
+
+						<div
+							class="w-full gap-1 grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]"
+						>
+							{@render buttons?.({ close: drawerClose })}
+						</div>
+					</div>
+				</Drawer.Footer>
+			{/if}
 		</Drawer.Content>
 	</Drawer.Root>
 {/if}

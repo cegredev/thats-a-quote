@@ -15,6 +15,7 @@
 		variants,
 		onComplete,
 		disableCopyButtonTimeout,
+		size = "default",
 	}: {
 		content: ShareData;
 		text?: { share?: string; copy?: string };
@@ -22,6 +23,7 @@
 		variants?: { action: Button.ButtonVariant };
 		onComplete?: (success: boolean) => void;
 		disableCopyButtonTimeout?: boolean;
+		size?: Button.ButtonSize;
 	} = $props();
 
 	async function doShare() {
@@ -54,10 +56,10 @@
 <!-- navigator.share can be undefined, but the types don't reflect that -->
 {#if (navigator.share as any) && !shareDisabled}
 	<Button.Root
-		size="sm"
 		onclick={doShare}
 		variant={variants?.action ?? "ghost"}
 		class={cn(classes?.share ?? "")}
+		{size}
 	>
 		{#if text?.share}
 			<span>{text.share}</span>
@@ -71,6 +73,7 @@
 		variant={variants?.action}
 		{onComplete}
 		timeout={disableCopyButtonTimeout ? 0 : undefined}
+		{size}
 	>
 		{#snippet copySnippet()}
 			{#if text?.copy}
