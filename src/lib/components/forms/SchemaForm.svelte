@@ -131,8 +131,7 @@
 </script>
 
 <form
-	// px-1 is so that the outlines of selected inputs don't get cut off
-	class={cn("flex flex-col gap-3 px-1", className)}
+	class={cn("flex flex-col gap-3", className)}
 	method="POST"
 	{action}
 	use:enhance

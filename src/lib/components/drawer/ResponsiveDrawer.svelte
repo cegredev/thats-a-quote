@@ -175,6 +175,7 @@
 				{/if}
 			</Drawer.Trigger>
 		{/if}
+
 		<Drawer.Content class={cn("px-6", contentClass)}>
 			<Drawer.Header class="text-start">
 				<Drawer.Title>{text.title}</Drawer.Title>
@@ -183,7 +184,8 @@
 				{/if}
 			</Drawer.Header>
 
-			<div class="overflow-y-scroll">
+			<!-- -m-1 p-1 is so that box-shadow gets rendered correctly and not cut off -->
+			<div class="overflow-y-scroll -m-1 p-1">
 				{@render children?.()}
 			</div>
 
