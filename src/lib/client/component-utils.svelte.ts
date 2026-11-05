@@ -1,18 +1,24 @@
 import { goto } from "$app/navigation";
+import { tick } from "svelte";
+import type { Action } from "svelte/action";
 
-export const autogrow = (node: HTMLTextAreaElement) => {
+// TODO: Convert to attachment
+export const autogrow: Action<HTMLElement, unknown> = (
+	node: HTMLElement,
+	_value?: unknown,
+) => {
 	function adjustHeight() {
-		node.style.height = "auto"; // Reset the height
-		node.style.height = `${node.scrollHeight}px`; // Set height to fit content
+		node.style.height = "auto";
+		node.style.height = `${node.scrollHeight}px`;
 	}
 
-	// Attach the `input` event listener
 	node.addEventListener("input", adjustHeight);
-
-	// Adjust height on mount
-	adjustHeight();
+	void tick().then(adjustHeight);
 
 	return {
+		update() {
+			void tick().then(adjustHeight);
+		},
 		destroy() {
 			node.removeEventListener("input", adjustHeight);
 		},
