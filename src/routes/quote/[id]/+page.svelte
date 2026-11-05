@@ -12,10 +12,16 @@
 
 	let title = $derived(`Quote by ${data.quote.person}`);
 	let description = $derived(data.quote.text);
-	let image = $derived(data.preview.url);
-	let imageWidth = $derived(String(data.preview.width));
-	let imageHeight = $derived(String(data.preview.height));
-	let imageAlt = $derived(`"${data.quote.text}" by ${data.quote.person}`);
+	let image = $derived(
+		data.preview
+			? {
+					url: data.preview.url,
+					width: String(data.preview.width),
+					height: String(data.preview.height),
+					alt: `"${data.quote.text}" by ${data.quote.person}`,
+				}
+			: undefined,
+	);
 </script>
 
 <svelte:head>
@@ -26,13 +32,18 @@
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content={title} />
 	<meta property="og:description" content={description} />
-	<meta property="og:image" content={image} />
-	<meta property="og:image:alt" content={imageAlt} />
-	<meta property="og:image:width" content={imageWidth} />
-	<meta property="og:image:height" content={imageHeight} />
+
+	{#if image}
+		<meta property="og:image" content={image.url} />
+		<meta property="og:image:alt" content={image.alt} />
+		<meta property="og:image:width" content={image.width} />
+		<meta property="og:image:height" content={image.height} />
+	{/if}
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:description" content={description} />
-	<meta name="twitter:image" content={data.preview.url} />
+	{#if image}
+		<meta name="twitter:image" content={image.url} />
+	{/if}
 </svelte:head>
