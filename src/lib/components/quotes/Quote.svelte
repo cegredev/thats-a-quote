@@ -87,7 +87,7 @@
 		{#if bottomRight}
 			<div class="absolute bottom-2 right-2">
 				<ShareButton
-					content={{ url: page.url.origin + `/quotes/${quote.id}` }}
+					content={{ url: page.url.origin + `/quote/${quote.id}` }}
 				/>
 
 				{@render bottomRight()}

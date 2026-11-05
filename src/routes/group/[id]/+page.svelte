@@ -128,7 +128,7 @@
 			content={{
 				url:
 					page.url.origin +
-					`/quotes/${page.url.searchParams.get("id")}`,
+					`/quote/${page.url.searchParams.get("id")}`,
 			}}
 			onComplete={(success) => {
 				if (success) removeDrawerNavigationHistory("share-quote");
