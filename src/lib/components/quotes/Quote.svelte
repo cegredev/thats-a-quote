@@ -83,16 +83,6 @@
 				{/if}
 			</div>
 		</div>
-
-		{#if bottomRight}
-			<div class="absolute bottom-2 right-2">
-				<ShareButton
-					content={{ url: page.url.origin + `/quote/${quote.id}` }}
-				/>
-
-				{@render bottomRight()}
-			</div>
-		{/if}
 	</Card.Content>
 
 	<Card.Footer class="pl-0">
@@ -107,7 +97,7 @@
 		</p>
 	</Card.Footer>
 
-	<div class="absolute -bottom-4 left-2">
+	<div class="absolute -bottom-3 left-2">
 		<span
 			class="inline-flex items-center gap-2 rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
 		>
@@ -138,6 +128,27 @@
 					</EmojiPickerPopoverForm>
 				</RequireLoginShield>
 			</span>
+		</span>
+	</div>
+
+	<div class="absolute -bottom-3 right-2">
+		<span
+			class="inline-flex items-center rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
+		>
+			{#if bottomRight}
+				<ShareButton
+					content={{
+						url: page.url.origin + `/quote/${quote.id}`,
+					}}
+					size="sm"
+					classes={{
+						share: "h-min",
+						copy: ["h-min"],
+					}}
+				/>
+
+				{@render bottomRight()}
+			{/if}
 		</span>
 	</div>
 </Card.Root>

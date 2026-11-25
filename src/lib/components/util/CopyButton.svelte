@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { m } from "#lib/paraglide/messages.js";
 	import * as Button from "#lib/shadcn/components/ui/button/index.js";
+	import { cn, type ClassArray } from "cn";
 	import type { Snippet } from "svelte";
 
 	let {
@@ -11,6 +12,7 @@
 		onComplete,
 		timeout,
 		size,
+		classes,
 	}: {
 		content: string;
 		copyText?: string;
@@ -19,6 +21,7 @@
 		onComplete?: (success: boolean) => void;
 		timeout?: number;
 		size?: Button.ButtonSize;
+		classes?: ClassArray;
 	} = $props();
 
 	let copied = $state(false);
@@ -37,6 +40,7 @@
 	variant={variant ?? "ghost"}
 	size={size ?? "sm"}
 	onclick={copyToClipboard}
+	class={cn(classes)}
 >
 	{#if copied}
 		{m.group_copied()}

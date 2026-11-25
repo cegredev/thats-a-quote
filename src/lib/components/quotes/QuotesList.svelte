@@ -44,6 +44,7 @@
 								size="icon-sm"
 								aria-label={m.edit_quote()}
 								title={m.edit_quote()}
+								class="h-min"
 							>
 								<Pencil class="size-4" />
 							</Button>

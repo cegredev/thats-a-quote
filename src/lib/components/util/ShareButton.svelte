@@ -6,7 +6,7 @@
 	import { Link, Share } from "@lucide/svelte";
 	import * as Button from "#lib/shadcn/components/ui/button/index.js";
 	import CopyButton from "./CopyButton.svelte";
-	import { cn } from "cn";
+	import { cn, type ClassArray } from "cn";
 
 	let {
 		content,
@@ -19,7 +19,7 @@
 	}: {
 		content: ShareData;
 		text?: { share?: string; copy?: string };
-		classes?: { share: string };
+		classes?: { share: string; copy?: ClassArray };
 		variants?: { action: Button.ButtonVariant };
 		onComplete?: (success: boolean) => void;
 		disableCopyButtonTimeout?: boolean;
@@ -74,6 +74,7 @@
 		{onComplete}
 		timeout={disableCopyButtonTimeout ? 0 : undefined}
 		{size}
+		classes={classes?.copy}
 	>
 		{#snippet copySnippet()}
 			{#if text?.copy}
